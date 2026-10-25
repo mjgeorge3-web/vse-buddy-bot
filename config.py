@@ -9,13 +9,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load local environment variables from .env file (if present)
-load_dotenv()
-
 # =====================================================================
-# PATHS
+# PATHS & ENVIRONMENT
 # =====================================================================
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+load_dotenv()  # also check current working directory
 KNOWLEDGE_DIR = BASE_DIR / "knowledge"
 DATA_DIR = BASE_DIR / "data"
 LOGS_DIR = BASE_DIR / "logs"

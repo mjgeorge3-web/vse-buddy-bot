@@ -93,18 +93,34 @@ class Retriever:
         return self.client
 
     def embed_query(self, query: str) -> np.ndarray:
-        """Embed user query with task_type='RETRIEVAL_QUERY' and L2-normalize."""
+        """Embed user query with task_type='RETRIEVAL_QUERY' and L2-normalize.
+        
+        Includes exponential backoff retry in case of free-tier rate limits.
+        """
+        import time
+
         client = self._get_client()
-        response = client.models.embed_content(
-            model=config.EMBEDDING_MODEL,
-            contents=query,
-            config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY"),
-        )
-        vec = np.array(response.embeddings[0].values, dtype=np.float32)
-        norm = np.linalg.norm(vec)
-        if norm > 0:
-            vec = vec / norm
-        return vec
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = client.models.embed_content(
+                    model=config.EMBEDDING_MODEL,
+                    contents=query,
+                    config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY"),
+                )
+                vec = np.array(response.embeddings[0].values, dtype=np.float32)
+                norm = np.linalg.norm(vec)
+                if norm > 0:
+                    vec = vec / norm
+                return vec
+            except Exception as e:
+                err_str = str(e).lower()
+                if ("429" in err_str or "quota" in err_str or "rate" in err_str) and attempt < max_retries - 1:
+                    wait_sec = 3.0 * (2 ** attempt)
+                    print(f"[Retriever rate-limit] Retrying in {wait_sec:.1f}s...")
+                    time.sleep(wait_sec)
+                else:
+                    raise
 
     def extract_query_keywords(self, query: str) -> List[str]:
         """Extract lowercased keywords with length >= config.MIN_KEYWORD_LENGTH excluding stopwords."""

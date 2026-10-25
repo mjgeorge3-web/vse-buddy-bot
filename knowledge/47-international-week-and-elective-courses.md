@@ -33,3 +33,29 @@ In addition to I-Week, international and local students can register for regular
 1. Go to InSIS → **Course Catalog (Katalog předmětů)**.
 2. In the search filter, select **Language of Instruction: English**.
 3. Filter by faculty, semester (winter/spring), and degree level (Bachelor/Master) to explore the syllabi, examination requirements, and schedules.
+
+## Who to contact about International Week by faculty
+If you have questions about available courses, eligibility, registration deadlines, or credit recognition for International Week, contact the responsible coordinator or study department for your faculty:
+
+- **Central International Office (OZS):**
+  - Partner International Weeks & Visiting Professor Mobility: Radka Vaváková (`radka.vavakova@vse.cz`)
+  - General International Office enquiries: `ozs@vse.cz`
+  - Incoming exchange/Erasmus students: `exchange@vse.cz`
+- **FIS – Faculty of Informatics and Statistics:**
+  - I-Week coordination team: `fisbachelor@vse.cz` (Bachelor's) / `fismasters@vse.cz` (Master's)
+  - International student community coordinator: Veronika Brunerová (`veronika.brunerova@vse.cz`)
+  - Office: NB 403 (New Building, 4th floor)
+- **FBA – Faculty of Business Administration (FPH):**
+  - International Relations Office: `fba@vse.cz`
+  - Vice-Dean for International Relations: Assoc. Prof. Ladislav Tyll (`ladislav.tyll@vse.cz`)
+- **FIR – Faculty of International Relations (FMV):**
+  - Faculty study & international office: `fmv@vse.cz`
+  - Programme coordinators: `ids@vse.cz` (IDS), `ibb@vse.cz` (IBB)
+- **FFA – Faculty of Finance and Accounting (FFU):**
+  - Faculty study department: `ffu@vse.cz`
+  - Master in Finance & Accounting (MIFA): `mifa@vse.cz`
+- **FE – Faculty of Economics (NF):**
+  - Faculty study department: `nf@vse.cz`
+  - English programmes coordinator: `econ@vse.cz`
+- **FM – Faculty of Management (Jindřichův Hradec):**
+  - Faculty study department: `fm@vse.cz`

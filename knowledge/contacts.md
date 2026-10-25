@@ -113,6 +113,34 @@ official numbers used throughout the Czech Republic:
 (Source for numbers: general Czech emergency-number information; cross-check
 on https://www.vse.cz/english/contacts/ or the Czech Ministry of Interior.)
 
+## 7. International Week (I-Week) & Elective Coordinators by Faculty
+
+For questions regarding International Week intensive courses, registration, or credit recognition, contact the responsible faculty coordinator:
+
+- **Central International Office (OZS):**
+  - Radka Vaváková (Staff mobility / Teaching Weeks / Partner I-Weeks): radka.vavakova@vse.cz
+  - General International Office: ozs@vse.cz
+  - Incoming exchange students: exchange@vse.cz
+- **FIS (Faculty of Informatics and Statistics):**
+  - Bachelor studies: fisbachelor@vse.cz
+  - Master studies: fismasters@vse.cz
+  - International coordinator: Veronika Brunerová (veronika.brunerova@vse.cz)
+  - Office: NB 403 (New Building, 4th floor)
+- **FBA (Faculty of Business Administration / FPH):**
+  - International office: fba@vse.cz
+  - Vice-Dean for International Relations: Assoc. Prof. Ladislav Tyll (ladislav.tyll@vse.cz)
+- **FIR (Faculty of International Relations / FMV):**
+  - Faculty office: fmv@vse.cz
+  - Programme coordinators: ids@vse.cz (IDS), ibb@vse.cz (IBB)
+- **FFA (Faculty of Finance and Accounting / FFU):**
+  - Faculty study office: ffu@vse.cz
+  - MIFA programme: mifa@vse.cz
+- **FE (Faculty of Economics / NF):**
+  - Faculty study office: nf@vse.cz
+  - Economics programme: econ@vse.cz
+- **FM (Faculty of Management in Jindřichův Hradec):**
+  - Faculty study office: fm@vse.cz
+
 ## How to use this file
 
 - Items marked **VERIFIED** were read directly from the listed official URL on
