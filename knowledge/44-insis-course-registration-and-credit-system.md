@@ -17,6 +17,18 @@ DATE SAVED: 2026-10-25
 - **How vouchers work:** 1 ECTS credit = 1 voucher. When enrolling in a course, the corresponding vouchers are deducted. Passing the course converts those vouchers into earned ECTS credits. Failing an enrolled course consumes the vouchers permanently without earning credits.
 - If a student runs out of vouchers and has fewer vouchers remaining than ECTS needed to graduate, studies are terminated.
 
+## Step-by-step how to enroll in a course in InSIS
+1. **Sign in to InSIS:** Log in at https://insis.vse.cz/ with your VŠE username and password.
+2. **Open Student's Portal:** In the main menu, navigate to **My Study** (or *My College*) → **Student's Portal**.
+3. **Open Registration/Enrollment:** Click on **Registration/Enrollment** (Registrace/Zápisy).
+4. **Browse Course Categories:** At the bottom of the page, click the course category indicator corresponding to your study plan:
+   - `sP`: Compulsory courses (Povinné předměty)
+   - `sV`: Elective/optional courses (Volitelné předměty)
+   - Language groups or faculty-specific elective groups.
+5. **Select and Add:** Check the boxes next to your desired courses and click **Add selected courses**.
+6. **Select Timetable Slot (Mandatory):** In the **Timetable** column, click **Select** to pick your time slot. If a course has both a lecture and a seminar/exercise, you must choose time slots for both. The status icon turns green when complete.
+7. **Verify Schedule:** Click **Display Timetables** to visually inspect your weekly calendar and ensure there are no overlapping classes.
+
 ## Course registration and enrollment rounds
 Registration in InSIS is split into clearly separated phases:
 1. **Pre-registration (Orders):** Students express interest by ordering compulsory and elective courses. This phase is **not first-come, first-served**; submitting on day 1 or the final day gives equal priority.
