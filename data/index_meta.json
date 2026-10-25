@@ -232,12 +232,142 @@
   {
     "chunk_id": "17-insis-portal.md#0",
     "doc_id": "17-insis-portal.md",
-    "title": "InSIS – VŠE information system (portal)",
-    "source_url": "https://insis.vse.cz/?lang=en",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
     "date_saved": "2026-10-25",
     "unverified": false,
     "is_contacts": false,
-    "text": "InSIS – VŠE information system (portal)\n\nInSIS is the central VŠE portal used for course registration, grades, study records, payments and personal data. English language switch is available at the top right.\n\nA parallel phone directory is reachable at https://insis.vse.cz/lide/?lang=en (used to look up official email/phone of VŠE staff and offices)."
+    "text": "InSIS – complete student portal navigation and services guide\n\n# InSIS – complete student portal navigation and services guide"
+  },
+  {
+    "chunk_id": "17-insis-portal.md#1",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 1. Login, English language switch and password reset\n- **Portal URL:** https://insis.vse.cz/ (or via the official mobile app *My College* on iOS/Android).\n- **Username format:** Typically 4 letters + 2 numbers based on your surname and name (e.g. `novj01`).\n- **Switch to English:** Click the **British flag icon / EN** in the top-right corner of any InSIS page.\n- **Multi-Factor Authentication (MFA):** Required for all logins using an authenticator app (Microsoft Authenticator or Google Authenticator) on your mobile phone.\n- **Forgotten password:** If you cannot log in, use the password reset link on the initial admissions application portal, or visit the IT Helpdesk in person with your student ID / passport (Žižkov Old Building SB or New Building NB)."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#2",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 2. Personal data, Prague address and Czech bank account\n- **Where to add Czech bank account:** InSIS → **Student's Portal** → **Bank Accounts (Bankovní účty)**. Mandatory for receiving accommodation scholarships, merit scholarships, and study fee refunds.\n- **Update Prague address and phone:** InSIS → **Personal Management (Osobní management)** → **Personal Data (Osobní údaje)**. You must keep your current Czech residence address and emergency contact phone number updated for official university notifications."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#3",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 3. Weekly timetable and Google/Apple Calendar export\n- **View timetable:** InSIS → **Student's Portal** → **My Timetable (Rozvrh)**. Displays weekly class schedules, lecture halls, and seminar rooms.\n- **Campus room code decoder:** `RB` = Rajská budova, `SB` = Stará budova, `NB` = Nová budova, `JM` = Jižní Město. The first digit is the floor number (e.g. `RB 101` is Rajská 1st floor, `NB 403` is Nová 4th floor).\n- **Sync with calendar:** Click **Export to iCal / ICS feed link** in the timetable toolbar to sync your VŠE class schedule automatically with Google Calendar, Apple Calendar, or Outlook."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#4",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 4. Coursework submission (Odevzdávárna / Drop-in box)\n- **Where to submit assignments:** InSIS → **Student's Portal** → **Student's Coursework Submission (Odevzdávárna / Drop-in box)**.\n- Select your course and assignment topic, then upload homework, presentation slides, or project files before the deadline.\n- Always check that the file uploaded completely and that the submission timestamp is recorded before the deadline expires."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#5",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 5. Continuous evaluation, test points and grades (Sheet of results)\n- **Check points and grades:** InSIS → **Student's Portal** → **My Lectures / Sheet of Results (Záznamník učitele / Průběžné hodnocení)**.\n- Displays continuous test scores, seminar attendance points, midterms, and final exam grades recorded by your professors.\n- **Grading scale at VŠE:**\n  - 1 = Excellent (*Výborně*, 90–100%)\n  - 2 = Very Good (*Velmi dobře*, 75–89%)\n  - 3 = Good (*Dobře*, 60–74%)\n  - 4+ / 4 = Failed (*Nevyhověl*, under 60%)\n  - Zápočet (z) = Satisfied / ungraded course requirement."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#6",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 6. Exam registration, dates and cancellation (Přihlašování na zkoušky)\n- **Register for exams:** InSIS → **Student's Portal** → **Exam Dates and Registration (Přihlašování na zkoušky)**.\n- Browse available examination dates (*řádné termíny*), check room locations, examiner names, and capacity limits.\n- **Deregistration / Cancellation:** If you cannot attend an exam, you must cancel your registration in InSIS before the cancellation deadline (typically 24 hours prior). Unexcused absences count as a failed attempt (grade 4) and deduct from your retake attempts.\n- **Exam retakes (Opravný termín):** If you fail an exam, you are entitled to up to 2 retake dates within the semester exam period."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#7",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 7. Official Electronic Confirmation of Study (Potvrzení o studiu)\n- **Generate digitally signed PDF:** InSIS → **Student's Portal** → **Student Confirmation** → click **Electronic Confirmation of Study**.\n- The PDF is generated with an official Qualified Electronic Stamp (digitally sealed) accepted by the Czech Foreign Police, OAMP MVČR, transit authorities (PID / Lítačka), banks, and embassies.\n- The signed PDF appears ready for download in **Student's Portal** → **Document Storage (Úschovna dokumentů)** within approx. 30–60 minutes.\n- **Certified paper copy:** If a physical paper stamp is required, bring the digital PDF on a flash drive to any CzechPOINT post office for official authorized conversion (*konverze dokumentů*)."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#8",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 8. Study financing, Variable Symbol (VS) and fee payments\n- **Check tuition and payment details:** InSIS → **Student's Portal** → **Study Financing (Financování studia)**.\n- Find your unique, personalized **Variable Symbol (VS)** needed to pair bank payments.\n- Access the online payment gateway to pay tuition or fee balances directly by debit/credit card, or scan the Czech QR code with your mobile banking app.\n- Check payment history and verify whether your payment has been marked as received by the bursar."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#9",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 9. Accommodation scholarship application (Ubytovací stipendium)\n- **Where to apply:** InSIS → **Student's Portal** → **My Studies** → **Scholarships (Žádost o ubytovací stipendium)**.\n- Available to full-time students whose permanent residence is outside Prague.\n- Must be submitted online twice a year (autumn and spring windows).\n- Payout is processed quarterly directly into the Czech bank account specified in InSIS."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#10",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 10. Study plan audit, completed credits and credit vouchers\n- **Audit degree progress:** InSIS → **Student's Portal** → **Check of Study Plan (Kontrola studijního plánu)**.\n- Displays completed ECTS credits vs required credits across mandatory (`sP`), optional (`sV`), and faculty groups, as well as your cumulative Grade Point Average (GPA / *studijní průměr*).\n- Check your remaining **credit voucher balance** (Bachelor students start with 216 vouchers; Master students start with 144 vouchers)."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#11",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 11. Official electronic requests via Document Office (Úřadovna)\n- **Where to submit official requests:** InSIS → **Student's Portal** → **Document Office (Úřadovna)** → **Submit a new application**.\n- Used for official administrative petitions to the Dean or Vice-Dean, including:\n  - Official apology for illness/absence from study or exams (with medical certificate).\n  - Recognition of previous university credits or Erasmus study courses.\n  - Request for individual study plan.\n  - Request for interruption of studies.\n  - Correction of course registration or credit voucher discrepancies."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#12",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 12. Final thesis, plagiarism check and state final exams (Státnice)\n- **Thesis topic and supervisor:** InSIS → **Student's Portal** → **Thesis Topics (Témata závěrečných prací)**. Propose or register your thesis topic and supervisor (*vedoucí práce*).\n- **Electronic thesis submission:** InSIS → **Student's Portal** → **Final Thesis Submission (Odevzdání závěrečné práce)**. Upload the final PDF text of your Bachelor's or Master's thesis and abstract before the semester deadline.\n- InSIS automatically routes your thesis to **Theses.cz** for plagiarism analysis.\n- **State Final Exams:** InSIS → **Student's Portal** → **State Final Exams (SZZ / Státnice)** to register for defense and state exam dates."
+  },
+  {
+    "chunk_id": "17-insis-portal.md#13",
+    "doc_id": "17-insis-portal.md",
+    "title": "InSIS – complete student portal navigation and services guide",
+    "source_url": "https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/",
+    "date_saved": "2026-10-25",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "InSIS – complete student portal navigation and services guide\n\n## 13. Course and teacher evaluation survey (Studentská evaluace)\n- At the end of each semester, InSIS opens the anonymous **Student Evaluation of Teaching**.\n- Access via **Student's Portal** → **Student Evaluation (Evaluace)** to provide anonymous feedback on course content, professors, seminar tutors, and materials."
   },
   {
     "chunk_id": "18-moodle-elearning.md#0",

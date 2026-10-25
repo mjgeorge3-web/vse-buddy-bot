@@ -232,7 +232,11 @@ def embed_chunks_with_backoff(
                 if attempt == max_retries - 1:
                     print(f"Error embedding batch {i}-{i+len(batch)}: {e}")
                     raise
-                wait_time = base_delay * (2 ** attempt)
+                if is_rate_limit:
+                    m = re.search(r"retry\s*(?:in|delay)?[^\d]*(\d+)", err_str)
+                    wait_time = float(m.group(1)) + 2.0 if m else (30.0 + 15.0 * attempt)
+                else:
+                    wait_time = base_delay * (2 ** attempt)
                 print(f"Rate limit / transient error on batch {i}. Retrying in {wait_time:.1f}s...")
                 time.sleep(wait_time)
 

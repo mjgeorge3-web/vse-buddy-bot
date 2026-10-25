@@ -1,14 +1,89 @@
 <!--
-SOURCE: https://insis.vse.cz/?lang=en
-TITLE: InSIS – VŠE information system (portal)
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+SOURCE: https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/
+TITLE: InSIS – complete student portal navigation and services guide
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 
-# InSIS – VŠE information system (portal)
+# InSIS – complete student portal navigation and services guide
 
 > General information only. Confirm with the relevant official authority or the VŠE International Office / Admission Office before acting.
-InSIS is the central VŠE portal used for course registration, grades, study records, payments and personal data. English language switch is available at the top right.
 
-A parallel phone directory is reachable at https://insis.vse.cz/lide/?lang=en (used to look up official email/phone of VŠE staff and offices).
+## 1. Login, English language switch and password reset
+- **Portal URL:** https://insis.vse.cz/ (or via the official mobile app *My College* on iOS/Android).
+- **Username format:** Typically 4 letters + 2 numbers based on your surname and name (e.g. `novj01`).
+- **Switch to English:** Click the **British flag icon / EN** in the top-right corner of any InSIS page.
+- **Multi-Factor Authentication (MFA):** Required for all logins using an authenticator app (Microsoft Authenticator or Google Authenticator) on your mobile phone.
+- **Forgotten password:** If you cannot log in, use the password reset link on the initial admissions application portal, or visit the IT Helpdesk in person with your student ID / passport (Žižkov Old Building SB or New Building NB).
 
+## 2. Personal data, Prague address and Czech bank account
+- **Where to add Czech bank account:** InSIS → **Student's Portal** → **Bank Accounts (Bankovní účty)**. Mandatory for receiving accommodation scholarships, merit scholarships, and study fee refunds.
+- **Update Prague address and phone:** InSIS → **Personal Management (Osobní management)** → **Personal Data (Osobní údaje)**. You must keep your current Czech residence address and emergency contact phone number updated for official university notifications.
+
+## 3. Weekly timetable and Google/Apple Calendar export
+- **View timetable:** InSIS → **Student's Portal** → **My Timetable (Rozvrh)**. Displays weekly class schedules, lecture halls, and seminar rooms.
+- **Campus room code decoder:** `RB` = Rajská budova, `SB` = Stará budova, `NB` = Nová budova, `JM` = Jižní Město. The first digit is the floor number (e.g. `RB 101` is Rajská 1st floor, `NB 403` is Nová 4th floor).
+- **Sync with calendar:** Click **Export to iCal / ICS feed link** in the timetable toolbar to sync your VŠE class schedule automatically with Google Calendar, Apple Calendar, or Outlook.
+
+## 4. Coursework submission (Odevzdávárna / Drop-in box)
+- **Where to submit assignments:** InSIS → **Student's Portal** → **Student's Coursework Submission (Odevzdávárna / Drop-in box)**.
+- Select your course and assignment topic, then upload homework, presentation slides, or project files before the deadline.
+- Always check that the file uploaded completely and that the submission timestamp is recorded before the deadline expires.
+
+## 5. Continuous evaluation, test points and grades (Sheet of results)
+- **Check points and grades:** InSIS → **Student's Portal** → **My Lectures / Sheet of Results (Záznamník učitele / Průběžné hodnocení)**.
+- Displays continuous test scores, seminar attendance points, midterms, and final exam grades recorded by your professors.
+- **Grading scale at VŠE:**
+  - 1 = Excellent (*Výborně*, 90–100%)
+  - 2 = Very Good (*Velmi dobře*, 75–89%)
+  - 3 = Good (*Dobře*, 60–74%)
+  - 4+ / 4 = Failed (*Nevyhověl*, under 60%)
+  - Zápočet (z) = Satisfied / ungraded course requirement.
+
+## 6. Exam registration, dates and cancellation (Přihlašování na zkoušky)
+- **Register for exams:** InSIS → **Student's Portal** → **Exam Dates and Registration (Přihlašování na zkoušky)**.
+- Browse available examination dates (*řádné termíny*), check room locations, examiner names, and capacity limits.
+- **Deregistration / Cancellation:** If you cannot attend an exam, you must cancel your registration in InSIS before the cancellation deadline (typically 24 hours prior). Unexcused absences count as a failed attempt (grade 4) and deduct from your retake attempts.
+- **Exam retakes (Opravný termín):** If you fail an exam, you are entitled to up to 2 retake dates within the semester exam period.
+
+## 7. Official Electronic Confirmation of Study (Potvrzení o studiu)
+- **Generate digitally signed PDF:** InSIS → **Student's Portal** → **Student Confirmation** → click **Electronic Confirmation of Study**.
+- The PDF is generated with an official Qualified Electronic Stamp (digitally sealed) accepted by the Czech Foreign Police, OAMP MVČR, transit authorities (PID / Lítačka), banks, and embassies.
+- The signed PDF appears ready for download in **Student's Portal** → **Document Storage (Úschovna dokumentů)** within approx. 30–60 minutes.
+- **Certified paper copy:** If a physical paper stamp is required, bring the digital PDF on a flash drive to any CzechPOINT post office for official authorized conversion (*konverze dokumentů*).
+
+## 8. Study financing, Variable Symbol (VS) and fee payments
+- **Check tuition and payment details:** InSIS → **Student's Portal** → **Study Financing (Financování studia)**.
+- Find your unique, personalized **Variable Symbol (VS)** needed to pair bank payments.
+- Access the online payment gateway to pay tuition or fee balances directly by debit/credit card, or scan the Czech QR code with your mobile banking app.
+- Check payment history and verify whether your payment has been marked as received by the bursar.
+
+## 9. Accommodation scholarship application (Ubytovací stipendium)
+- **Where to apply:** InSIS → **Student's Portal** → **My Studies** → **Scholarships (Žádost o ubytovací stipendium)**.
+- Available to full-time students whose permanent residence is outside Prague.
+- Must be submitted online twice a year (autumn and spring windows).
+- Payout is processed quarterly directly into the Czech bank account specified in InSIS.
+
+## 10. Study plan audit, completed credits and credit vouchers
+- **Audit degree progress:** InSIS → **Student's Portal** → **Check of Study Plan (Kontrola studijního plánu)**.
+- Displays completed ECTS credits vs required credits across mandatory (`sP`), optional (`sV`), and faculty groups, as well as your cumulative Grade Point Average (GPA / *studijní průměr*).
+- Check your remaining **credit voucher balance** (Bachelor students start with 216 vouchers; Master students start with 144 vouchers).
+
+## 11. Official electronic requests via Document Office (Úřadovna)
+- **Where to submit official requests:** InSIS → **Student's Portal** → **Document Office (Úřadovna)** → **Submit a new application**.
+- Used for official administrative petitions to the Dean or Vice-Dean, including:
+  - Official apology for illness/absence from study or exams (with medical certificate).
+  - Recognition of previous university credits or Erasmus study courses.
+  - Request for individual study plan.
+  - Request for interruption of studies.
+  - Correction of course registration or credit voucher discrepancies.
+
+## 12. Final thesis, plagiarism check and state final exams (Státnice)
+- **Thesis topic and supervisor:** InSIS → **Student's Portal** → **Thesis Topics (Témata závěrečných prací)**. Propose or register your thesis topic and supervisor (*vedoucí práce*).
+- **Electronic thesis submission:** InSIS → **Student's Portal** → **Final Thesis Submission (Odevzdání závěrečné práce)**. Upload the final PDF text of your Bachelor's or Master's thesis and abstract before the semester deadline.
+- InSIS automatically routes your thesis to **Theses.cz** for plagiarism analysis.
+- **State Final Exams:** InSIS → **Student's Portal** → **State Final Exams (SZZ / Státnice)** to register for defense and state exam dates.
+
+## 13. Course and teacher evaluation survey (Studentská evaluace)
+- At the end of each semester, InSIS opens the anonymous **Student Evaluation of Teaching**.
+- Access via **Student's Portal** → **Student Evaluation (Evaluace)** to provide anonymous feedback on course content, professors, seminar tutors, and materials.
