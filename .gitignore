@@ -1,0 +1,26 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Chat logs and user feedback
+logs/
+*.log
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Streamlit local runtime state & secrets
+.streamlit/secrets.toml
+
+# Operating system files
+.DS_Store
+Thumbs.db

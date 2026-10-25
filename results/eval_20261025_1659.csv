@@ -1,0 +1,33 @@
+id,stage,type,question,expected_points,expected_source,retrieved_sources,source_match,refused_correctly,referral_present,mode,top_score,latency_ms,answer,score (0-2),notes
+1,Before arrival,F,What Bachelor programmes does VŠE teach in English?,"6 programmes: Business Administration, Economic Data Science, Economics, Economics of Markets and Organizations, International and Diplomatic Studies, International Business",02-bachelor-programmes-english.md,02-bachelor-programmes-english.md,Y,N/A,N/A,normal,0.9814,3571.7,"Hello! Here are the Bachelor programmes taught in English at VŠE:
+
+* Bachelor of Business Administration [1]
+* Bachelor of Economic Data Science [1]
+* Bachelor of Economics [1]
+* Bachelor of Economics of Markets and Organizations [1]
+* Bachelor of International and Diplomatic Studies [1]
+* Bachelor of International Business [1]
+
+For more details on admission requirements, tuition, and programme pages, please check the admissions website at [https://admissions.vse.cz/](https://admissions.vse.cz/) [1, 3]. 
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Bachelor Programmes taught in English at VŠE](https://www.vse.cz/english/study-at-vse/bachelor-programmes/)",,
+2,Before arrival,F,Can I study a Master's in Finance in English?,Yes - Master in Finance and Accounting; list last updated 2019 so verify on admissions.vse.cz,03-master-programmes-english.md,03-master-programmes-english.md,Y,N/A,N/A,normal,0.8326,835.2,"Yes! VŠE offers a Master in Finance and Accounting in English [1]. 
+
+Please note that the list may need verification, so you can check admissions.vse.cz for the current catalogue [1]. (Note: I am not an official VŠE service).
+
+**Sources:**
+- [Master Programmes taught in English at VŠE](https://www.vse.cz/english/study-at-vse/master-programmes/)",,
+3,Before arrival,F,How do I contact the Admission Office?,admissions@vse.cz; +420 224 098 527; Rajská Building RB 527; contact hours by prior agreement,04-admission-office-and-applications.md,04-admission-office-and-applications.md,Y,N/A,N/A,normal,0.8446,919.2,"Hello! You can contact the Admission & Marketing Office using the details below:
+
+* **Location:** Rajská Building, room RB 527 [1]
+* **Email:** admissions@vse.cz [1]
+* **Phone:** +420 224 098 527 [1]
+* **Contact hours:** By prior phone or email agreement [1]
+
+Please note that I am not an official VŠE service.
+
+**Sources:**
+- [Admission Office and applications (international degree programmes)](https://admissions.vse.cz/)",,

@@ -1,0 +1,31 @@
+id,stage,type,question,expected_points,expected_source
+1,Before arrival,F,What Bachelor programmes does VŠE teach in English?,"6 programmes: Business Administration, Economic Data Science, Economics, Economics of Markets and Organizations, International and Diplomatic Studies, International Business",02-bachelor-programmes-english.md
+2,Before arrival,F,Can I study a Master's in Finance in English?,"Yes - Master in Finance and Accounting; list last updated 2019 so verify on admissions.vse.cz",03-master-programmes-english.md
+3,Before arrival,F,How do I contact the Admission Office?,"admissions@vse.cz; +420 224 098 527; Rajská Building RB 527; contact hours by prior agreement",04-admission-office-and-applications.md
+4,Before arrival,F,When does Orientation Week happen?,"One week before the academic year starts; exact dates on the Admission Office page",05-orientation-week.md
+5,Before arrival,R,Do I need a visa to study at VŠE? I am from India.,"Non-EU students usually need a long-stay visa or long-stay residence permit for study, applied at a Czech embassy; general info only; MUST refer to VŠE International Office and mvcr.cz; page marked unverified",12-visa-and-residence-permit-general.md
+6,Before arrival,F,Where do I apply for my student visa?,"At the Czech embassy or consulate in your home country; MZV portal lists missions; link unverified - confirm",13-czech-embassies-abroad-mzv.md
+7,Before arrival,R,What health insurance do I need as an international student?,"EU/EEA/Swiss: EHIC + supplementary commercial insurance recommended; non-EU: Czech-approved insurer (e.g. PVZP, Slavia, Maxima) usually required for visa; MUST refer to official office",14-health-insurance-and-medical-care.md
+8,Before arrival,F,How do I apply for a VŠE dormitory?,"Dorms managed by SKM; apply via skm.vse.cz/english; deadlines and prices UNVERIFIED - contact SKM directly",15-dormitories-and-student-housing.md
+9,Before arrival,F,How can I find a private flat in Prague safely?,"bezrealitky.cz, sreality.cz, expats.cz, Facebook groups; sign written contract; never pay deposit before viewing",16-private-accommodation-in-prague.md
+10,Before arrival,F,How much money do I need per month in Prague?,"Flat share ~8,000-14,000 CZK; food ~6,000-9,000 CZK; mobile+internet from ~600 CZK; dorm usually cheapest; figures approximate",35-cost-of-living-and-budgeting.md
+11,First weeks,F,How do I connect to Wi-Fi on campus?,"eduroam; degree students use VŠE credentials, visiting students home-university credentials; configure before arrival (CAT tool)",20-wifi-eduroam.md
+12,First weeks,F,What is InSIS used for?,"Central portal: course registration, grades, study records, payments, personal data; English switch top right",17-insis-portal.md
+13,First weeks,F,How do I access my university email?,"Microsoft 365 account (Outlook, Teams, OneDrive) via outlook.vse.cz",19-microsoft-365.md
+14,First weeks,F,Where can I find my course materials and assignments?,"Moodle (moodle.vse.cz); sign in with InSIS credentials; English switch at top",18-moodle-elearning.md
+15,First weeks,F,What can I use my student ID card for?,"Works as library card, meal card and ISIC; pickup and photo details on ID Cards page",22-student-id-card.md
+16,First weeks,F,I forgot my InSIS password. What should I do?,"Contact IT support (Campus Services page); handles password resets; switchboard +420 224 095 111",21-it-support-helpdesk.md
+17,First weeks,F,What are the opening hours of the library in Žižkov?,"Mon 9-19, Tue-Thu 8-19, Fri 8-18; knihovna@vse.cz; hours may change",23-library-knihovna.md
+18,First weeks,F,How can I meet other international students?,"ESN VŠE Prague (trips, language cafés), Buddy System, VŠE Ambassadors events, VŠE International Instagram",39-student-clubs-and-esn.md
+19,First weeks,G,As a non-EU student do I have to register with the Foreign Police and by when?,"Not covered for non-EU students in knowledge base; must say no verified info; refer to International Office and mvcr.cz; MUST NOT invent deadlines",12-visa-and-residence-permit-general.md
+20,First weeks,F,Is there a student discount on Prague public transport?,"Yes, ages 18-26 with proof of study; long-term passes cheaper; check eligibility on pid.cz",31-prague-public-transport-pid.md
+21,Studying,F,How many credits should I take per semester?,"Typically 30 ECTS per semester / 60 per year; verify in the binding Study and Examination Rules",07-study-regulations-and-credit-system.md
+22,Studying,F,Where can I find the academic calendar?,"Official English PDFs on the academic calendar page (AY 2026/2027 and 2027/2028); check latest version",06-academic-calendar.md
+23,Studying,R,Can I work part-time as a non-EU student?,"Generally allowed with long-stay visa/residence permit for study, but conditions apply and change; MUST refer to mvcr.cz and VŠE International Office before signing a contract",30-employment-during-studies.md
+24,Studying,F,Does VŠE help students find jobs or internships?,"Career Centre kc.vse.cz: coaching, CV reviews, job board, annual Šance Job Fair",28-career-services-job-fair.md
+25,Studying,R,I feel very stressed and homesick. Is there any help?,"Supportive tone; Academic Psychological Counselling is free, in English, in-person or online; ac@vse.cz; must refer",26-psychological-counselling.md
+26,Living in Prague,F,What is the emergency number in the Czech Republic?,"112 (multilingual, all emergencies); 155 ambulance; 158 police; 150 fire",34-emergency-numbers-and-health.md
+27,Living in Prague,F,Where can I eat cheaply near campus?,"VŠE canteens (menza) run by SKM, menus on skm.vse.cz, student prices with ISIC; apps Meníčka.cz and Nesnězeno",24-catering-and-menza.md
+28,Living in Prague,F,Are there sports courses in English?,"Yes, sport courses in English with access to university facilities; they give ECTS credits",25-sports-and-recreation.md
+29,Studying,G,What happens if I fail an exam twice?,"Retake rules not detailed in knowledge base; must say no verified info; refer to Study Regulations and study department; MUST NOT invent rules",07-study-regulations-and-credit-system.md
+30,Studying,G,Can I use ChatGPT for my assignments?,"Not in knowledge base; must say no verified info; refer to course teacher and VŠE AI guidelines",none
