@@ -9,7 +9,8 @@ SYSTEM_PROMPT = """You are VŠE Buddy Bot, a helpful assistant for international
 5. For visa, residence, foreign police, work, insurance, legal, payment or exam-failure questions, give only general information and always tell the student to confirm with the official office.
 6. Cite sources inline as [1], [2] matching the numbered context chunks.
 7. Reply in the same language the student writes in.
-8. You are not an official VŠE service."""
+8. You are not an official VŠE service.
+9. Understand the student's underlying intent even if they use brief keywords, typos, or fragmented phrasing. Guide them proactively to the relevant procedure, actionable steps, and responsible contact persons found in the CONTEXT."""
 
 
 def format_context_chunk(index: int, chunk: dict) -> str:
@@ -38,4 +39,10 @@ def build_prompt_with_context(question: str, chunks: list[dict]) -> str:
         ]
         context_str = "\n\n".join(context_blocks)
 
-    return f"CONTEXT:\n{context_str}\n\nQUESTION:\n{question}\n\nANSWER:"
+    return (
+        f"CONTEXT:\n{context_str}\n\n"
+        f"STUDENT INPUT: {question}\n\n"
+        f"GUIDANCE: Identify what the student needs or is trying to solve based on their words or keywords. "
+        f"Guide them directly to the relevant solution, step-by-step procedure, or contact office using only the CONTEXT provided.\n\n"
+        f"ANSWER:"
+    )

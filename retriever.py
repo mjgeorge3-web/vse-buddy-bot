@@ -47,6 +47,32 @@ STOPWORDS = {
 }
 
 
+INTENT_EXPANSIONS = {
+    "iweek": ["international", "week", "intensive", "courses"],
+    "fees": ["tuition", "payment", "bank", "insis", "variable"],
+    "fee": ["tuition", "payment", "bank", "insis"],
+    "tuition": ["fees", "payment", "bank", "insis"],
+    "police": ["foreign", "police", "olšanská", "registration", "residence"],
+    "nostrifikace": ["foreign", "education", "assessment", "recognition", "diploma"],
+    "nostrification": ["foreign", "education", "assessment", "recognition", "diploma"],
+    "vouchers": ["credit", "voucher", "ects", "registration", "enrollment"],
+    "voucher": ["credit", "voucher", "ects", "registration", "enrollment"],
+    "scholarship": ["accommodation", "stipendium", "grant", "insis"],
+    "scholarships": ["accommodation", "stipendium", "grant", "insis"],
+    "stipendium": ["accommodation", "scholarship", "grant", "insis"],
+    "wifi": ["eduroam", "network", "internet", "connection"],
+    "eduroam": ["wifi", "network", "internet", "credentials"],
+    "dorm": ["dormitories", "housing", "skm", "accommodation"],
+    "dorms": ["dormitories", "housing", "skm", "accommodation"],
+    "isic": ["student", "card", "identity"],
+    "safeq": ["printing", "copying", "card", "library"],
+    "print": ["safeq", "copying", "isic", "library"],
+    "printing": ["safeq", "copying", "isic", "library"],
+    "retake": ["exam", "failure", "credit"],
+    "flunk": ["exam", "failure", "retake", "credit"],
+}
+
+
 class Retriever:
     """Retriever using numpy cosine similarity, hybrid title boosting, and contacts fallback."""
 
@@ -123,13 +149,22 @@ class Retriever:
                     raise
 
     def extract_query_keywords(self, query: str) -> List[str]:
-        """Extract lowercased keywords with length >= config.MIN_KEYWORD_LENGTH excluding stopwords."""
+        """Extract lowercased keywords with length >= config.MIN_KEYWORD_LENGTH excluding stopwords,
+        and expand with semantic intent synonyms for fragmented student queries.
+        """
         words = re.findall(r"\w+", query.lower(), re.UNICODE)
         keywords = [
             w for w in words
             if len(w) >= config.MIN_KEYWORD_LENGTH and w not in STOPWORDS
         ]
-        return keywords
+        # Expand keywords using semantic intent dictionary
+        expanded = set(keywords)
+        for w in words:
+            if w in INTENT_EXPANSIONS:
+                for exp_w in INTENT_EXPANSIONS[w]:
+                    if len(exp_w) >= config.MIN_KEYWORD_LENGTH and exp_w not in STOPWORDS:
+                        expanded.add(exp_w)
+        return list(expanded)
 
     def retrieve(
         self, query: str, k: int = config.TOP_K, min_score: float = config.MIN_SCORE
