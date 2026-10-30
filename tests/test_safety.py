@@ -60,6 +60,7 @@ class TestSensitiveTopicDetection:
         "query,expected_topic",
         [
             ("Do I need a visa to study at VŠE? I am from India.", "visa_residence"),
+            ("Do I need a student visa to study at VŠE, and what are the requirements?", "visa_residence"),
             ("Where do I apply for my student visa?", "visa_residence"),
             ("As a non-EU student do I have to register with the Foreign Police?", "foreign_police"),
             ("Can I work part-time as a non-EU student?", "employment_work"),

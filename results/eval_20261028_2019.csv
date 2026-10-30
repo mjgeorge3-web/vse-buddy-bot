@@ -1,0 +1,394 @@
+id,stage,type,question,expected_points,expected_source,retrieved_sources,source_match,refused_correctly,referral_present,mode,top_score,latency_ms,answer,score (0-2),notes
+1,Before arrival,F,What Bachelor programmes does VŠE teach in English?,"6 programmes: Business Administration, Economic Data Science, Economics, Economics of Markets and Organizations, International and Diplomatic Studies, International Business",02-bachelor-programmes-english.md,02-bachelor-programmes-english.md; 04-admission-office-and-applications.md,Y,N/A,N/A,normal,0.9814,4173.2,"Hello! I'd be happy to help you with that. Here are the Bachelor programmes taught in English at VŠE:
+
+* Bachelor of Business Administration [1]
+* Bachelor of Economic Data Science [1]
+* Bachelor of Economics [1]
+* Bachelor of Economics of Markets and Organizations [1]
+* Bachelor of International and Diplomatic Studies [1]
+* Bachelor of International Business [1]
+
+**Next steps:**
+* For programme details, admission requirements, and tuition, you can check the individual programme pages or visit [admissions.vse.cz](https://admissions.vse.cz/) [1], [3].
+* Remember to refer to the live Admission Office pages for binding admission rules, deadlines, and required documents [3].
+
+Please note: I am not an official VŠE service.
+
+**Sources:**
+- [Bachelor Programmes taught in English at VŠE](https://www.vse.cz/english/study-at-vse/bachelor-programmes/)
+- [Admission Office and applications (international degree programmes)](https://admissions.vse.cz/)",,
+2,Before arrival,F,Can I study a Master's in Finance in English?,Yes - Master in Finance and Accounting; list last updated 2019 so verify on admissions.vse.cz,03-master-programmes-english.md,03-master-programmes-english.md; 02-bachelor-programmes-english.md,Y,N/A,N/A,normal,0.8326,2087.0,"Hello! I'm your VŠE Buddy Bot (not an official VŠE service). 
+
+Yes, you can study a Master's programme in Finance in English at VŠE! The available programme is:
+- **Master in Finance and Accounting** [1]
+
+For programme details, admission requirements, and tuition, please visit the [admissions website](https://admissions.vse.cz/) [1], [2]. 
+
+*Note: Please remember that I am an AI assistant, so always confirm details with the official admissions office.*
+
+**Sources:**
+- [Master Programmes taught in English at VŠE](https://www.vse.cz/english/study-at-vse/master-programmes/)
+- [Bachelor Programmes taught in English at VŠE](https://www.vse.cz/english/study-at-vse/bachelor-programmes/)",,
+3,Before arrival,F,How do I contact the Admission Office?,admissions@vse.cz; +420 224 098 527; Rajská Building RB 527; contact hours by prior agreement,04-admission-office-and-applications.md,04-admission-office-and-applications.md,Y,N/A,N/A,normal,0.8446,1509.4,"Hello! I'd be happy to help you contact the Admission Office. 
+
+Here is how you can reach them:
+
+* **Location:** Rajská Building, room RB 527 [1]
+* **Email:** admissions@vse.cz [1]
+* **Phone:** +420 224 098 527 [1]
+* **Note:** Please make sure to arrange contact hours by prior phone or email agreement before visiting [1].
+
+*(Please note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Admission Office and applications (international degree programmes)](https://admissions.vse.cz/)",,
+4,Before arrival,F,When does Orientation Week happen?,One week before the academic year starts; exact dates on the Admission Office page,05-orientation-week.md,05-orientation-week.md,Y,N/A,N/A,normal,0.8077,1702.4,"Hello! Orientation Week takes place one week before the start of the academic year [1]. It is organized by the VŠE International Office to help new international students get familiar with the campus, study system, Prague, and Czech culture [1]. 
+
+Here is what you can do:
+* Check out ESN VŠE Prague activities, study-programme sessions, and the International Office programme during the week [1].
+* Look for the detailed calendar for the next intake on the Admission Office website a few weeks before your arrival [1].
+
+Please note: I am not an official VŠE service.
+
+**Sources:**
+- [Orientation Week for incoming international students](https://admissions.vse.cz/admitted-students-2/on-campus/orientation-week/)",,
+5,Before arrival,R,Do I need a visa to study at VŠE? I am from India.,"Non-EU students usually need a long-stay visa or long-stay residence permit for study, applied at a Czech embassy; general info only; MUST refer to VŠE International Office and mvcr.cz; page marked unverified",12-visa-and-residence-permit-general.md,12-visa-and-residence-permit-general.md,Y,N/A,Y,normal,0.8672,1773.8,"Hello! As a student from India (non-EU/EEA), you typically need either a **long-stay visa for study (90+ days)** or a **long-stay residence permit for study** to study in the Czech Republic [1]. 
+
+*Note: This information is marked as unverified, so please confirm it with the official authorities [1].*
+
+**Next Steps:**
+* Determine the right option based on the length and type of your study [1].
+* Apply at a Czech embassy or consulate before your arrival [1].
+* Always consult the **VŠE International Office** (ozs@vse.cz) and the **Czech Ministry of the Interior** (mvcr.cz) for your personal case [1]. 
+
+*Disclaimer: I am not an official VŠE service. For visa and legal matters, always verify directly with the official authorities.*
+
+**Sources:**
+- [Visa and residence permit for study in the Czech Republic – general information](https://www.mvcr.cz/mvcren/article/long-stay-visa.aspx) *(unverified - please confirm)*",,
+6,Before arrival,F,Where do I apply for my student visa?,At the Czech embassy or consulate in your home country; MZV portal lists missions; link unverified - confirm,13-czech-embassies-abroad-mzv.md,12-visa-and-residence-permit-general.md; 13-czech-embassies-abroad-mzv.md,Y,N/A,N/A,normal,0.721,2089.7,"Hello! I am VŠE Buddy Bot, a helpful assistant for international students. Please note that I am not an official VŠE service.
+
+For visa and residence permit questions, please remember to give only general information and always confirm with the official authorities. 
+
+Here is where you apply for your student visa:
+* Non-EU/EEA students typically need to apply for a long-stay visa for study (90+ days) or a long-stay residence permit at a **Czech embassy or consulate** in your home country before arrival [1], [3].
+* You can check the MZV (Ministry of Foreign Affairs) portal to find diplomatic missions, consular fees, and public holidays [3].
+
+*Note: This information is unverified, so please confirm it with the official office [1], [3].*
+
+Always consult the **VŠE International Office (OZS)** and the **Czech Ministry of the Interior (mvcr.cz)** for your personal case [1].
+
+**Sources:**
+- [Visa and residence permit for study in the Czech Republic – general information](https://www.mvcr.cz/mvcren/article/long-stay-visa.aspx) *(unverified - please confirm)*
+- [Czech embassies and consulates abroad (MZV / Ministry of Foreign Affairs)](https://www.mzv.cz/inp/en/index.html) *(unverified - please confirm)*",,
+7,Before arrival,R,What health insurance do I need as an international student?,"EU/EEA/Swiss: EHIC + supplementary commercial insurance recommended; non-EU: Czech-approved insurer (e.g. PVZP, Slavia, Maxima) usually required for visa; MUST refer to official office",14-health-insurance-and-medical-care.md,14-health-insurance-and-medical-care.md,Y,N/A,Y,normal,0.8436,1400.7,"Hello! As an international student, you must have valid health insurance covering your stay in the Czech Republic [1]. 
+
+Here is what you need based on your category:
+* **EU/EEA/Swiss students:** Use your EHIC (European Health Insurance Card) from home, and supplementary commercial insurance is also recommended [1].
+* **Non-EU students:** You normally need a contract with a Czech-approved insurance company (such as PVZP, Slavia, or Maxima) as a requirement for your long-stay visa or residence permit [1].
+
+*Please note: Since this relates to insurance and visa requirements, please confirm the exact current requirements with the official office [1]. (I am not an official VŠE service).*
+
+**Sources:**
+- [Health insurance and medical care](https://www.vse.cz/english/students/services/)",,
+8,Before arrival,F,How do I apply for a VŠE dormitory?,Dorms managed by SKM; apply via skm.vse.cz/english; deadlines and prices UNVERIFIED - contact SKM directly,15-dormitories-and-student-housing.md,15-dormitories-and-student-housing.md; contacts.md,Y,N/A,N/A,normal,0.8031,2059.9,"Hello! Applying for a VŠE dormitory is easy. Just follow these steps:
+
+* **Log in to ISKaM:** Go to the ISKaM portal (https://iskam-web.vse.cz/) and log in using your VŠE InSIS username and password [1].
+* **Submit Housing Request:** Complete and submit your online accommodation application during the designated registration window [1].
+* **Select Room:** Choose your preferred room type [1].
+* **Pay Deposit:** Pay the refundable reservation deposit (kauce) by the deadline via credit card or international bank transfer to finalize your booking [1].
+* **Move In:** Upon arrival, visit the dormitory reception or manager with your passport/ID, sign the Accommodation Contract, and pick up your keys [1].
+
+*(Note regarding visas/residence: Please confirm any related housing document or visa steps with the official office.)*
+
+If you have questions, you can contact the Central Accommodation Office at `ubytovani@vse.cz` or call `+420 224 092 156` [4]. *(Please note that some contact info from source [6] is marked UNVERIFIED, so feel free to double-check with the office.)*
+
+**Sources:**
+- [VŠE dormitories and student housing (SÚZ VŠE)](https://accommodation.vse.cz/)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,
+9,Before arrival,F,How can I find a private flat in Prague safely?,"bezrealitky.cz, sreality.cz, expats.cz, Facebook groups; sign written contract; never pay deposit before viewing",16-private-accommodation-in-prague.md,16-private-accommodation-in-prague.md; 35-cost-of-living-and-budgeting.md,Y,N/A,N/A,normal,0.8648,1563.8,"Hello! Finding a private flat in Prague safely is totally doable. Here is a helpful step-by-step guide and some tips based on VŠE recommendations:
+
+* **Search platforms:** Look for shared flats on websites like bezrealitky.cz, sreality.cz, expats.cz, or check Facebook groups like ""Flat in Prague / Pronájem Praha"" [1].
+* **Stay safe:** Always sign a written contract, and **never** transfer any deposits before you have physically viewed the flat [1]. 
+* **VAT check:** If the landlord is charging you short-term fees, make sure to check that they are registered for VAT [1].
+* **Cost expectations:** Private flat shares outside the city centre typically cost around 8,000–14,000 CZK/month (prices vary by district) [2].
+
+*(Note: I am not an official VŠE service.)* If you need further assistance with housing or student life, you can check the VŠE Accommodation Centre page under Campus Services [1].
+
+**Sources:**
+- [Private accommodation in Prague – general guidance](https://www.vse.cz/english/students/campus-services/accommodation-centre/)
+- [Cost of living and budgeting in Prague – general guidance](https://admissions.vse.cz/)",,
+10,Before arrival,F,How much money do I need per month in Prague?,"Flat share ~8,000-14,000 CZK; food ~6,000-9,000 CZK; mobile+internet from ~600 CZK; dorm usually cheapest; figures approximate",35-cost-of-living-and-budgeting.md,35-cost-of-living-and-budgeting.md,Y,N/A,N/A,normal,0.8142,2040.3,"Hi! Here is an idea of the approximate monthly student budget in Prague (figures can change, so always cross-check official sites):
+
+- **Dormitory bed:** Low-mid range shared (often the cheapest option; see SKM) [1].
+- **Private flat share:** ~8,000–14,000 CZK/month outside the city centre (varies by district) [1].
+- **Food:** ~6,000–9,000 CZK/month (cheaper if you use university canteens, ISIC, and Lítačka discounts) [1].
+- **Transport:** Long-term student PID pass is much cheaper than single tickets [1].
+- **Mobile & internet:** Combined bundles from ~600 CZK/month [1].
+
+**Tips to save money:**
+- Use your ISIC card and student Lítačka [1], [2].
+- Look for daily lunch menus (*polední menu / denní menu*) using apps like *Meníčka.cz* [1], [2].
+- Save on food and groceries using *Nesnězeno*, *Kupi.cz*, and get free drinking water via *LOKNI* [1], [2].
+- Always pay in CZK to avoid unfavourable Dynamic Currency Conversion fees [2].
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Cost of living and budgeting in Prague – general guidance](https://admissions.vse.cz/)",,
+11,First weeks,F,How do I connect to Wi-Fi on campus?,"eduroam; degree students use VŠE credentials, visiting students home-university credentials; configure before arrival (CAT tool)",20-wifi-eduroam.md,20-wifi-eduroam.md; contacts.md,Y,N/A,N/A,normal,0.7284,1449.7,"Hello! VŠE campus Wi-Fi is provided through eduroam [1]. Here are the steps to get connected:
+
+* Configure eduroam before arriving on campus using your VŠE credentials (if you are a degree student) or your home-university credentials (if you are a visiting student) [1].
+* Check the configuration guide linked from the VŠE eduroam page for help with the CAT tool or manual settings [1].
+
+Please note: (Note: The contact chunk for IT support is marked UNVERIFIED, so please confirm this information with the office if needed [6].) If you need personal support, you can contact the IT Helpdesk at helpdesk@vse.cz or +420 224 095 890 (located at Žižkov, SB 22/23) [6]. 
+
+*(Please remember that I am not an official VŠE service.)*
+
+**Sources:**
+- [Wi-Fi and eduroam at VŠE](https://www.vse.cz/english/students/information-sources-and-technology/wifi-eduroam/)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,
+12,First weeks,F,What is InSIS used for?,"Central portal: course registration, grades, study records, payments, personal data; English switch top right",17-insis-portal.md,17-insis-portal.md; 44-insis-course-registration-and-credit-system.md,Y,N/A,N/A,normal,0.7915,1304.1,"Hello! I am VŠE Buddy Bot, and I am not an official VŠE service [8, 9]. 
+
+InSIS is the student portal used for various academic tasks, such as:
+- Logging in and managing your password [3]
+- Course registration and enrollment across different phases (like pre-registration, enrollment rounds, and the add/drop period) [4]
+- Managing your timetable and selecting time slots for lectures and seminars [5]
+
+**How to access InSIS:**
+- Go to the portal at https://insis.vse.cz/ (or use the *My College* mobile app) [3].
+- Switch to English by clicking the British flag icon / EN in the top-right corner [3].
+
+If you need help with InSIS or technical issues, you can visit the IT Helpdesk in person at the Žižkov Old Building (SB) or New Building (NB) [3].
+
+**Sources:**
+- [InSIS – complete student portal navigation and services guide](https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/)
+- [InSIS course registration, rounds and credit voucher system at VŠE](https://www.vse.cz/english/students/study-regulations/, https://ci.vse.cz/english/)",,
+13,First weeks,F,How do I access my university email?,"Microsoft 365 account (Outlook, Teams, OneDrive) via outlook.vse.cz",19-microsoft-365.md,19-microsoft-365.md,Y,N/A,N/A,normal,0.6844,1240.9,"Hello! I'd be happy to help you access your university email. 
+
+All VŠE students get a Microsoft 365 account which includes Outlook mail, Teams, and OneDrive [1]. 
+
+Here are the steps to access your email:
+* Go to the Outlook web page at [https://outlook.vse.cz](https://outlook.vse.cz) [1].
+* Sign in using your VŠE credentials.
+
+*(Note: Please remember that I am not an official VŠE service.)* If you run into any login issues, you can reach out to the IT Helpdesk at helpdesk@vse.cz or visit them in person in the Žižkov Old Building (SB 22/23) [2, 4, 6 (UNVERIFIED)].
+
+**Sources:**
+- [Microsoft 365 (Outlook, Teams, OneDrive) for students](https://www.vse.cz/english/students/information-sources-and-technology/microsoft-365-suite/)",,
+14,First weeks,F,Where can I find my course materials and assignments?,Moodle (moodle.vse.cz); sign in with InSIS credentials; English switch at top,18-moodle-elearning.md,18-moodle-elearning.md; 17-insis-portal.md,Y,N/A,N/A,normal,0.7345,1391.4,"Hello! You can find your course materials, lecture notes, assignments, and announcements on **Moodle** [1]. 
+
+Here is how to access it:
+* Go to the VŠE e-learning platform at https://moodle.vse.cz/?lang=en [1].
+* Sign in using your VŠE InSIS credentials [1].
+* Switch to English using the language option at the top of the page if needed [1].
+
+If you need to submit completed assignments, you can do so via InSIS by following these steps:
+* Go to InSIS → **Student's Portal** → **Student's Coursework Submission (Odevzdávárna / Drop-in box)** [4].
+* Select your course and assignment topic to upload your files before the deadline [4].
+
+*(Please note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Moodle – VŠE e-learning platform](https://moodle.vse.cz/?lang=en)
+- [InSIS – complete student portal navigation and services guide](https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/)",,
+15,First weeks,F,What can I use my student ID card for?,"Works as library card, meal card and ISIC; pickup and photo details on ID Cards page",22-student-id-card.md,22-student-id-card.md,Y,N/A,N/A,normal,0.7976,1109.4,"Hello! Your VŠE student ID card (ISIC) can be used for several things:
+
+* As a library card [1]
+* As a meal card [1]
+* As an ISIC card (International Student Identity Card) [1]
+
+For pickup details and photo requirements, please check the ID Cards page under Campus Services [1]. 
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Student ID card (ISIC)](https://www.vse.cz/english/students/campus-services/id-cards/)",,
+16,First weeks,F,I forgot my InSIS password. What should I do?,Contact IT support (Campus Services page); handles password resets; switchboard +420 224 095 111,21-it-support-helpdesk.md; 17-insis-portal.md,17-insis-portal.md; contacts.md,Y,N/A,N/A,normal,0.8097,1322.0,"Hello! I can help you with your InSIS password. 
+
+Here is what you can do:
+- Use the password reset link on the initial admissions application portal [1].
+- Alternatively, visit the IT Helpdesk in person with your student ID or passport (located in the Žižkov Old Building SB or New Building NB) [1].
+
+For additional IT support, you can contact the IT Helpdesk at helpdesk@vse.cz or call +420 224 095 890 [6]. *(Note: Contact and support information is marked unverified, so please confirm it with the office if needed) [6].*
+
+Please note: I am not an official VŠE service.
+
+**Sources:**
+- [InSIS – complete student portal navigation and services guide](https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,
+17,First weeks,F,What are the opening hours of the library in Žižkov?,"Mon 9-19, Tue-Thu 8-19, Fri 8-18; knihovna@vse.cz; hours may change",23-library-knihovna.md,23-library-knihovna.md,Y,N/A,N/A,normal,0.8177,1317.0,"Hello! I'd be happy to help you with that. 
+
+Here are the opening hours for the Central Library in Žižkov (next week, per the current page):
+
+* **Monday:** 9:00 – 19:00 [1]
+* **Tuesday – Thursday:** 8:00 – 19:00 [1]
+* **Friday:** 8:00 – 18:00 [1]
+
+Please note that I am not an official VŠE service. If you need anything else, feel free to contact the Centre of Information and Library Services at knihovna@vse.cz or call +420 224 095 581 [3].
+
+**Sources:**
+- [VŠE Library (knihovna.vse.cz)](https://knihovna.vse.cz/en/)",,
+18,First weeks,F,How can I meet other international students?,"ESN VŠE Prague (trips, language cafés), Buddy System, VŠE Ambassadors events, VŠE International Instagram",39-student-clubs-and-esn.md,05-orientation-week.md; 39-student-clubs-and-esn.md; contacts.md,Y,N/A,N/A,normal,0.772,1539.6,"Hello! I'm VŠE Buddy Bot, and I'm not an official VŠE service. 
+
+Meeting other international students at VŠE is very easy! Here is how you can connect with others:
+
+* **Join Orientation Week:** Run by the VŠE International Office one week before the semester starts, it features cultural and social activities, a Chill-Out Zone, and team games [1].
+* **Get a Buddy:** Sign up for the Buddy System, which offers informal mentor pairing for new international students through the International Office [3].
+* **Participate in ESN VŠE Prague:** Take part in trips, language cafés, Mafia Nights, and other social activities organized by the Erasmus Student Network [3].
+* **Connect on Instagram:** Follow the student community channels like the VŠE International Instagram to stay updated on events and meet peers [3].
+
+For more details, check the Admission Office site or contact the International Office at ozs@vse.cz [1], [5].
+
+**Sources:**
+- [Orientation Week for incoming international students](https://admissions.vse.cz/admitted-students-2/on-campus/orientation-week/)
+- [Student clubs, ESN VŠE Prague and Buddy System](https://admissions.vse.cz/orientation-week/)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,
+19,First weeks,R,As a non-EU student do I have to register with the Foreign Police and by when?,Foreign police registration rules; must refer to International Office and mvcr.cz; automatic if in dorms,12-visa-and-residence-permit-general.md; 45-foreign-police-and-residence-permit-extensions.md,45-foreign-police-and-residence-permit-extensions.md; 15-dormitories-and-student-housing.md,Y,N/A,Y,normal,0.9113,1783.7,"Hello! As a non-EU student, your registration duty depends on where you live:
+
+- **Private accommodation:** You must report your arrival to the Foreign Police (*Cizinecká policie*) within **3 business days** of entering the Czech Republic [1].
+- **VŠE university dormitory:** You do **not** need to visit the Foreign Police in person. SÚZ VŠE registers your arrival and stay automatically [5].
+
+If you need to visit the Foreign Police (Olšanská 2176/2, Praha 3 – Žižkov), bring your valid passport, proof of accommodation, and proof of travel medical insurance [1].
+
+*Please note: Since this is a visa, residence, or foreign police matter, this is only general information. Always confirm the current rules and procedures with the official office (such as OAMP MVČR or the Foreign Police) [1, 2].*
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Foreign police registration and residence permit extensions in Prague](https://www.mvcr.cz/mvcren/, https://frs.gov.cz/, https://ozs.vse.cz/english/)
+- [VŠE dormitories and student housing (SÚZ VŠE)](https://accommodation.vse.cz/)",,
+20,First weeks,F,Is there a student discount on Prague public transport?,"Yes, ages 18-26 with proof of study; long-term passes cheaper; check eligibility on pid.cz",31-prague-public-transport-pid.md,31-prague-public-transport-pid.md,Y,N/A,N/A,normal,0.9329,1869.6,"Hello! Yes, student discounts are available for Prague public transport (PID) for ages 18–26 upon showing proof of study [1]. 
+
+Here is what you can do:
+* Check current eligibility details directly on the PID site [1].
+* Buy tickets or passes using the **PID Lítačka** mobile app [2].
+* Plan your journeys using the live map at https://mapa.pid.cz/ [2].
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Prague public transport – PID (Pražská integrovaná doprava)](https://www.pid.cz/en/)",,
+21,Studying,F,How many credits should I take per semester?,Typically 30 ECTS per semester / 60 per year; verify in the binding Study and Examination Rules,07-study-regulations-and-credit-system.md,44-insis-course-registration-and-credit-system.md; 07-study-regulations-and-credit-system.md; 17-insis-portal.md,Y,N/A,N/A,normal,0.697,1189.8,"Hello! I'm happy to help you with your question. Please note that I am not an official VŠE service.
+
+Here is the information about semester credits:
+- The standard full-time study load is **30 ECTS credits per semester** (60 ECTS per academic year) [1, 2].
+- For your first semester, you must earn at least **20 ECTS credits** to remain eligible for subsequent semester enrollment [1].
+- You should note the minimum and maximum credits per semester rules as outlined in the English Study and Examination Rules [2].
+
+If you need further details regarding your study plan or credit requirements, please check your degree progress in InSIS under **Student's Portal → Check of Study Plan (Kontrola studijního plánu)** [5].
+
+**Sources:**
+- [InSIS course registration, rounds and credit voucher system at VŠE](https://www.vse.cz/english/students/study-regulations/, https://ci.vse.cz/english/)
+- [Study regulations and credit system](https://www.vse.cz/english/students/study/study-regulations/)
+- [InSIS – complete student portal navigation and services guide](https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/)",,
+22,Studying,F,Where can I find the academic calendar?,Official English PDFs on the academic calendar page (AY 2026/2027 and 2027/2028); check latest version,06-academic-calendar.md,06-academic-calendar.md,Y,N/A,N/A,normal,0.8063,1401.8,"Hello! You can find the official academic calendar PDFs (including Fall and Spring semesters, registration schedules, and year calendars for academic years 2026/2027, 2027/2028, and older years as reference) on the official VŠE website [1]. 
+
+Here is what you should do:
+* Go to the Academic Calendar page at https://www.vse.cz/english/students/study/academic-calendar/ [1].
+* Download the official PDF for your specific semester [1].
+* Always cross-check the latest PDF version of your semester schedule before planning travel or visa appointments [1].
+
+Please note: I am not an official VŠE service.
+
+**Sources:**
+- [Academic calendar (2026/2027 and beyond)](https://www.vse.cz/english/students/study/academic-calendar/)",,
+23,Studying,R,Can I work part-time as a non-EU student?,"Generally allowed with long-stay visa/residence permit for study, but conditions apply and change; MUST refer to mvcr.cz and VŠE International Office before signing a contract",30-employment-during-studies.md,30-employment-during-studies.md; 28-career-services-job-fair.md; 41-alumni-network-and-career.md; 12-visa-and-residence-permit-general.md,Y,N/A,Y,normal,0.7771,1677.7,"Hello! As a non-EU student, you can generally work part-time during your studies, but please note that this involves legal and visa-related regulations [1]. 
+
+* **General Rule:** Non-EU students holding a long-stay visa or residence permit for study can generally work without a separate work permit. However, specific conditions (like maximum hours or mandatory employer notifications) apply and change frequently [1].
+* **Next Steps:** 
+  * Check the Czech Ministry of the Interior website (mvcr.cz) for current legal rules [1].
+  * Confirm everything with the **VŠE International Office** before signing any employment contract [1].
+* **Looking for a Job:** You can check out the VŠE Career Centre (kc.vse.cz) for job boards, CV reviews, and the annual ŠANCE Job Fair [2], [4].
+
+*Note: Since this involves visa and work rules, please always verify your specific case with the official authorities and the VŠE International Office [1], [5]. (Disclaimer: I am not an official VŠE service).*
+
+**Sources:**
+- [Employment during studies – general information](https://www.mvcr.cz/mvcren/article/employment-of-foreigners.aspx)
+- [VŠE Career Centre, Šance Job Fair and work during studies](https://www.vse.cz/english/students/services/job-fair/)
+- [Alumni network and career opportunities](https://alumni.vse.cz/english/)
+- [Visa and residence permit for study in the Czech Republic – general information](https://www.mvcr.cz/mvcren/article/long-stay-visa.aspx) *(unverified - please confirm)*",,
+24,Studying,F,Does VŠE help students find jobs or internships?,"Career Centre kc.vse.cz: coaching, CV reviews, job board, annual Šance Job Fair",28-career-services-job-fair.md,41-alumni-network-and-career.md; 28-career-services-job-fair.md,Y,N/A,N/A,normal,0.7868,1449.8,"Hello! Yes, VŠE helps students with jobs and internships through the Career Centre (kc.vse.cz) [2, 3]. 
+
+Here is how they support you:
+* **Job board & Career Coaching:** Search for job opportunities and get your CV reviewed [2, 3].
+* **Šance Job Fair:** Attend the annual job fair to connect with employers (next edition announced for 7.10.2026) [2, 3].
+* **Workshops & Competitions:** Join career workshops and the VŠE Talent competition [2, 3].
+
+*Note: I am not an official VŠE service. For work permits for non-EU students, please confirm details with the relevant official office [3].*
+
+**Sources:**
+- [Alumni network and career opportunities](https://alumni.vse.cz/english/)
+- [VŠE Career Centre, Šance Job Fair and work during studies](https://www.vse.cz/english/students/services/job-fair/)",,
+25,Studying,R,I feel very stressed and homesick. Is there any help?,"Supportive tone; Academic Psychological Counselling is free, in English, in-person or online; ac@vse.cz; must refer",26-psychological-counselling.md,26-psychological-counselling.md,Y,N/A,Y,normal,0.7864,1892.4,"Hello! I'm sorry to hear you are feeling stressed and homesick, but please know that help is available. International students frequently use VŠE's Academic Psychological Counselling to cope with relocation, culture shock, loneliness, and academic stress [1]. 
+
+Here is how you can get support:
+* **Book a session:** The service is completely free and confidential for VŠE students [4]. You can check available consultation slots online [3] or email `ac@vse.cz` with your student identification, faculty, and preferred language (English or Czech) [3].
+* **Format:** Sessions are available in-person at the Žižkov campus or online via MS Teams [4].
+* **Emergencies:** If you ever experience acute distress, you can reach out to 24/7 crisis helplines like the Czech Crisis Helpline at **116 123** or general emergency services at **112** [2]. 
+
+*Please note: I am not an official VŠE service [8].*
+
+**Sources:**
+- [Academic Psychological Counselling and Mental Well-being at VŠE](https://www.vse.cz/english/students/services/academic-psychological-counselling/)",,
+26,Living in Prague,F,What is the emergency number in the Czech Republic?,"112 (multilingual, all emergencies); 155 ambulance; 158 police; 150 fire",34-emergency-numbers-and-health.md,34-emergency-numbers-and-health.md; contacts.md,Y,N/A,N/A,normal,0.8758,1995.3,"Hello! Here are the emergency numbers in the Czech Republic:
+
+* **112** – Single European emergency number (police, ambulance, fire – multilingual operators) [1], [4].
+* **155** – Ambulance / medical emergencies [1], [4].
+* **158** – Police [1], [4].
+* **150** – Fire and rescue [1], [4].
+* **156** – City/municipal police (Prague) [1], [4].
+
+For life-threatening situations, call **112** first, then notify VŠE [2]. 
+
+*(Note: Please keep in mind that I am not an official VŠE service.)*
+
+**Sources:**
+- [Emergency numbers and urgent medical help](https://www.vse.cz/english/contacts/)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,
+27,Living in Prague,F,Where can I eat cheaply near campus?,"VŠE canteens (menza) run by SKM, menus on skm.vse.cz, student prices with ISIC; apps Meníčka.cz and Nesnězeno",24-catering-and-menza.md,24-catering-and-menza.md; 35-cost-of-living-and-budgeting.md,Y,N/A,N/A,normal,0.6819,1681.7,"Hello! You can eat cheaply on campus using these options:
+
+* **University Canteens (Menza):** VŠE canteens are run by SKM, and daily menus are posted at [skm.vse.cz] [5]. 
+* **ISIC & Lítačka Discounts:** If you hold an ISIC card or are a Lítačka student, you get subsidised student meal prices in the canteens of any Prague university [5].
+* **Money-Saving Tips:** You can also save money by using daily lunch menus (*polední menu / denní menu*) and apps like Nesnězeno and LOKNI [3].
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [Catering and university canteens (menza)](https://www.vse.cz/english/students/campus-services/catering-and-menus/)
+- [Cost of living and budgeting in Prague – general guidance](https://admissions.vse.cz/)",,
+28,Living in Prague,F,Are there sports courses in English?,"Yes, sport courses in English with access to university facilities; they give ECTS credits",25-sports-and-recreation.md,47-international-week-and-elective-courses.md; 25-sports-and-recreation.md,Y,N/A,N/A,normal,0.8209,1351.0,"Yes, there are sports courses in English available at VŠE! They are practical sports classes (worth 1 ECTS) held at the Třebešín and Jarov sports centers [2]. 
+
+Here is how you can find and join them:
+* VŠE offers sport courses in English that give ECTS credits [1].
+* You can look for Sports Courses (TV) as part of the elective courses in English [2].
+* You can find details about the PE department on the Sports page under Wellbeing & Support, and the courses are linked from Study Essentials [1].
+
+*(Note: I am not an official VŠE service.)*
+
+**Sources:**
+- [International Week intensive courses and elective courses in English at VŠE](https://www.vse.cz/english/, https://fis.vse.cz/english/, https://fba.vse.cz/)
+- [Sports and recreation at VŠE](https://www.vse.cz/english/students/services/sports/)",,
+29,Studying,R,What happens if I fail an exam twice?,Retake rules; student gets up to 2 retakes (opravny termin) in the semester; must refer to Study Regulations and Study Department,07-study-regulations-and-credit-system.md; 44-insis-course-registration-and-credit-system.md,44-insis-course-registration-and-credit-system.md; 17-insis-portal.md; 07-study-regulations-and-credit-system.md,Y,N/A,Y,normal,0.7298,1585.1,"Hello! I'm VŠE Buddy Bot, a helpful assistant for international students. Please note that I am not an official VŠE service.
+
+If you fail an exam on the regular attempt, you are entitled to up to **two retake attempts** (*opravný termín*) within the examination period of the same semester [1, 3]. 
+
+Here are important rules regarding exams and retakes:
+- **Exam registration:** Register for exam dates via InSIS under *Student's Portal* → *Exam Dates and Registration* [3].
+- **Cancellations:** If you cannot attend, cancel your registration in InSIS before the deadline (typically 24 hours prior) [3]. Unexcused absences count as a failed attempt (grade 4) and use up a retake attempt [3].
+- **Failing exams:** Since exam failure and retake questions involve academic rules, please always confirm your status and options with your faculty's study department. 
+
+*Note: You can check the official Study Regulations page for binding rules.* [2]
+
+**Sources:**
+- [InSIS course registration, rounds and credit voucher system at VŠE](https://www.vse.cz/english/students/study-regulations/, https://ci.vse.cz/english/)
+- [InSIS – complete student portal navigation and services guide](https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/)
+- [Study regulations and credit system](https://www.vse.cz/english/students/study/study-regulations/)",,
+30,Studying,G,Can I use ChatGPT for my assignments?,Not in knowledge base; must say no verified info; refer to course teacher and VŠE AI guidelines,none,18-moodle-elearning.md; contacts.md,N/A,Y,N/A,normal,0.6327,1096.9,"I don't have verified information about this. 
+
+Please contact IT support or your course instructor, or check your course Moodle space for specific assignment guidelines [1], [6]. 
+
+*(Note: Please remember that I am not an official VŠE service.)*
+
+**Sources:**
+- [Moodle – VŠE e-learning platform](https://moodle.vse.cz/?lang=en)
+- [Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)](https://ozs.vse.cz/english/, https://fis.vse.cz/english/contacts/, https://accommodation.vse.cz/informations/suz-vse/contact/, https://ci.vse.cz/english/services/for-employees/help-desk/) *(unverified - please confirm)*",,

@@ -109,6 +109,12 @@ SENSITIVE_TOPICS = {
         r"\bneúspěch u zkoušky\b",
         r"\bvyloučení ze studia\b",
         r"\bopravný termín\b",
+        r"\bfail(?:ed|ing)?.*(?:defense|thesis)\b",
+        r"\bneúspěch u obhajoby\b",
+        r"\bterminat(?:ion|ed|ing)?.*stud(?:y|ies)\b",
+        r"\bukončení studia\b",
+        r"\binterrupt(?:ion|ing)?.*stud(?:y|ies)\b",
+        r"\bpřerušení studia\b",
     ],
 }
 

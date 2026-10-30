@@ -122,12 +122,142 @@
   {
     "chunk_id": "07-study-regulations-and-credit-system.md#0",
     "doc_id": "07-study-regulations-and-credit-system.md",
-    "title": "Study regulations and credit system",
-    "source_url": "https://www.vse.cz/english/students/study/study-regulations/",
-    "date_saved": "2026-10-25",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
     "unverified": false,
     "is_contacts": false,
-    "text": "Study regulations and credit system\n\nThe official Study Regulations (Study and Examination Rules) are linked from the Study Essentials page; the VŠE credit system is described in a recent Admission Office news post (\"Credit System at VŠE – Don't fail your studies!\", 20.10.2026). International students should:\n1. Read the English Study and Examination Rules (binding).\n2. Note the minimum/maximum credits per semester rules (typical: 30 ECTS per semester; 60 per year).\n3. Understand re-examination and absence rules.\n\nFinal text and figures must be verified on the live Study Regulations page."
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n> General information based on the binding VŠE Study and Examination Rules (*Studijní a zkušební řád VŠE*). Always verify your individual study plan and credit status in InSIS under **Student's Portal → Check of Study Plan**, or consult your faculty Study Department.\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#1",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 1. Credit Requirements: How Many Credits Do I Need?\n\n### Standard Full-Time Load\n- **Per Semester:** The standard study load is **30 ECTS credits** per semester.\n- **Per Academic Year:** **60 ECTS credits** per academic year (two teaching semesters).\n- **Total for Bachelor’s Degree:** **180 ECTS credits** (standard 3 years / 6 semesters).\n- **Total for Master’s Degree:** **120 ECTS credits** (standard 2 years / 4 semesters)."
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#2",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n### Minimum Credit Thresholds (To Avoid Expulsion / Study Termination)\nTo remain actively enrolled at VŠE, you must satisfy two critical threshold checkpoints:\n1. **First-Semester Absolute Minimum:**\n   - By the end of your **first semester** at VŠE, you must earn **at least 9 ECTS credits** (or 9 credit vouchers converted).\n   - If you earn fewer than 9 credits in your first semester, your studies are **immediately terminated** by the Dean for failure to make required academic progress.\n2. **Ongoing Semesters Progression Threshold (20 Credits Rule):**\n   - For every active (non-interrupted) semester, your cumulative earned credits must satisfy the formula:\n     $$\\text{Cumulative Minimum Credits} \\ge 20 \\times \\text{number of active semesters}$$\n     - **After Semester 1:** At least 9 credits to avoid expulsion; **20 credits** to stay on track without voucher deduction penalties.\n     - **After Semester 2:** At least **40 credits** accumulated.\n     - **After Semester 3:** At least **60 credits** accumulated.\n     - **After Semester 4:** At least **80 credits** accumulated.\n     - **After Semester 5:** At least **100 credits** accumulated.\n     - **After Semester 6:** At least **120 credits** (or 180 to graduate for Bachelor's).\n   - If your accumulated credits fall below the $20 \\times \\text{semesters}$ requirement, the system automatically subtracts credit vouchers equal to the missing credits as a penalty!"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#3",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n### Maximum Credits per Semester: Can I Take More Than 30 Credits?\n- **No Upper Cap:** There is **no administrative limit** preventing you from enrolling in 35, 40, or more ECTS credits in a single semester.\n- As long as you have sufficient credit vouchers in your account, meet course prerequisites, and your weekly timetable has no overlapping conflicts, you may enroll in extra courses.\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#4",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 2. The VŠE Credit Voucher System (Kreditní poukázky)\n\nVŠE uses a virtual currency called **Credit Vouchers** (*Kreditní poukázky*) alongside ECTS credits to measure your study budget:\n\n### Voucher Allotment (1.2× Safety Buffer)\nUpon initial enrollment, every student receives a voucher pool equal to **120%** of their degree requirement:\n- **Bachelor’s Students:** **216 vouchers** (180 for standard curriculum + 36 reserve vouchers = 20% safety margin).\n- **Master’s Students:** **144 vouchers** (120 for standard curriculum + 24 reserve vouchers = 20% safety margin)."
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#5",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n### How Vouchers Work\n- **1 ECTS Credit = 1 Voucher:** Enrolling in a 6-credit course deducts 6 vouchers from your active voucher balance.\n- **Passing a Course:** Successfully completing the course converts the deducted vouchers into permanent earned ECTS credits.\n- **Failing a Course:** If you fail a course, the deducted vouchers are **lost permanently**. You gain 0 ECTS credits, and your reserve voucher pool is depleted.\n- **Voucher Penalty Deduction:** If at the end of a semester your cumulative credits are less than $20 \\times \\text{semesters}$, additional vouchers are deducted from your account."
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#6",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n### Study Termination Due to Insufficient Vouchers\n- At the end of each semester, InSIS checks your remaining voucher balance against the remaining ECTS credits needed to graduate.\n- **Termination Rule:** If your remaining vouchers are **strictly less than the remaining credits needed to complete your degree**, your studies are terminated by law, because it is mathematically impossible to register for all required remaining courses.\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#7",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 3. Course Types and Repeating Failed Courses"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#8",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 3. Course Types and Repeating Failed Courses\n\n### Course Categories in Your Study Plan\n1. **Compulsory Courses (sP / oP - Povinné předměty):**\n   - Mandatory for all students in your programme.\n   - **Failing a Compulsory Course:** You **must re-enroll** in the course in the next semester it is offered, which consumes another batch of vouchers from your reserve pool.\n   - **Maximum Enrollments:** A compulsory course can only be enrolled a maximum of **two times**. If you fail a compulsory course on its second enrollment, your studies are terminated.\n2. **Compulsory Electives (sV - Povinně volitelné předměty):**\n   - Chosen from specialized lists (e.g. major specialization or branch courses).\n   - If you fail an `sV` course, the vouchers are lost, but you may choose a different eligible `sV` course in future semesters.\n3. **Free Electives (fV - Volitelné předměty):**\n   - General electives, foreign language courses, sports, or International Week courses.\n   - If failed, you lose the vouchers, but you do not need to repeat the same course; you can choose any other free elective.\n4. **Minor Specialization (Vedlejší specializace):**\n   - For Master's students: a structured block of **30 ECTS credits** chosen in your second year, concluding with a separate state exam component."
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#9",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#10",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 4. Grading System and Exam Retakes\n\n### VŠE Grading Scale\nVŠE uses a 4-tier grading scale:\n| Grade | Czech Term | Meaning | Percentage Scale | ECTS Grade Equivalent |\n| :---: | :---: | :---: | :---: | :---: |\n| **1** | Výborně | Excellent | 90–100% | A |\n| **2** | Velmi dobře | Very Good | 75–89% | B – C |\n| **3** | Dobře | Good | 60–74% | D – E |\n| **4** | Nevyhověl | Failed | 0–59% | F (No credits gained) |\n\n### Exam Retake Attempts (Opravné termíny)\n- For every enrolled course in a semester, you are entitled to **1 regular exam attempt** plus up to **2 retake attempts** (*opravný termín*), for a maximum of 3 attempts per semester, provided exam dates are still available.\n- Retake attempts must be taken during the examination period of the same semester; they cannot be carried over into the next semester.\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#11",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 5. Study Interruption (Přerušení studia)\n- **What it is:** An official pause/freeze of your university studies.\n- **Eligibility:** You can apply to interrupt your studies after earning the minimum first-semester credits, or anytime for serious documented medical, personal, or maternity reasons.\n- **How to Apply:** Submit an electronic application via InSIS under **Student's Portal → Contact Study Department / Applications**.\n- ⚠️ **Critical Warning for Visa Students (Non-EU):**\n  - During study interruption, **you lose your legal student status**.\n  - VŠE is legally required to notify the Czech Foreign Police and Ministry of the Interior (OAMP/MVČR), which may invalidate your student residence permit or visa. Always consult the VŠE International Office before applying to interrupt!\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#12",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 6. Transfer and Recognition of Previous Credits (Uznávání předmětů)\n- Courses completed at another university or in previous studies may be recognized by VŠE.\n- **Conditions:**\n  - Must have been passed with a grade of **1 or 2** (A, B, or C).\n  - Must not be older than **5 years**.\n  - Course content must match at least 70–80% of the VŠE course syllabus.\n- **How to Apply:** Submit an official recognition request via InSIS with your official transcript of records and syllabus to the Vice-Dean for Study Affairs.\n\n---"
+  },
+  {
+    "chunk_id": "07-study-regulations-and-credit-system.md#13",
+    "doc_id": "07-study-regulations-and-credit-system.md",
+    "title": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers",
+    "source_url": "https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/",
+    "date_saved": "2026-10-29",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers\n\n## 7. How to Check Your Academic Standing in InSIS\n1. Log in to InSIS at https://insis.vse.cz/.\n2. Go to **Student's Portal** (*Portál studenta*).\n3. Click on **Check of Study Plan** (*Kontrola plánu*) to view your completed ECTS, pending courses, and graduation progress.\n4. Click on **E-study record / Vouchers** (*Zápisové listy / Kreditní poukázky*) to check your exact remaining credit voucher balance.\n5. If in doubt, contact your faculty Study Department (*Studijní oddělení*)."
   },
   {
     "chunk_id": "08-incoming-exchange-students.md#0",
@@ -212,12 +342,72 @@
   {
     "chunk_id": "15-dormitories-and-student-housing.md#0",
     "doc_id": "15-dormitories-and-student-housing.md",
-    "title": "VŠE dormitories and student housing",
-    "source_url": "https://skm.vse.cz/english/dormitories/",
-    "date_saved": "2026-10-25",
-    "unverified": true,
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
     "is_contacts": false,
-    "text": "VŠE dormitories and student housing\n\nVŠE student dormitories are managed by the Správa kolejí a menzy (SKM). The SKM English portal https://skm.vse.cz/english/ is the canonical place for housing applications, pricing and rules.\n\n> Gap: live retrieval of https://skm.vse.cz/english/ and https://skm.vse.cz/english/dormitories/ failed during this run (network error). Treat the application deadlines, prices and room types as **unverified**. Direct students to SKM by email/phone from the live site before they commit to a housing plan."
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n# VŠE dormitories and student housing (SÚZ VŠE)"
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#1",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## Overview and Management\nVŠE student dormitories are operated and managed by the Facilities Management Department (Správa účelových zařízení, SÚZ VŠE, formerly SKM). The official accommodation web portal is https://accommodation.vse.cz/ and the booking system is ISKaM at https://iskam-web.vse.cz/."
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#2",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## Dormitory Locations and Campuses\nVŠE offers student accommodation across multiple dormitories grouped primarily into two student campuses:\n- **Jarov Campus (Prague 3 - Žižkov / Jarov):**\n  - Palachova dormitory, Eislerova dormitory, Thalerova dormitory, University Hotel, and Jarov II.\n  - Located approximately 10–15 minutes from the main VŠE campus in Žižkov by direct tram (lines 9, 26, 31 to tram stop Chmelnice or Strážní).\n  - Very popular among degree students and international exchange students.\n- **Jižní Město Campus (Prague 4 - Chodov / Kunratice):**\n  - Blanice dormitory and Vltava dormitory.\n  - Located directly at the Jižní Město satellite campus near metro line C (stations Chodov / Opatov) and bus stop Volha.\n  - Houses both Czech and international students with dining halls and extensive outdoor sports areas nearby.\n- **Other locations:** Rooseveltova dormitory (Prague 7 - Holešovice)."
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#3",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## How to Apply for Dormitory Accommodation via ISKaM\n1. **Access ISKaM Portal:** Log in to the ISKaM accommodation portal at https://iskam-web.vse.cz/ using your VŠE InSIS username and password.\n2. **Submit Housing Request:** Complete and submit the online accommodation application during the designated registration window for international or incoming students.\n3. **Select Room and Dormitory:** Choose from available room types (typically 2-bed rooms in apartment units or shared rooms).\n4. **Pay Reservation Deposit (Kauce):** Pay the required refundable accommodation deposit via credit card or international bank transfer before the stated deadline. The room booking is only finalized once the deposit is confirmed in ISKaM.\n5. **Move-in and Accommodation Contract:** Upon arrival, visit the dormitory reception or accommodation manager, present your passport/ID, sign the official Accommodation Contract (*Ubytovací smlouva*), and receive your room keys."
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#4",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## Room Amenities and Facilities\n- All rooms are furnished with beds, study desks, chairs, wardrobes, and bed linen (regular linen laundry exchange is included in the fee).\n- **Wi-Fi and Internet:** High-speed campus Wi-Fi (**eduroam**) is available across all dormitories for VŠE students.\n- **Kitchen and Sanitary Facilities:** Depending on the dormitory type, bathrooms and kitchenettes are either located inside private apartment units (cell blocks) or shared on the floor.\n- **Common Amenities:** Self-service laundry rooms equipped with washing machines and dryers (booked through ISKaM), quiet study rooms, and bike storage."
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#5",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## Automatic Foreign Police Registration for Dormitory Residents\nInternational students residing in a VŠE university dormitory benefit from automatic reporting:\n- SÚZ VŠE registers your arrival and stay with the Czech Foreign Police (*Cizinecká policie*) electronically on your behalf.\n- Non-EU and EU students living in dorms do **not** need to visit the Foreign Police in person at Olšanská to report their arrival, provided they check in with valid identification.\n- An official proof of accommodation (*Doklad o zajištění ubytování*) required for visa or residence permit applications can be requested directly from SÚZ VŠE."
+  },
+  {
+    "chunk_id": "15-dormitories-and-student-housing.md#6",
+    "doc_id": "15-dormitories-and-student-housing.md",
+    "title": "VŠE dormitories and student housing (SÚZ VŠE)",
+    "source_url": "https://accommodation.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "VŠE dormitories and student housing (SÚZ VŠE)\n\n## Official Accommodation Contacts\n- **Central Accommodation Office (SÚZ VŠE):**\n  - Email: `ubytovani@vse.cz`\n  - Phone: `+420 224 092 156` (or dial internal extension 2156 from any dormitory)\n  - Office: Jeseniova 2769/208, 130 00 Praha 3 (room CK 146)\n  - Hours: Mon–Thu 8:00–11:00 & 13:00–15:00, Fri 8:00–11:00\n- **International Student Office SÚZ VŠE (Eislerova / Jarov III.F):**\n  - Coordinator: Veronika Schneiderová (room F141, V Zahrádkách 1953/67, Praha 3)\n  - Email: `dormitorycoordinator@vse.cz`\n  - Phone: `+420 224 092 113`\n- **ISKaM Portal Technical Support:**\n  - Email: `michal.kores@vse.cz`"
   },
   {
     "chunk_id": "16-private-accommodation-in-prague.md#0",
@@ -482,42 +672,62 @@
   {
     "chunk_id": "26-psychological-counselling.md#0",
     "doc_id": "26-psychological-counselling.md",
-    "title": "Academic Psychological Counselling (APC)",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
     "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
-    "date_saved": "2026-10-25",
+    "date_saved": "2026-10-28",
     "unverified": false,
     "is_contacts": false,
-    "text": "Academic Psychological Counselling (APC)\n\n# Academic Psychological Counselling (APC)"
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n# Academic Psychological Counselling and Mental Well-being at VŠE"
   },
   {
     "chunk_id": "26-psychological-counselling.md#1",
     "doc_id": "26-psychological-counselling.md",
-    "title": "Academic Psychological Counselling (APC)",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
     "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
-    "date_saved": "2026-10-25",
+    "date_saved": "2026-10-28",
     "unverified": false,
     "is_contacts": false,
-    "text": "Academic Psychological Counselling (APC)\n\n## What it is\n- Free, short-term counselling service of the Academic Centre for all VŠE students and staff.\n- Languages: **Czech** and **English** (Polish and Russian on request via ac@vse.cz).\n- Sessions in-person or online, with advance registration."
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n## What is Academic Psychological Counselling (APC)?\n- Academic Psychological Counselling is a professional, confidential, and completely **free of charge** service provided by the Academic Centre (Akademické centrum) for all enrolled VŠE students and staff.\n- **Languages Available:** Full counselling sessions are provided in **Czech** and **English** (Polish and Russian available upon specific request via email).\n- **Format:** Consultations are conducted either in-person at the Žižkov campus or online via MS Teams, requiring prior reservation."
   },
   {
     "chunk_id": "26-psychological-counselling.md#2",
     "doc_id": "26-psychological-counselling.md",
-    "title": "Academic Psychological Counselling (APC)",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
     "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
-    "date_saved": "2026-10-25",
+    "date_saved": "2026-10-28",
     "unverified": false,
     "is_contacts": false,
-    "text": "Academic Psychological Counselling (APC)\n\n## Common topics\n- Study (concentration, procrastination, motivation, stress).\n- Relations (peers, teachers, partners, family).\n- Culture shock and adaptation.\n- Career or personal development.\n- Mood, anxiety, overwhelming reactions."
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n## Common Reasons Students Seek Counselling\nInternational students frequently consult the service for support with:\n- **Academic adjustment and stress:** Overcoming exam anxiety, deadline pressure, procrastination, concentration difficulties, and loss of study motivation.\n- **Culture shock and adaptation:** Coping with relocation to Prague, language barriers, loneliness, and homesickness.\n- **Interpersonal relationships:** Communication difficulties with peers, roommates, professors, or partners.\n- **Emotional and psychological well-being:** Mood fluctuations, chronic worry, mild depression, acute distress, or life transitions.\n- **Personal and career development:** Self-confidence building, decision-making, and coping strategies."
   },
   {
     "chunk_id": "26-psychological-counselling.md#3",
     "doc_id": "26-psychological-counselling.md",
-    "title": "Academic Psychological Counselling (APC)",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
     "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
-    "date_saved": "2026-10-25",
+    "date_saved": "2026-10-28",
     "unverified": false,
     "is_contacts": false,
-    "text": "Academic Psychological Counselling (APC)\n\n## Code of Ethics\nBased on the Czech University Counsellors' Code (professional responsibility, respect, discretion, expertise, refusal).\n\n> Free service. Email ac@vse.cz or check the current schedule at https://ac.vse.cz/english/psychological-counselling/opening-times/."
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n## How to Book an Appointment\n1. **Check Schedule:** Review available consultation slots on the Academic Centre booking schedule at https://ac.vse.cz/english/psychological-counselling/opening-times/.\n2. **Email Registration:** Write directly to `ac@vse.cz` indicating your student identification, faculty, and preferred language (English or Czech).\n3. **Emergency Discretion:** If you are experiencing acute psychological distress, mention the urgency in the email subject line so the counsellors can prioritize your request."
+  },
+  {
+    "chunk_id": "26-psychological-counselling.md#4",
+    "doc_id": "26-psychological-counselling.md",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
+    "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n## Professional Ethics and Confidentiality\nAll counsellors adhere strictly to the Ethical Code of Czech University Counsellors:\n- **Full Confidentiality:** Information shared during sessions is never disclosed to faculty administrators, professors, parents, or outside authorities.\n- **Non-Judgmental Support:** Discretion, mutual respect, and student-centered support are unconditionally guaranteed."
+  },
+  {
+    "chunk_id": "26-psychological-counselling.md#5",
+    "doc_id": "26-psychological-counselling.md",
+    "title": "Academic Psychological Counselling and Mental Well-being at VŠE",
+    "source_url": "https://www.vse.cz/english/students/services/academic-psychological-counselling/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Academic Psychological Counselling and Mental Well-being at VŠE\n\n## Urgent Mental Health Crisis & Emergency Helplines (24/7)\nIf you or someone you know is experiencing acute severe distress or a life-threatening mental health emergency, do not wait for a scheduled university appointment:\n- **General Emergency (Police, Fire, Medical):** Dial **112** (available 24/7 in English and Czech, free of charge).\n- **Czech Crisis Helpline (Linka první psychické pomoci):** Dial **116 123** (free, anonymous, available 24/7 for adults in psychological distress).\n- **Safety Helpline (Linka bezpečí - for youth & students under 26):** Dial **116 111** (free, anonymous, 24/7).\n- **Prague Crisis Intervention Centre (Centrum krizové intervence - Bohnice):**\n  - Phone: `+420 284 016 110` (24/7 emergency psychiatric walk-in clinic and phone helpline).\n  - Address: Ústavní 91, Prague 8 - Bohnice."
   },
   {
     "chunk_id": "27-students-with-special-needs.md#0",
@@ -867,7 +1077,7 @@
     "date_saved": "2026-10-25",
     "unverified": false,
     "is_contacts": false,
-    "text": "InSIS course registration, rounds and credit voucher system at VŠE\n\n## Minimum semester credits and exam retakes\n- **First-semester threshold:** Students must earn at least **20 ECTS credits** in their first semester to remain eligible for subsequent semester enrollment. Standard full-time study load is 30 ECTS per semester (60 ECTS per academic year).\n- **Exam retakes:** If a student fails an exam on the regular attempt, they are entitled to up to **two retake attempts** (opravný termín) within the examination period of the same semester."
+    "text": "InSIS course registration, rounds and credit voucher system at VŠE\n\n## Semester credit rules and exam retakes\n- **Standard workload:** Standard full-time study load is **30 ECTS credits** per semester (60 ECTS per academic year).\n- **First-semester thresholds:**\n  - **Absolute minimum:** At least **9 ECTS credits** must be earned in the first semester to avoid immediate study termination by the Dean.\n  - **Progression threshold:** At least **20 ECTS credits** should be earned to meet the cumulative $20 \\times \\text{semesters}$ progression pace and prevent voucher deduction penalties.\n- **Ongoing cumulative threshold:** In subsequent semesters, total earned credits must satisfy: $\\text{Cumulative Credits} \\ge 20 \\times \\text{number of active semesters}$ (e.g. 40 after semester 2, 60 after semester 3).\n- **Exam retakes:** If a student fails an exam on the regular attempt, they are entitled to up to **two retake attempts** (opravný termín) within the examination period of the same semester."
   },
   {
     "chunk_id": "45-foreign-police-and-residence-permit-extensions.md#0",
@@ -1018,6 +1228,136 @@
     "unverified": false,
     "is_contacts": false,
     "text": "International Week intensive courses and elective courses in English at VŠE\n\n- **Central International Office (OZS):**\n  - Partner International Weeks & Visiting Professor Mobility: Radka Vaváková (`radka.vavakova@vse.cz`)\n  - General International Office enquiries: `ozs@vse.cz`\n  - Incoming exchange/Erasmus students: `exchange@vse.cz`\n- **FIS – Faculty of Informatics and Statistics:**\n  - I-Week coordination team: `fisbachelor@vse.cz` (Bachelor's) / `fismasters@vse.cz` (Master's)\n  - International student community coordinator: Veronika Brunerová (`veronika.brunerova@vse.cz`)\n  - Office: NB 403 (New Building, 4th floor)\n- **FBA – Faculty of Business Administration (FPH):**\n  - International Relations Office: `fba@vse.cz`\n  - Vice-Dean for International Relations: Assoc. Prof. Ladislav Tyll (`ladislav.tyll@vse.cz`)\n- **FIR – Faculty of International Relations (FMV):**\n  - Faculty study & international office: `fmv@vse.cz`\n  - Programme coordinators: `ids@vse.cz` (IDS), `ibb@vse.cz` (IBB)\n- **FFA – Faculty of Finance and Accounting (FFU):**\n  - Faculty study department: `ffu@vse.cz`\n  - Master in Finance & Accounting (MIFA): `mifa@vse.cz`\n- **FE – Faculty of Economics (NF):**\n  - Faculty study department: `nf@vse.cz`\n  - English programmes coordinator: `econ@vse.cz`\n- **FM – Faculty of Management (Jindřichův Hradec):**\n  - Faculty study department: `fm@vse.cz`"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#0",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n# Final thesis submission, InSIS errata, defense and reviews at VŠE"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#1",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 1. Overview of Final Theses at VŠE\nAt VŠE (including the Faculty of Informatics and Statistics - FIS, and degree programmes like Information Systems Management - ISM), completing a Bachelor's or Master's programme requires writing, submitting, and defending a final thesis:\n- **Bachelor’s Thesis (Bakalářská práce):** Recommended length approx. 10,000 words (around 35–50 standard pages).\n- **Master’s / Diploma Thesis (Diplomová práce):** Recommended length approx. 20,000 words (around 60–80 standard pages).\n- **Language:** Written in English for English-taught programmes (such as ISM, CEMS, MIMG, IBB, EDS) or Czech/Slovak for Czech programmes.\n- **Templates:** Official VŠE templates (Word and LaTeX) with required ordering, APA citation styles, and title pages are available on the faculty website and InSIS.\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#2",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 2. Thesis Topic Assignment (Zadání závěrečné práce)\n1. **Topic Selection:** Choose an advertised topic in InSIS under **Student's Portal** → **Thesis Topics (Témata závěrečných prací)**, or agree on an individual research topic with a prospective supervisor (*vedoucí práce*).\n2. **Assignment Protocol:** The supervisor enters the formal assignment into InSIS:\n   - Official title in English and Czech.\n   - Objectives and methodology (*Zásady pro vypracování*).\n   - Preliminary table of contents and primary literature/sources.\n3. **Approval:** The assignment is electronically approved in InSIS by the student, supervisor, head of department (*vedoucí katedry*), and dean/vice-dean. This must be completed well before final submission (typically 3–6 months in advance).\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#3",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 3. Step-by-Step Electronic Thesis Submission in InSIS\nFinal theses at VŠE are submitted **electronically via InSIS**. Printed hard copies are generally no longer required for defense, unless specifically requested by your department."
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#4",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n1. **Open InSIS:** Log in at https://insis.vse.cz/ with your VŠE credentials.\n2. **Navigate to Submission Portal:** Go to **Student's Portal** (*Portál studenta*) → **Final Thesis** (*Závěrečná práce*).\n3. **Fill Required Metadata:**\n   - English and Czech thesis title (must match the approved assignment).\n   - English and Czech abstract (*Abstrakt*).\n   - English and Czech keywords (*Klíčová slova*).\n4. **Upload Thesis File:**\n   - Upload the full text of the thesis strictly in **PDF format** (searchable text, PDF/A standard recommended, no password protection).\n   - The file must contain all formal sections: Title page, Declaration of Authorship / Originality, Table of Contents, Chapters, Reference List, and Appendices.\n5. **Upload Supplementary Attachments:**\n   - If your thesis involves practical software prototypes, code, datasets, or survey materials, package them into a `.zip` archive and upload under supplementary files.\n6. **Confirm Final Submission:**\n   - Click the final submission button (**Potvrdit odevzdání** / Confirm Submission).\n   - Verify the system confirmation message: *\"Elektronická verze závěrečné práce byla odevzdána a bylo potvrzeno její korektní vložení. Proces vkládání je tímto ukončen. Práci již nelze modifikovat.\"*\n   - ⚠️ **Important Warning:** Once final submission is confirmed, the system locks your file. You cannot replace or edit the uploaded PDF directly."
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#5",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#6",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 4. How to Submit Errata in InSIS (Errata k závěrečné práci)\nIf you discover factual errors, typos, calculation mistakes, or formatting inaccuracies **after** your thesis has already been locked and submitted in InSIS, you can submit an official **Errata** (*Errata k práci*):\n\n### What is Errata?\nUnder the Higher Education Act (§ 47b) and VŠE Study Regulations, submitted theses become public academic records. An **Errata** (Erratum) is an official supplementary document listing specific corrections to errors identified in the submitted thesis without altering the locked original file."
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#7",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n### How to Submit Errata in InSIS (Step-by-Step):\n1. **Log in to InSIS:** Go to https://insis.vse.cz/.\n2. **Access Final Thesis Application:** Navigate to **Student's Portal** (*Portál studenta*) → **Final Thesis** (*Závěrečná práce*).\n3. **Find Errata Option:** In the student editing section (*Editační aplikace studenta*), locate the button **\"Insert Errata\"** (**Vložit errata**).\n4. **Upload Errata File:** Upload your structured corrections document strictly in **PDF format**.\n5. **Supervisor Consultation:** Always inform and consult your thesis supervisor (*vedoucí práce*) before uploading. The supervisor reviews the corrections and acknowledges them in InSIS.\n6. **Publication:** Once confirmed, the Errata file is permanently attached to your final thesis record in InSIS and Theses.cz, making the corrections visible to the examination committee, opponent, and public readers."
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#8",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n### Recommended Errata Document Format:\nPrepare a clear 1–2 page PDF document structured as follows:\n- **Header:**\n  - University: Prague University of Economics and Business (VŠE)\n  - Faculty and Programme (e.g. FIS – Information Systems Management)\n  - Thesis Title: [Full Title of Your Thesis]\n  - Author: [Your Full Name and Student ID]\n  - Supervisor: [Supervisor's Name and Academic Titles]\n  - Date: [Date of Errata Preparation]\n- **Correction Table:**\n  | Page / Section | Original (Erroneous) Text | Corrected (Accurate) Text | Reason / Note |\n  | :--- | :--- | :--- | :--- |\n  | Page 24, Para 2 | \"sample size of 15\" | \"sample size of 25\" | Typographical correction |\n  | Page 48, Table 4 | \"Value = 12.4%\" | \"Value = 18.2%\" | Calculation adjustment |\n- **Minor Errors at Defense:** For very minor typos or grammar glitches, you do not always need a formal Errata upload; you can prepare a brief slide in your defense presentation acknowledging the corrections in response to the opponent's review."
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#9",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#10",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 5. Automated Plagiarism Check (Theses.cz / VŠE Validator)\n- After submission in InSIS, your thesis is automatically sent to the Czech national repository **Theses.cz** for similarity analysis against academic papers, published theses, and web pages.\n- The similarity protocol is generated in InSIS within a few hours to days.\n- Both your supervisor and opponent evaluate the similarity percentage and verify that all external sources and quotes are properly referenced according to academic ethics and VŠE AI guidelines.\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#11",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 6. Supervisor and Opponent Reviews (Posudky)\n- **Two Written Reviews:** Your thesis is evaluated independently by your supervisor (*Posudek vedoucího*) and an assigned opponent (*Posudek oponenta*).\n- **Evaluation Criteria:** Fulfillment of thesis objectives, theoretical framework, methodology, analytical rigor, formal formatting, and original contribution.\n- **Grade Proposal:** Both reviews propose a grade: *Výborně* (1 - Excellent), *Velmi dobře* (2 - Very Good), *Dobře* (3 - Good), or *Nevyhověl* (4 - Failed).\n- **Questions for Defense:** The reviews include specific questions (*otázky k obhajobě*) which you must address during your defense presentation.\n- **Deadline for Reviews:** Reviews must be published in InSIS at least **3 working days** before the defense date, giving you time to prepare your slides and answers.\n\n---"
+  },
+  {
+    "chunk_id": "48-final-thesis-submission-defense-and-errata.md#12",
+    "doc_id": "48-final-thesis-submission-defense-and-errata.md",
+    "title": "Final thesis submission, InSIS errata, defense and reviews at VŠE",
+    "source_url": "https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/",
+    "date_saved": "2026-10-28",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 7. Thesis Defense Presentation (Obhajoba)\n1. **Prerequisites:** All required coursework and ECTS credits completed (180 ECTS for Bachelor, 120 ECTS for Master), thesis submitted on time.\n2. **Registration:** Register for the defense date under **Student's Portal** → **State Final Exams (SZZ / Státnice)**.\n3. **Presentation:** Prepare a 5–10 minute presentation (PowerPoint or PDF slides):\n   - Background, motivation, and practical relevance.\n   - Research questions / objectives.\n   - Methodology and dataset / prototype implementation.\n   - Key findings, evaluation metrics, and thesis contribution.\n4. **Defense Procedure:**\n   - Introduction of candidate and thesis title by the committee chair.\n   - Student delivers the presentation.\n   - Reading of the supervisor's and opponent's reviews.\n   - Student presents direct, prepared answers to the review questions.\n   - Open discussion and questions from committee members.\n   - Closed committee deliberation and final grade announcement."
   },
   {
     "chunk_id": "contacts.md#0",

@@ -62,14 +62,72 @@ INTENT_EXPANSIONS = {
     "stipendium": ["accommodation", "scholarship", "grant", "insis"],
     "wifi": ["eduroam", "network", "internet", "connection"],
     "eduroam": ["wifi", "network", "internet", "credentials"],
-    "dorm": ["dormitories", "housing", "skm", "accommodation"],
-    "dorms": ["dormitories", "housing", "skm", "accommodation"],
+    "dorm": ["dormitories", "housing", "skm", "suz", "accommodation", "iskam"],
+    "dorms": ["dormitories", "housing", "skm", "suz", "accommodation", "iskam"],
+    "housing": ["dormitories", "accommodation", "iskam", "suz", "flat"],
+    "iskam": ["dormitories", "housing", "accommodation", "suz", "deposit", "kauce"],
+    "deposit": ["dormitories", "housing", "accommodation", "iskam", "kauce"],
     "isic": ["student", "card", "identity"],
     "safeq": ["printing", "copying", "card", "library"],
     "print": ["safeq", "copying", "isic", "library"],
     "printing": ["safeq", "copying", "isic", "library"],
-    "retake": ["exam", "failure", "credit"],
+    "retake": ["exam", "failure", "credit", "regulations"],
     "flunk": ["exam", "failure", "retake", "credit"],
+    "fail": ["exam", "failure", "retake", "credit", "regulations"],
+    "failed": ["exam", "failure", "retake", "credit", "regulations"],
+    "counseling": ["psychological", "counselling", "stress", "anxiety", "academic", "centre"],
+    "counselling": ["psychological", "counselling", "stress", "anxiety", "academic", "centre"],
+    "psychologist": ["psychological", "counselling", "mental", "support", "academic", "centre"],
+    "therapy": ["psychological", "counselling", "mental", "support", "academic"],
+    "stress": ["psychological", "counselling", "mental", "anxiety", "academic", "centre"],
+    "anxiety": ["psychological", "counselling", "mental", "stress", "academic", "centre"],
+    "homesick": ["psychological", "counselling", "adaptation", "culture", "shock"],
+    "mental": ["psychological", "counselling", "support", "wellbeing", "academic"],
+    "litacka": ["prague", "public", "transport", "pid", "metro", "tram", "student"],
+    "lítačka": ["prague", "public", "transport", "pid", "metro", "tram", "student"],
+    "transport": ["pid", "litacka", "metro", "tram", "bus", "student", "discount"],
+    "metro": ["prague", "public", "transport", "pid", "litacka"],
+    "tram": ["prague", "public", "transport", "pid", "litacka"],
+    "menza": ["catering", "menza", "food", "lunch", "meals", "canteen"],
+    "canteen": ["catering", "menza", "food", "lunch", "meals"],
+    "cafeteria": ["catering", "menza", "food", "lunch"],
+    "doctor": ["health", "insurance", "medical", "care", "emergency"],
+    "medical": ["health", "insurance", "medical", "care", "doctor"],
+    "hospital": ["health", "insurance", "medical", "care", "emergency", "doctor"],
+    "insurance": ["health", "insurance", "medical", "pvzp", "ehic"],
+    "timetable": ["insis", "course", "registration", "schedule", "classes"],
+    "schedule": ["insis", "course", "registration", "timetable", "academic", "calendar"],
+    "ects": ["credit", "voucher", "courses", "study", "regulations"],
+    "internship": ["career", "services", "job", "fair", "employment", "work"],
+    "work": ["employment", "work", "permit", "part-time", "career", "job"],
+    "job": ["career", "services", "employment", "work", "job", "fair"],
+    "errata": ["thesis", "submission", "insis", "corrections", "erratum", "defense"],
+    "erratum": ["thesis", "errata", "submission", "insis", "corrections"],
+    "thesis": ["final", "submission", "defense", "insis", "supervisor", "errata", "bachelor", "master"],
+    "theses": ["final", "thesis", "submission", "defense", "insis", "supervisor"],
+    "defense": ["thesis", "state", "exam", "szz", "obhajoba", "presentation", "reviews"],
+    "obhajoba": ["defense", "thesis", "presentation", "opponent", "supervisor"],
+    "opponent": ["review", "posudek", "thesis", "defense", "supervisor"],
+    "posudek": ["review", "opponent", "supervisor", "thesis", "defense"],
+    "plagiarism": ["theses", "validator", "similarity", "check", "thesis"],
+    "szz": ["state", "final", "exam", "defense", "thesis", "insis"],
+    "statnice": ["state", "final", "exam", "defense", "thesis", "szz"],
+    "státnice": ["state", "final", "exam", "defense", "thesis", "szz"],
+    "credit": ["ects", "voucher", "semester", "regulations", "study"],
+    "credits": ["ects", "voucher", "semester", "regulations", "study", "minimum"],
+    "semester": ["credits", "study", "regulations", "enrollment", "timetable"],
+    "minimum": ["credits", "regulations", "threshold", "semester", "requirements"],
+    "maximum": ["credits", "regulations", "semester", "limit"],
+    "graduate": ["credits", "thesis", "defense", "szz", "requirements", "degree"],
+    "graduation": ["credits", "thesis", "defense", "szz", "requirements", "degree"],
+    "interrupt": ["interruption", "preruseni", "studies", "visa", "insis"],
+    "interruption": ["preruseni", "studies", "visa", "insis", "regulations"],
+    "recognize": ["recognition", "uznavani", "credits", "transcript", "courses"],
+    "recognition": ["uznavani", "credits", "transcript", "courses", "vice-dean"],
+    "grades": ["grading", "scale", "exam", "vyborne", "ects"],
+    "grading": ["scale", "grades", "exam", "vyborne", "ects"],
+    "expulsion": ["termination", "studies", "vouchers", "credits", "regulations"],
+    "termination": ["studies", "vouchers", "credits", "expulsion", "regulations"],
 }
 
 
@@ -126,7 +184,7 @@ class Retriever:
         import time
 
         client = self._get_client()
-        max_retries = 3
+        max_retries = 4
         for attempt in range(max_retries):
             try:
                 response = client.models.embed_content(
@@ -141,9 +199,11 @@ class Retriever:
                 return vec
             except Exception as e:
                 err_str = str(e).lower()
-                if ("429" in err_str or "quota" in err_str or "rate" in err_str) and attempt < max_retries - 1:
-                    wait_sec = 3.0 * (2 ** attempt)
-                    print(f"[Retriever rate-limit] Retrying in {wait_sec:.1f}s...")
+                if attempt < max_retries - 1:
+                    wait_sec = 2.0 * (attempt + 1)
+                    if "429" in err_str or "quota" in err_str or "rate" in err_str:
+                        wait_sec = 4.0 * (2 ** attempt)
+                    print(f"[Retriever retry {attempt+1}/{max_retries}] ({e}). Retrying in {wait_sec:.1f}s...")
                     time.sleep(wait_sec)
                 else:
                     raise

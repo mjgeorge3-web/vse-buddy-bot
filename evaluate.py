@@ -91,7 +91,9 @@ def evaluate_test_set(
         if expected_source.lower() == "none":
             source_match = "N/A"
         else:
-            is_match = any(expected_source.lower() == s.lower() for s in retrieved_sources)
+            expected_sources = [es.strip().lower() for es in expected_source.split(";") if es.strip()]
+            retrieved_sources_lower = [s.lower() for s in retrieved_sources]
+            is_match = any(es in retrieved_sources_lower for es in expected_sources)
             source_match = "Y" if is_match else "N"
             factual_or_ref_count += 1
             if is_match:

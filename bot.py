@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 import uuid
 
 from google import genai
@@ -77,21 +77,34 @@ class BuddyBot:
         if not chunks:
             return "", []
 
-        # Find cited chunk numbers (e.g., [1], [2])
-        cited_indices = [int(m) for m in re.findall(r"\[(\d+)\]", raw_answer)]
+        # Find cited chunk numbers (e.g., [1], [2], or multi-citations like [1, 3])
+        cited_indices: List[int] = []
+        for bracket_content in re.findall(r"\[([\d\s,]+)\]", raw_answer):
+            for part in bracket_content.split(","):
+                part_clean = part.strip()
+                if part_clean.isdigit():
+                    cited_indices.append(int(part_clean))
         valid_indices = [idx for idx in cited_indices if 1 <= idx <= len(chunks)]
 
         # If chunks were cited, only list the cited chunks (preserving citation order)
         if valid_indices:
-            seen = set()
+            seen_docs = set()
             selected_chunks = []
             for idx in valid_indices:
-                if idx not in seen:
-                    seen.add(idx)
-                    selected_chunks.append(chunks[idx - 1])
+                chunk = chunks[idx - 1]
+                doc_key = chunk.get("source_url") or chunk.get("doc_id") or chunk.get("title")
+                if doc_key not in seen_docs:
+                    seen_docs.add(doc_key)
+                    selected_chunks.append(chunk)
         else:
-            # If none cited, list the top 2 chunks as background context
-            selected_chunks = chunks[:2]
+            # If none cited, list unique top chunks as background context
+            seen_docs = set()
+            selected_chunks = []
+            for chunk in chunks[:3]:
+                doc_key = chunk.get("source_url") or chunk.get("doc_id") or chunk.get("title")
+                if doc_key not in seen_docs:
+                    seen_docs.add(doc_key)
+                    selected_chunks.append(chunk)
 
         # Format markdown sources block
         source_lines = ["\n\n**Sources:**"]

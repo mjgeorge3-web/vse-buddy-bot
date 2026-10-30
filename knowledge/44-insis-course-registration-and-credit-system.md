@@ -38,6 +38,10 @@ Registration in InSIS is split into clearly separated phases:
 5. **Enrollment Round 3 (Open changes):** Students can enroll in any open course across faculties that has remaining free capacity, even if not pre-registered.
 6. **Add/Drop period:** Changes can still be made during the first week of teaching in the semester.
 
-## Minimum semester credits and exam retakes
-- **First-semester threshold:** Students must earn at least **20 ECTS credits** in their first semester to remain eligible for subsequent semester enrollment. Standard full-time study load is 30 ECTS per semester (60 ECTS per academic year).
+## Semester credit rules and exam retakes
+- **Standard workload:** Standard full-time study load is **30 ECTS credits** per semester (60 ECTS per academic year).
+- **First-semester thresholds:**
+  - **Absolute minimum:** At least **9 ECTS credits** must be earned in the first semester to avoid immediate study termination by the Dean.
+  - **Progression threshold:** At least **20 ECTS credits** should be earned to meet the cumulative $20 \times \text{semesters}$ progression pace and prevent voucher deduction penalties.
+- **Ongoing cumulative threshold:** In subsequent semesters, total earned credits must satisfy: $\text{Cumulative Credits} \ge 20 \times \text{number of active semesters}$ (e.g. 40 after semester 2, 60 after semester 3).
 - **Exam retakes:** If a student fails an exam on the regular attempt, they are entitled to up to **two retake attempts** (opravný termín) within the examination period of the same semester.
