@@ -253,24 +253,76 @@ class BuddyBot:
             context_chunks = chunks
 
         # -------------------------------------------------------------
-        # 4b. InSIS Navigation Database Integration
+        # 4b. InSIS & Campus Knowledge Database Integration
         # -------------------------------------------------------------
-        # If the student asks about InSIS workflows, portals, or navigation,
-        # retrieve exact procedural breadcrumbs and click sequences.
-        insis_triggers = [
-            "insis", "portal", "where", "how do i", "how can i", "path", "find",
-            "enroll", "register", "submit", "upload", "thesis", "voucher", "exam",
-            "timetable", "grades", "confirmation", "tuition", "variable symbol",
-            "password", "otp", "zapis", "diplomka", "rozvrh", "koleje", "iskam"
-        ]
-        q_lower = question.lower()
-        if any(term in q_lower for term in insis_triggers):
-            try:
-                import insis_nav_db
-                nav_routes = insis_nav_db.search_routes(question, limit=1)
-                if nav_routes:
-                    top_nav = nav_routes[0]
-                    nav_chunk = {
+        # Queries the relational database for:
+        # 1. Campus floor navigation (washrooms, classrooms, study coordinators)
+        # 2. 50 VŠE Policies, Rules and Regulations
+        # 3. InSIS Navigation Routes
+        try:
+            import insis_nav_db
+            search_res = insis_nav_db.unified_search(question, limit=2)
+            candidates = []
+
+            if search_res.get("policies"):
+                for p in search_res["policies"][:1]:
+                    candidates.append(("policy", p.get("rank", -5.0), p))
+            if search_res.get("campus_locations"):
+                for loc in search_res["campus_locations"][:1]:
+                    candidates.append(("campus", loc.get("rank", -5.0), loc))
+            if search_res.get("insis_routes"):
+                for r in search_res["insis_routes"][:1]:
+                    candidates.append(("insis", r.get("rank", -5.0), r))
+
+            # Sort by rank (in SQLite FTS5, more negative rank means higher relevance)
+            candidates.sort(key=lambda c: c[1])
+
+            db_chunk = None
+            if candidates:
+                best_kind, best_rank, best_item = candidates[0]
+
+                if best_kind == "policy":
+                    pol = best_item
+                    db_chunk = {
+                        "id": f"policy_{pol['rule_id']}",
+                        "doc_id": "vse_policies_db",
+                        "title": f"VŠE Policy [{pol['rule_id']}]: {pol['title']}",
+                        "source_url": "https://www.vse.cz/english/university-rules-and-regulations/",
+                        "date_saved": "2026-10-31",
+                        "unverified": False,
+                        "score": 0.99,
+                        "text": (
+                            f"Policy Title: {pol['title']}\n"
+                            f"Category: {pol['category']} | Official Reference: {pol['official_reference']}\n"
+                            f"Rule Summary: {pol['summary']}\n"
+                            f"Detailed Regulation:\n{pol['rule_text']}\n"
+                            f"Sanctions / Penalties for Non-Compliance:\n{pol.get('penalty_or_consequence', 'None')}\n"
+                        ),
+                        "is_policy": True,
+                    }
+                elif best_kind == "campus":
+                    loc = best_item
+                    db_chunk = {
+                        "id": f"campus_{loc['location_id']}",
+                        "doc_id": "vse_campus_db",
+                        "title": f"VŠE Campus Navigation: {loc['name']} ({loc['room_number']})",
+                        "source_url": "https://www.vse.cz/english/campus-map-and-buildings/",
+                        "date_saved": "2026-10-31",
+                        "unverified": False,
+                        "score": 0.99,
+                        "text": (
+                            f"Location Name: {loc['name']}\n"
+                            f"Building: {loc['building']} | Floor: {loc['floor']} | Room Number: {loc['room_number']}\n"
+                            f"Facility Type: {loc['facility_type']}\n"
+                            f"Walking Directions from Main Entrance:\n{loc['directions_from_entrance']}\n"
+                            f"Amenities & Accessibility: {loc.get('amenities_accessibility', 'Standard')}\n"
+                            f"Hours / Availability: {loc.get('hours_or_availability', 'Standard building hours')}\n"
+                        ),
+                        "is_campus_loc": True,
+                    }
+                elif best_kind == "insis":
+                    top_nav = best_item
+                    db_chunk = {
                         "id": f"insis_nav_{top_nav['task_id']}",
                         "doc_id": "insis_nav_db",
                         "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
@@ -289,11 +341,13 @@ class BuddyBot:
                         ),
                         "is_insis_nav": True,
                     }
-                    context_chunks = [nav_chunk] + [c for c in context_chunks if not c.get("is_insis_nav")]
-                    if mode == "no_context":
-                        mode = "normal"
-            except Exception as e:
-                print(f"[InSIS DB Query Warning]: {e}")
+
+            if db_chunk:
+                context_chunks = [db_chunk] + [c for c in context_chunks if not (c.get("is_insis_nav") or c.get("is_policy") or c.get("is_campus_loc"))]
+                if mode == "no_context":
+                    mode = "normal"
+        except Exception as e:
+            print(f"[Knowledge DB Query Warning]: {e}")
 
         # -------------------------------------------------------------
         # 5. Gemini Generation

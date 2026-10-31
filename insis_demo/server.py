@@ -75,6 +75,103 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             self.wfile.write(resp_bytes)
             return
 
+        # 1b. API: VŠE Policies & Regulations Query
+        if self.path.startswith("/api/vse/policies"):
+            import urllib.parse
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query_str = params.get("q", [""])[0]
+            limit_val = int(params.get("limit", [3])[0])
+
+            try:
+                import insis_nav_db
+                policies = insis_nav_db.search_policies(query_str, limit=limit_val)
+                payload = {
+                    "query": query_str,
+                    "count": len(policies),
+                    "results": policies
+                }
+            except Exception as e:
+                payload = {
+                    "query": query_str,
+                    "count": 0,
+                    "error": str(e),
+                    "results": []
+                }
+
+            resp_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(resp_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+            return
+
+        # 1c. API: VŠE Campus Locations (Washrooms, Classrooms, Coordinators)
+        if self.path.startswith("/api/vse/locations"):
+            import urllib.parse
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query_str = params.get("q", [""])[0]
+            limit_val = int(params.get("limit", [3])[0])
+
+            try:
+                import insis_nav_db
+                locations = insis_nav_db.search_campus_locations(query_str, limit=limit_val)
+                payload = {
+                    "query": query_str,
+                    "count": len(locations),
+                    "results": locations
+                }
+            except Exception as e:
+                payload = {
+                    "query": query_str,
+                    "count": 0,
+                    "error": str(e),
+                    "results": []
+                }
+
+            resp_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(resp_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+            return
+
+        # 1d. API: Unified Search (Locations + Policies + InSIS)
+        if self.path.startswith("/api/vse/unified"):
+            import urllib.parse
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query_str = params.get("q", [""])[0]
+            limit_val = int(params.get("limit", [3])[0])
+
+            try:
+                import insis_nav_db
+                res = insis_nav_db.unified_search(query_str, limit=limit_val)
+                payload = {
+                    "query": query_str,
+                    "results": res
+                }
+            except Exception as e:
+                payload = {
+                    "query": query_str,
+                    "error": str(e),
+                    "results": {}
+                }
+
+            resp_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(resp_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+            return
+
         # 1b. API: insis-links JSON
         if self.path.startswith("/api/insis-links"):
             all_urls_path = Path(__file__).resolve().parent / "all_urls.json"

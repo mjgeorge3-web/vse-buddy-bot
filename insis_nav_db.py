@@ -1,8 +1,11 @@
-"""InSIS Navigation Database & Semantic Router.
+"""InSIS Navigation & Campus Database with 50 University Policies & Floor Locations.
 
 Provides an SQLite database (`data/insis_navigation.db`) and query engine
-for guiding international students through InSIS navigation workflows,
-breadcrumbs, click sequences, and demo links.
+for guiding international students through:
+1. InSIS Navigation Routes (20+ tasks with breadcrumbs and demo links)
+2. 50 VŠE Policies, Rules, Regulations & Penalties
+3. Complete Floor-by-Floor Campus Navigation (washrooms on each floor,
+   classrooms, study coordinator offices, lecture halls, and amenities).
 """
 
 import sys
@@ -16,12 +19,15 @@ import re
 import sqlite3
 from typing import Any, Dict, List, Optional, Tuple
 
+from vse_data_fixtures import POLICIES_50, CAMPUS_LOCATIONS
+
 DB_PATH = Path(__file__).resolve().parent / "data" / "insis_navigation.db"
 
 # Schema definitions
 SCHEMA_SQL = """
 PRAGMA foreign_keys = ON;
 
+-- 1. InSIS Modules & Navigation Routes
 CREATE TABLE IF NOT EXISTS insis_modules (
     module_id TEXT PRIMARY KEY,
     title_en TEXT NOT NULL,
@@ -54,6 +60,55 @@ CREATE VIRTUAL TABLE IF NOT EXISTS insis_routes_fts USING fts5(
     category,
     breadcrumbs,
     step_by_step_instructions,
+    keywords,
+    tokenize = 'porter unicode61'
+);
+
+-- 2. VŠE Policies, Rules & Regulations
+CREATE TABLE IF NOT EXISTS vse_policies (
+    rule_id TEXT PRIMARY KEY,
+    category TEXT NOT NULL,
+    title TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    rule_text TEXT NOT NULL,
+    official_reference TEXT NOT NULL,
+    penalty_or_consequence TEXT,
+    faq_triggers TEXT NOT NULL
+);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS vse_policies_fts USING fts5(
+    rule_id UNINDEXED,
+    category,
+    title,
+    summary,
+    rule_text,
+    official_reference,
+    faq_triggers,
+    tokenize = 'porter unicode61'
+);
+
+-- 3. Campus Navigation (Classrooms, Washrooms, Coordinators)
+CREATE TABLE IF NOT EXISTS campus_locations (
+    location_id TEXT PRIMARY KEY,
+    building TEXT NOT NULL,
+    floor TEXT NOT NULL,
+    room_number TEXT NOT NULL,
+    facility_type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    directions_from_entrance TEXT NOT NULL,
+    amenities_accessibility TEXT,
+    hours_or_availability TEXT,
+    keywords TEXT NOT NULL
+);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS campus_locations_fts USING fts5(
+    location_id UNINDEXED,
+    building,
+    floor,
+    room_number,
+    facility_type,
+    name,
+    directions_from_entrance,
     keywords,
     tokenize = 'porter unicode61'
 );
@@ -373,27 +428,26 @@ ROUTES_DATA = [
 ]
 
 
-def init_database() -> sqlite3.Connection:
-    """Creates the SQLite database schema and populates routes data if empty."""
+def init_database(force_refresh: bool = False) -> sqlite3.Connection:
+    """Creates the SQLite database schema and populates routes, policies, and locations."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH))
     conn.execute("PRAGMA foreign_keys = ON;")
     
     with conn:
         conn.executescript(SCHEMA_SQL)
-        
-        # Populate modules if table is empty
         cur = conn.cursor()
+        
+        # 1. Populate InSIS modules & routes
         cur.execute("SELECT COUNT(*) FROM insis_modules;")
-        if cur.fetchone()[0] == 0:
+        if cur.fetchone()[0] == 0 or force_refresh:
+            cur.execute("DELETE FROM insis_routes_fts;")
+            cur.execute("DELETE FROM insis_routes;")
+            cur.execute("DELETE FROM insis_modules;")
             cur.executemany(
                 "INSERT INTO insis_modules (module_id, title_en, title_cs, description, icon) VALUES (?, ?, ?, ?, ?);",
                 MODULES_DATA
             )
-            
-        # Populate routes if table is empty
-        cur.execute("SELECT COUNT(*) FROM insis_routes;")
-        if cur.fetchone()[0] == 0:
             cur.executemany(
                 """INSERT INTO insis_routes (
                     task_id, module_id, title_en, title_cs, category,
@@ -402,12 +456,68 @@ def init_database() -> sqlite3.Connection:
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
                 ROUTES_DATA
             )
-            
-            # Populate FTS5 table
             cur.execute("""
                 INSERT INTO insis_routes_fts (task_id, title_en, title_cs, category, breadcrumbs, step_by_step_instructions, keywords)
                 SELECT task_id, title_en, title_cs, category, breadcrumbs, step_by_step_instructions, keywords
                 FROM insis_routes;
+            """)
+
+        # 2. Populate 50 Policies & Rules
+        cur.execute("SELECT COUNT(*) FROM vse_policies;")
+        if cur.fetchone()[0] < len(POLICIES_50) or force_refresh:
+            cur.execute("DELETE FROM vse_policies;")
+            cur.execute("DELETE FROM vse_policies_fts;")
+            policy_rows = [
+                (
+                    p["rule_id"], p["category"], p["title"], p["summary"],
+                    p["rule_text"], p["official_reference"], p.get("penalty_or_consequence", ""),
+                    p["faq_triggers"]
+                )
+                for p in POLICIES_50
+            ]
+            cur.executemany(
+                """INSERT INTO vse_policies (
+                    rule_id, category, title, summary, rule_text,
+                    official_reference, penalty_or_consequence, faq_triggers
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
+                policy_rows
+            )
+            cur.execute("""
+                INSERT INTO vse_policies_fts (
+                    rule_id, category, title, summary, rule_text, official_reference, faq_triggers
+                ) SELECT rule_id, category, title, summary, rule_text, official_reference, faq_triggers
+                FROM vse_policies;
+            """)
+
+        # 3. Populate Campus Navigation Locations
+        cur.execute("SELECT COUNT(*) FROM campus_locations;")
+        if cur.fetchone()[0] < len(CAMPUS_LOCATIONS) or force_refresh:
+            cur.execute("DELETE FROM campus_locations;")
+            cur.execute("DELETE FROM campus_locations_fts;")
+            loc_rows = [
+                (
+                    loc["location_id"], loc["building"], loc["floor"], loc["room_number"],
+                    loc["facility_type"], loc["name"], loc["directions_from_entrance"],
+                    loc.get("amenities_accessibility", ""), loc.get("hours_or_availability", ""),
+                    loc["keywords"]
+                )
+                for loc in CAMPUS_LOCATIONS
+            ]
+            cur.executemany(
+                """INSERT INTO campus_locations (
+                    location_id, building, floor, room_number, facility_type,
+                    name, directions_from_entrance, amenities_accessibility,
+                    hours_or_availability, keywords
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
+                loc_rows
+            )
+            cur.execute("""
+                INSERT INTO campus_locations_fts (
+                    location_id, building, floor, room_number, facility_type,
+                    name, directions_from_entrance, keywords
+                ) SELECT location_id, building, floor, room_number, facility_type,
+                         name, directions_from_entrance, keywords
+                FROM campus_locations;
             """)
             
     return conn
@@ -422,6 +532,9 @@ def get_connection() -> sqlite3.Connection:
     return conn
 
 
+# ---------------------------------------------------------------------------
+# 1. Search Functions for InSIS Routes
+# ---------------------------------------------------------------------------
 def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
     """Searches InSIS routes using FTS5 full-text matching with fallback to LIKE search."""
     if not query_str or not query_str.strip():
@@ -430,15 +543,11 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
     clean_q = query_str.strip()
     conn = get_connection()
     cur = conn.cursor()
-    
-    # 1. Clean query for FTS5 syntax
-    # Extract alpha-numeric tokens
     tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", clean_q)
     if not tokens:
         return []
         
     fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
-    
     results = []
     if fts_match_expr:
         try:
@@ -453,11 +562,9 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
             cur.execute(sql_fts, (fts_match_expr, limit))
             for row in cur.fetchall():
                 results.append(dict(row))
-        except Exception as e:
-            # Fallback if FTS error
+        except Exception:
             results = []
             
-    # 2. Fallback or augment with LIKE query if FTS yielded few results
     if len(results) < limit:
         existing_ids = {r["task_id"] for r in results}
         placeholders = " OR ".join(["r.keywords LIKE ? OR r.title_en LIKE ? OR r.breadcrumbs LIKE ?"] * len(tokens[:4]))
@@ -466,12 +573,7 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
             p = f"%{t}%"
             params.extend([p, p, p])
             
-        sql_like = f"""
-            SELECT r.*
-            FROM insis_routes r
-            WHERE ({placeholders})
-            LIMIT ?;
-        """
+        sql_like = f"SELECT r.* FROM insis_routes r WHERE ({placeholders}) LIMIT ?;"
         params.append(limit * 2)
         try:
             cur.execute(sql_like, params)
@@ -499,8 +601,127 @@ def get_route_by_task_id(task_id: str) -> Optional[Dict[str, Any]]:
     return dict(row) if row else None
 
 
+# ---------------------------------------------------------------------------
+# 2. Search Functions for 50 Policies & Rules
+# ---------------------------------------------------------------------------
+def search_policies(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """Searches 50 VŠE Policies and Rules using FTS5 and LIKE fallback."""
+    if not query_str or not query_str.strip():
+        return []
+        
+    conn = get_connection()
+    cur = conn.cursor()
+    tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
+    if not tokens:
+        return []
+
+    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
+    results = []
+    if fts_match_expr:
+        try:
+            sql_fts = """
+                SELECT p.*, rank
+                FROM vse_policies_fts fts
+                JOIN vse_policies p ON fts.rule_id = p.rule_id
+                WHERE vse_policies_fts MATCH ?
+                ORDER BY rank
+                LIMIT ?;
+            """
+            cur.execute(sql_fts, (fts_match_expr, limit))
+            for row in cur.fetchall():
+                results.append(dict(row))
+        except Exception:
+            results = []
+
+    if len(results) < limit:
+        existing_ids = {r["rule_id"] for r in results}
+        placeholders = " OR ".join(["p.faq_triggers LIKE ? OR p.title LIKE ? OR p.summary LIKE ? OR p.rule_text LIKE ?"] * len(tokens[:4]))
+        params = []
+        for t in tokens[:4]:
+            p = f"%{t}%"
+            params.extend([p, p, p, p])
+            
+        sql_like = f"SELECT p.* FROM vse_policies p WHERE ({placeholders}) LIMIT ?;"
+        params.append(limit * 2)
+        try:
+            cur.execute(sql_like, params)
+            for row in cur.fetchall():
+                d = dict(row)
+                if d["rule_id"] not in existing_ids:
+                    results.append(d)
+                    existing_ids.add(d["rule_id"])
+                    if len(results) >= limit:
+                        break
+        except Exception:
+            pass
+
+    conn.close()
+    return results[:limit]
+
+
+# ---------------------------------------------------------------------------
+# 3. Search Functions for Campus Locations (Washrooms, Classrooms, Offices)
+# ---------------------------------------------------------------------------
+def search_campus_locations(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """Searches Campus Locations (washrooms, classrooms, study coordinators) via FTS5 & LIKE."""
+    if not query_str or not query_str.strip():
+        return []
+        
+    conn = get_connection()
+    cur = conn.cursor()
+    tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
+    if not tokens:
+        return []
+
+    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
+    results = []
+    if fts_match_expr:
+        try:
+            sql_fts = """
+                SELECT loc.*, rank
+                FROM campus_locations_fts fts
+                JOIN campus_locations loc ON fts.location_id = loc.location_id
+                WHERE campus_locations_fts MATCH ?
+                ORDER BY rank
+                LIMIT ?;
+            """
+            cur.execute(sql_fts, (fts_match_expr, limit))
+            for row in cur.fetchall():
+                results.append(dict(row))
+        except Exception:
+            results = []
+
+    if len(results) < limit:
+        existing_ids = {r["location_id"] for r in results}
+        placeholders = " OR ".join(["loc.keywords LIKE ? OR loc.name LIKE ? OR loc.room_number LIKE ? OR loc.directions_from_entrance LIKE ?"] * len(tokens[:4]))
+        params = []
+        for t in tokens[:4]:
+            p = f"%{t}%"
+            params.extend([p, p, p, p])
+            
+        sql_like = f"SELECT loc.* FROM campus_locations loc WHERE ({placeholders}) LIMIT ?;"
+        params.append(limit * 2)
+        try:
+            cur.execute(sql_like, params)
+            for row in cur.fetchall():
+                d = dict(row)
+                if d["location_id"] not in existing_ids:
+                    results.append(d)
+                    existing_ids.add(d["location_id"])
+                    if len(results) >= limit:
+                        break
+        except Exception:
+            pass
+
+    conn.close()
+    return results[:limit]
+
+
+# ---------------------------------------------------------------------------
+# 4. Card Formatters
+# ---------------------------------------------------------------------------
 def format_navigation_card(route: Dict[str, Any]) -> str:
-    """Formats an InSIS route record into a structured, readable Markdown block."""
+    """Formats an InSIS route record into a structured Markdown block."""
     card = []
     card.append(f"### 🧭 InSIS Navigation: {route['title_en']}")
     card.append(f"**Category:** `{route['category']}` | **Path:** `{route['portal_path']}`")
@@ -513,27 +734,101 @@ def format_navigation_card(route: Dict[str, Any]) -> str:
         if step.strip():
             card.append(f"{step}")
     card.append(f"")
-    
     if route.get("prerequisites"):
         card.append(f"**Prerequisites:** {route['prerequisites']}")
     if route.get("common_pitfalls"):
         card.append(f"⚠️ **Important Note:** {route['common_pitfalls']}")
     card.append(f"")
-    
     card.append(f"🔗 [Open in Official InSIS]({route['official_url']})  |  🧪 [Test in InSIS Demo Simulation]({route['demo_url']})")
     return "\n".join(card)
 
 
-if __name__ == "__main__":
-    print("[InSIS Nav DB] Initializing database...")
-    init_database()
-    print(f"[InSIS Nav DB] Database ready at: {DB_PATH}")
+def format_policy_card(policy: Dict[str, Any]) -> str:
+    """Formats a University Policy into an authoritative, readable Markdown block."""
+    card = []
+    card.append(f"### 📜 VŠE Policy [{policy['rule_id']}]: {policy['title']}")
+    card.append(f"**Category:** `{policy['category']}` | **Official Ref:** `{policy['official_reference']}`")
+    card.append(f"")
+    card.append(f"**Core Rule Summary:**")
+    card.append(f"> {policy['summary']}")
+    card.append(f"")
+    card.append(f"**Full Regulation:**")
+    card.append(f"{policy['rule_text']}")
+    card.append(f"")
+    if policy.get("penalty_or_consequence"):
+        card.append(f"⚠️ **Sanction / Non-Compliance Consequence:**")
+        card.append(f"{policy['penalty_or_consequence']}")
+    return "\n".join(card)
+
+
+def format_location_card(location: Dict[str, Any]) -> str:
+    """Formats a Campus Location into a clear, turn-by-turn navigation guide."""
+    card = []
+    card.append(f"### 📍 Campus Navigation: {location['name']}")
+    card.append(f"**Building:** `{location['building']}` | **Floor:** `{location['floor']}` | **Room:** `{location['room_number']}`")
+    card.append(f"")
+    card.append(f"**Walking Directions from Main Entrance:**")
+    card.append(f"> {location['directions_from_entrance']}")
+    card.append(f"")
+    if location.get("amenities_accessibility"):
+        card.append(f"**Amenities & Accessibility:** {location['amenities_accessibility']}")
+    if location.get("hours_or_availability"):
+        card.append(f"**Hours / Availability:** {location['hours_or_availability']}")
+    return "\n".join(card)
+
+
+# ---------------------------------------------------------------------------
+# 5. Unified Intelligent Search
+# ---------------------------------------------------------------------------
+def unified_search(query_str: str, limit: int = 3) -> Dict[str, Any]:
+    """Smart dispatcher searching across InSIS routes, policies, and campus locations."""
+    q_lower = query_str.lower()
     
-    import sys
-    test_q = sys.argv[1] if len(sys.argv) > 1 else "where can I upload my master thesis"
-    print(f"\n[Test Query]: '{test_q}'")
-    hits = search_routes(test_q, limit=2)
-    print(f"Found {len(hits)} matching routes:\n")
-    for h in hits:
-        print(format_navigation_card(h))
-        print("-" * 50)
+    # Campus cues
+    campus_cues = ["where is", "how do i get to", "toilet", "washroom", "wc", "restroom", "bathroom",
+                   "floor", "room", "hall", "aula", "sb", "nb", "rb", "menza", "canteen", "library",
+                   "coordinator", "office hours", "atm", "gym", "sports", "helpdesk", "ciks"]
+    # Policy cues
+    policy_cues = ["policy", "rule", "regulation", "penalty", "fail", "plagiarism", "cheat",
+                   "attending", "absence", "doctor", "retake", "guest", "dorm rules", "smoking",
+                   "insurance", "police", "foreign police", "merit", "scholarship", "voucher",
+                   "minimum credits", "9 ects", "20 ects", "termination", "expulsion"]
+                   
+    is_campus = any(c in q_lower for c in campus_cues)
+    is_policy = any(p in q_lower for p in policy_cues)
+    
+    locations = search_campus_locations(query_str, limit=limit) if is_campus or not is_policy else []
+    policies = search_policies(query_str, limit=limit) if is_policy or not is_campus else []
+    routes = search_routes(query_str, limit=limit)
+
+    return {
+        "query": query_str,
+        "campus_locations": locations,
+        "policies": policies,
+        "insis_routes": routes
+    }
+
+
+if __name__ == "__main__":
+    print("[InSIS & Campus DB] Initializing complete database with 50 policies and locations...")
+    init_database()
+    print(f"[InSIS & Campus DB] Database ready at: {DB_PATH}")
+    
+    test_queries = [
+        "washroom 1st floor",
+        "where is the study coordinator for fis",
+        "what happens if i fail an exam 3 times",
+        "overnight guest dorm rules",
+        "where is room RB 211"
+    ]
+    for q in test_queries:
+        print(f"\n==================== QUERY: '{q}' ====================")
+        res = unified_search(q, limit=1)
+        if res["campus_locations"]:
+            print(format_location_card(res["campus_locations"][0]))
+        elif res["policies"]:
+            print(format_policy_card(res["policies"][0]))
+        elif res["insis_routes"]:
+            print(format_navigation_card(res["insis_routes"][0]))
+        else:
+            print("No immediate entity found.")
