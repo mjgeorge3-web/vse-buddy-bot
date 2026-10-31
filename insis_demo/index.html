@@ -8,6 +8,21 @@
 </head>
 <body>
 
+  <!-- =========================================================================
+       0. IN-APP InSIS URL BAR & FAST NAVIGATOR (Access all 195 URLs)
+       ========================================================================= -->
+  <div class="insis-url-navigator">
+    <div class="url-nav-label">
+      <span>🌐 InSIS URL:</span>
+    </div>
+    <input type="text" id="insis-url-input" class="url-input-box" value="https://insis.vse.cz/auth/?lang=en" onkeydown="handleUrlKey(event)">
+    <select id="insis-url-select" class="url-dropdown-select" onchange="handleSelectUrl(this.value)">
+      <option value="">-- Jump to any of 195 InSIS URLs --</option>
+      <!-- Populated dynamically from all_urls.json -->
+    </select>
+    <button class="btn-nav-go" onclick="handleGoUrl()">Go</button>
+  </div>
+
   <!-- 1. Top Navy Utility Bar -->
   <div class="insis-top-bar">
     <a href="#" onclick="alert('Jazyk: Čeština')">ČESKY</a>
@@ -34,20 +49,26 @@
   </header>
 
   <!-- 3. User Session Bar -->
-  <div class="insis-user-bar">
-    <div class="insis-user-info">
-      <span><strong>Logged in:</strong> <span class="insis-user-name">George Joseph</span></span>
+  <div class="insis-user-bar" id="insis-user-bar">
+    <div class="insis-user-info" id="user-info-logged-in">
+      <span><strong>Logged in:</strong> <span class="insis-user-name" id="display-user-name">George Joseph</span></span>
       <a class="insis-user-link" href="https://o365.vse.cz" target="_blank">Office365</a>
-      <a class="insis-user-link" href="#" onclick="openModal('docs-modal')">13 documents</a>
+      <a class="insis-user-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/uschovna/?lang=en')">13 documents</a>
       <a class="insis-user-link" href="#" onclick="alert('0 active tasks pending.')">0 tasks</a>
+      <span style="opacity:0.4;">|</span>
+      <a class="insis-user-link" href="#" onclick="performLogout()" style="color:#c0392b; font-weight:700;">[Log out]</a>
     </div>
-    <div class="user-close" title="Collapse bar" onclick="alert('Session active for George Joseph')">✕</div>
+    <div class="insis-user-info" id="user-info-logged-out" style="display:none;">
+      <span>You are currently not logged in.</span>
+      <a class="insis-user-link" href="#" onclick="showLoginView()" style="font-weight:700;">[Log in to InSIS]</a>
+    </div>
+    <div class="user-close" title="Toggle session status" onclick="alert('InSIS session active.')">✕</div>
   </div>
 
   <!-- 4. Breadcrumb Strip -->
-  <div class="insis-breadcrumbs">
+  <div class="insis-breadcrumbs" id="insis-breadcrumbs">
     <div class="breadcrumb-path" id="breadcrumb-path">
-      <a href="#" onclick="navigateTo('personal-admin')">🏠</a>
+      <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/?lang=en')">🏠</a>
       <span id="breadcrumb-dynamic">&raquo; Personal administration</span>
     </div>
     <div class="breadcrumb-tools">
@@ -56,136 +77,159 @@
     </div>
   </div>
 
+
   <!-- =========================================================================
-       VIEW 1: PERSONAL ADMINISTRATION (Main InSIS Portal Landing Screen)
+       VIEW: InSIS AUTHENTIC LOGIN SCREEN
+       ========================================================================= -->
+  <div id="view-login" class="insis-view" style="display:none;">
+    <div class="insis-login-container">
+      <div class="login-header-banner">
+        <h2>Log in to InSIS</h2>
+        <div style="font-size:12px; opacity:0.85;">Prague University of Economics and Business</div>
+      </div>
+      <div class="login-body">
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="login-form-group">
+            <label for="login-username">User name (e.g. username@vse.cz or xname):</label>
+            <input type="text" id="login-username" value="George Joseph" required>
+          </div>
+          <div class="login-form-group">
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" value="VsePassword2026!" required>
+          </div>
+          <div class="login-form-group">
+            <label for="login-expiry">Session lifetime:</label>
+            <select id="login-expiry">
+              <option>Log out after 8 hours of inactivity (recommended)</option>
+              <option>Log out after 1 day of inactivity</option>
+              <option>Log out after 30 minutes of inactivity</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-insis-login">Log in to the Personal administration of InSIS</button>
+        </form>
+
+        <div style="text-align:center; margin:14px 0 10px 0; font-size:11px; color:#888;">&ndash; OR &ndash;</div>
+
+        <button type="button" class="btn-o365-login" onclick="handleLoginSubmit(event)">
+          <span>🏢</span>
+          <span>Log in with university Microsoft 365 account</span>
+        </button>
+
+        <div class="login-footer-links">
+          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/navod/?lang=en')">First log in to InSIS instructions</a><br>
+          • <a href="#" onclick="alert('Forgotten password: If you cannot log in, visit the IT Helpdesk with your student ID.')">Forgotten password assistance</a><br>
+          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/help.pl?lang=en')">InSIS documentation and manuals</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       VIEW 1: PERSONAL ADMINISTRATION (Home screen - Screenshots 2 & 4)
+       URL: https://insis.vse.cz/auth/?lang=en
        ========================================================================= -->
   <main id="view-personal-admin" class="insis-view">
-    
-    <!-- Top Notice Banners -->
     <div class="insis-notices-container">
-      <!-- Left: Warning box -->
       <div class="notice-box warning-red">
         <div class="notice-icon-circle icon-red">!</div>
         <div class="notice-content">
-          <div><a href="#" onclick="alert('Opening Personal Data Check: Please verify your current residence address in Prague and emergency telephone number.')">:: Personal data check</a></div>
-          <div><a href="#" onclick="alert('Distribution server settings: Default server cluster ACTIVE.')">:: Change of distribution server</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/lide/moje_udaje.pl?lang=en')">:: Personal data check</a></div>
+          <div><a href="#" onclick="alert('Distribution server settings: Cluster ACTIVE.')">:: Change of distribution server</a></div>
         </div>
       </div>
-
-      <!-- Right: Mobile App Banner -->
       <div class="notice-box info-yellow">
         <div class="notice-icon-circle icon-blue">i</div>
         <div class="notice-content">
-          <a href="#" onclick="alert('My College Mobile App available on App Store and Google Play.')" style="font-size:14px;">My College mobile app: Just. Study. Anywhere.</a>
+          <a href="#" onclick="alert('My College Mobile App available for iOS & Android.')" style="font-size:14px;">My College mobile app: Just. Study. Anywhere.</a>
         </div>
       </div>
     </div>
 
-    <!-- Controls -->
     <div class="pa-controls">
       <button class="btn-open-all" onclick="alert('All modules expanded.')">Open all</button>
     </div>
 
-    <!-- 13 Authentic InSIS Module Cards Grid -->
     <div class="pa-modules-grid">
-      
       <!-- 1. Public information portal -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Public information portal</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Public information portal</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#007bb6;">ℹ️</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Departments directory')">Departments</a></li>
-            <li><a href="#" onclick="alert('Thematic search')">Thematic search</a></li>
-            <li><a href="#" onclick="alert('Persons directory: Search professors and staff')">Persons at VŠE</a></li>
-            <li><a href="#" onclick="alert('Study plans & accreditations')">Study plans</a></li>
-            <li><a href="#" onclick="alert('Public course catalogue search')">Course catalogue</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/pracoviste/pracoviste.pl?lang=en')">Departments</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/hledani/?lang=en')">Thematic search</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/lide/?lang=en')">Persons at VŠE</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/plany.pl?lang=en')">Study plans</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/?lang=en')">Course catalogue</a></li>
           </ul>
         </div>
       </div>
 
-      <!-- 2. My College (Direct link to Student's Portal) -->
+      <!-- 2. My College -->
       <div class="pa-card" style="border: 2px solid #007bb6;">
-        <div class="pa-card-header" style="background-color:#005596;">
-          <span>My College (Student's Portal)</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header" style="background-color:#005596;"><span>My College</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#005596;">📘</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="navigateTo('student-portal')" style="font-weight:700; color:#004b87;">Student's portal ➔</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/studium.pl?lang=en')" style="font-weight:700; color:#004b87;">Student's portal ➔</a></li>
             <li><a href="#" onclick="alert('Course Attainment Evaluation')">Course Attainment Evaluation</a></li>
-            <li><a href="#" onclick="alert('Study application form')">Study application form</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/prihlaska/?lang=en')">Study application form</a></li>
             <li><a href="#" onclick="alert('Student enrollment statistics')">Student enrollment statistics</a></li>
-            <li><a href="#" onclick="alert('Student evaluation of teaching')">Course evaluation by students</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/anketa/?lang=en')">Course evaluation by students</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 3. eLearning -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>eLearning</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>eLearning</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#e67e22;">🎓</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Tests and examinations registration')">Tests and examinations</a></li>
-            <li><a href="#" onclick="alert('Electronic study materials and literature')">Electronic study materials</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zkousky.pl?lang=en')">Tests and examinations</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/eknihovna/?lang=en')">Electronic study materials</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 4. Science and research -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Science and research</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Science and research</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#27ae60;">🧪</div>
           <ul class="pa-links-list">
             <li><a href="#" onclick="alert('Matching of publications')">Matching of publications</a></li>
             <li><a href="#" onclick="alert('Biographical information')">Biographical information</a></li>
-            <li><a href="#" onclick="alert('Creation of academic CVs')">Creation of CVs</a></li>
+            <li><a href="#" onclick="alert('Creation of CVs')">Creation of CVs</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 5. Personal management -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Personal management</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Personal management</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#2980b9;">✉️</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Document server')">Document server</a></li>
-            <li><a href="#" onclick="openModal('docs-modal')">Document storage</a></li>
-            <li><a href="#" onclick="alert('Sign up for university news')">Sign up for news</a></li>
-            <li><a href="#" onclick="alert('Internal InSIS mailbox')">Mail box</a></li>
-            <li><a href="#" onclick="alert('Course discussion platforms')">Discussion platforms</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok_server/?lang=en')">Document server</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/uschovna/?lang=en')">Document storage</a></li>
+            <li><a href="#" onclick="alert('Sign up for news')">Sign up for news</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/posta/?lang=en')">Mail box</a></li>
+            <li><a href="#" onclick="alert('Discussion platforms')">Discussion platforms</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 6. eAgenda -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>eAgenda</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>eAgenda</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#f39c12;">📋</div>
           <ul class="pa-links-list">
             <li><a href="#" onclick="alert('Contact centre')">Contact centre</a></li>
             <li><a href="#" onclick="alert('eSurveys')">eSurveys</a></li>
-            <li><a href="#" onclick="alert('Academic Senate Elections')">My Elections</a></li>
+            <li><a href="#" onclick="alert('My Elections')">My Elections</a></li>
             <li><a href="#" onclick="alert('Register of printouts')">Register of printouts</a></li>
             <li><a href="#" onclick="alert('Electronic document verification')">Electronic document verification</a></li>
           </ul>
@@ -194,87 +238,72 @@
 
       <!-- 7. Technology and its administration -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Technology and its administration</span>
-          <span>⚙️</span>
-        </div>
+        <div class="pa-card-header"><span>Technology and its administration</span><span>⚙️</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#34495e;">🖥️</div>
           <ul class="pa-links-list">
             <li><a href="#" onclick="alert('Accounts administration')">Accounts administration section</a></li>
             <li><a href="#" onclick="alert('Access control system')">Access control system</a></li>
-            <li><a href="#" onclick="alert('ISIC & ID cards verification')">Identification cards in use</a></li>
-            <li><a href="#" onclick="alert('University e-mail delivery settings')">University e-mail delivery</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/karty/typy_karet.pl?lang=en')">Identification cards in use</a></li>
+            <li><a href="#" onclick="alert('University e-mail delivery')">University e-mail delivery</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 8. InSIS documentation -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>InSIS documentation</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>InSIS documentation</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#e74c3c;">🛟</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Official InSIS user manuals')">InSIS documentation</a></li>
-            <li><a href="#" onclick="alert('My InSIS operations history')">My operations</a></li>
-            <li><a href="#" onclick="alert('System integrators contact list')">System integrators</a></li>
-            <li><a href="#" onclick="alert('Licence information')">Licence information</a></li>
-            <li><a href="#" onclick="alert('Statistics of using InSIS')">Statistics of using InSIS</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/help.pl?lang=en')">InSIS documentation</a></li>
+            <li><a href="#" onclick="alert('My operations history')">My operations</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/integratori.pl?lang=en')">System integrators</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/licenses/index.pl?lang=en')">Licence information</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/system/agregat.pl?lang=en')">Statistics of using InSIS</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 9. Game room -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Game room</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Game room</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#8e44ad;">🎰</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Launching Stone Eater mini-game')">Stone Eater</a></li>
-            <li><a href="#" onclick="alert('Launching Caterpillar mini-game')">Caterpillar</a></li>
-            <li><a href="#" onclick="alert('Launching IQ Solitaire')">IQ Solitaire</a></li>
-            <li><a href="#" onclick="alert('List of games and high scores')">List of games and statistics</a></li>
+            <li><a href="#" onclick="alert('Stone Eater mini-game')">Stone Eater</a></li>
+            <li><a href="#" onclick="alert('Caterpillar mini-game')">Caterpillar</a></li>
+            <li><a href="#" onclick="alert('IQ Solitaire')">IQ Solitaire</a></li>
+            <li><a href="#" onclick="alert('List of games and statistics')">List of games and statistics</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 10. Adjustment of the information system -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Adjustment of the information system</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Adjustment of the information system</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#7f8c8d;">⚙️</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Change profile photo')">Change photo</a></li>
-            <li><a href="#" onclick="alert('Manage favorites menu')">Administration of My favourites menu</a></li>
-            <li><a href="#" onclick="alert('Portlet arrangement')">Portlets in InSIS</a></li>
+            <li><a href="#" onclick="alert('Change photo')">Change photo</a></li>
+            <li><a href="#" onclick="alert('Favourites menu')">Administration of My favourites menu</a></li>
+            <li><a href="#" onclick="alert('Portlets in InSIS')">Portlets in InSIS</a></li>
             <li><a href="#" onclick="alert('User settings')">User settings</a></li>
-            <li><a href="#" onclick="alert('Office 365 calendar sync')">Configure transfer of events to Office 365</a></li>
+            <li><a href="#" onclick="alert('Configure transfer of events to Office 365')">Configure transfer of events to Office 365</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 11. Information system set-up -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Information system set-up</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Information system set-up</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#16a085;">💻</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Change study identity')">Change identity</a></li>
-            <li><a href="#" onclick="alert('One-time passwords / MFA set-up')">Setting of authentication using one-time passwords (OTP)</a></li>
-            <li><a href="#" onclick="alert('BankID / eID link')">Link your account to eID</a></li>
-            <li><a href="#" onclick="alert('My operations audit log')">My operations</a></li>
+            <li><a href="#" onclick="alert('Change identity')">Change identity</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/system/totp.pl?lang=en')">Setting of authentication using one-time passwords (OTP)</a></li>
+            <li><a href="#" onclick="alert('Link your account to eID')">Link your account to eID</a></li>
+            <li><a href="#" onclick="alert('My operations')">My operations</a></li>
             <li><a href="#" onclick="alert('Delegates set-up')">Delegates set-up</a></li>
           </ul>
         </div>
@@ -282,41 +311,33 @@
 
       <!-- 12. Protection of personal data -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>Protection of personal data</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>Protection of personal data</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#d35400;">🔒</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('GDPR access statistics')">Personal data check statistics</a></li>
-            <li><a href="#" onclick="alert('Personal data record inspection')">Personal data check</a></li>
-            <li><a href="#" onclick="alert('User consent and approvals')">Approvals by user</a></li>
+            <li><a href="#" onclick="alert('Personal data check statistics')">Personal data check statistics</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/lide/moje_udaje.pl?lang=en')">Personal data check</a></li>
+            <li><a href="#" onclick="alert('Approvals by user')">Approvals by user</a></li>
           </ul>
         </div>
       </div>
 
       <!-- 13. My College mobile app 2 -->
       <div class="pa-card">
-        <div class="pa-card-header">
-          <span>My College mobile app 2</span>
-          <span>▼</span>
-        </div>
+        <div class="pa-card-header"><span>My College mobile app 2</span><span>▼</span></div>
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#2c3e50;">📱</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('About My College mobile app')">About app</a></li>
-            <li><a href="#" onclick="alert('Paired smartphones & tablets')">Administration of paired devices</a></li>
+            <li><a href="#" onclick="alert('About app')">About app</a></li>
+            <li><a href="#" onclick="alert('Administration of paired devices')">Administration of paired devices</a></li>
             <li><a href="https://play.google.com" target="_blank">Google Play ↗</a></li>
-            <li><a href="#" onclick="alert('Mobile app FAQ')">Frequently asked questions</a></li>
+            <li><a href="#" onclick="alert('FAQ')">Frequently asked questions</a></li>
             <li><a href="https://apple.com" target="_blank">App Store ↗</a></li>
           </ul>
         </div>
       </div>
-
     </div>
 
-    <!-- Authentic InSIS Footer Operations Statistics -->
     <div class="insis-stats-box">
       In Integrated Study Information System <strong>2,467,913,141</strong> operations in total have been carried out since July 23th 2007.<br>
       Yesterday <strong>7,703</strong> users logged in and <strong>1,096,646</strong> operations were carried out.<br>
@@ -326,12 +347,11 @@
 
 
   <!-- =========================================================================
-       VIEW 2: STUDENT'S PORTAL (Recreated from Screenshot 3)
+       VIEW 2: STUDENT'S PORTAL (Screenshot 3)
+       URL: https://insis.vse.cz/auth/student/studium.pl?lang=en
        ========================================================================= -->
   <main id="view-student-portal" class="insis-view" style="display:none;">
     <div class="portal-page-container">
-      
-      <!-- Sub-header -->
       <div class="portal-title-block">
         <h2 class="portal-main-heading">Student's portal</h2>
         <div class="portal-subheading">
@@ -339,27 +359,24 @@
         </div>
       </div>
 
-      <!-- Rounded Tab Buttons -->
       <div class="insis-portal-tabs">
-        <button class="tab-btn active" onclick="navigateTo('student-portal')">My College</button>
-        <button class="tab-btn" onclick="alert('E-study record: Overview of enrolled semesters, past grades and study progress.')">E-study record</button>
-        <button class="tab-btn" onclick="alert('My schoolmates: List of students in your study group.')">My schoolmates</button>
-        <button class="tab-btn" onclick="alert('Study details: Enrolled dates, matriculation number, tuition terms.')">Study details</button>
-        <button class="tab-btn" onclick="alert('Map of my study: Visual prerequisites and course dependency tree.')">Map of my study</button>
-        <button class="tab-btn" onclick="alert('Course e-plans: Detailed syllabi, weekly reading materials and requirements.')">Course e-plans</button>
-        <button class="tab-btn" onclick="alert('List of topics: Final thesis topics catalog and vacant research openings.')">List of topics</button>
-        <button class="tab-btn" onclick="alert('Coursework submissions: Drop-in box (Odevzdávárna) for homework and projects.')">Coursework submissions</button>
-        <button class="tab-btn" onclick="openPlanProgressCheck()">Plan progress check</button>
-        <button class="tab-btn" onclick="alert('My lectures sheet: Sheet of continuous results, midterm test points and attendance.')">My lectures sheet</button>
-        <button class="tab-btn" onclick="alert('My favourite courses bookmark list.')">My favourite courses</button>
+        <button class="tab-btn active" onclick="navigateToUrl('https://insis.vse.cz/auth/student/studium.pl?lang=en')">My College</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/arch_studia.pl?lang=en')">E-study record</button>
+        <button class="tab-btn" onclick="alert('My schoolmates in ISM')">My schoolmates</button>
+        <button class="tab-btn" onclick="alert('Study details')">Study details</button>
+        <button class="tab-btn" onclick="alert('Map of my study')">Map of my study</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/katalog/?lang=en')">Course e-plans</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/temata_zp.pl?lang=en')">List of topics</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en')">Coursework submissions</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en')">Plan progress check</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zaznamnik.pl?lang=en')">My lectures sheet</button>
+        <button class="tab-btn" onclick="alert('My favourite courses bookmark list')">My favourite courses</button>
       </div>
 
-      <!-- Description Paragraph -->
       <p class="portal-intro-text">
         The table shows the studies commenced or completed at this university and the application icons relevant to the studies. The study and the study period you are working with at the moment can be found in the page subheader. If you have more than one study or study period use the grey bullet in the first column Choose to switch between them in the portal applications. When entering the Student's portal you are working with the active study (green bullet).
       </p>
 
-      <!-- Active Studies Table -->
       <table class="insis-study-table">
         <thead>
           <tr>
@@ -376,9 +393,7 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align:center;">
-              <span class="bullet-green-circle" title="Active study"></span>
-            </td>
+            <td style="text-align:center;"><span class="bullet-green-circle" title="Active study"></span></td>
             <td><strong>FIS</strong></td>
             <td>
               <strong>Information Systems Management</strong><br>
@@ -387,43 +402,32 @@
             </td>
             <td><strong style="color:#27ae60;">enrolled</strong></td>
             <td>&ndash;</td>
-            <td style="text-align:center;">
-              <a href="#" onclick="alert('Examination Dates Registration: Browse exam dates, examiner names, and available slots.')" title="Register for examinations" style="font-size:20px; text-decoration:none;">✍️</a>
-            </td>
-            <td style="text-align:center;">
-              <a href="#" onclick="alert('Course Registration & Enrollment: Round 1 / Round 2 / Automated evaluation status.')" title="Course Enrollment" style="font-size:20px; text-decoration:none;">📝</a>
-            </td>
-            <td style="text-align:center;">
-              <a href="#" onclick="alert('Extra-semester courses: Intensive block seminars and winter/summer school.')" title="Extra-semester courses" style="font-size:20px; text-decoration:none;">🗓️</a>
-            </td>
-            <td style="text-align:center;">
-              <!-- Direct link to Master's Thesis view -->
-              <a href="#" onclick="navigateTo('master-thesis')" title="Open Master's thesis application" style="font-size:24px; text-decoration:none; cursor:pointer;">📗</a>
-            </td>
+            <td style="text-align:center;"><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zkousky.pl?lang=en')" style="font-size:20px; text-decoration:none;">✍️</a></td>
+            <td style="text-align:center;"><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/registrace.pl?lang=en')" style="font-size:20px; text-decoration:none;">📝</a></td>
+            <td style="text-align:center;"><a href="#" onclick="alert('Extra-semester courses')" style="font-size:20px; text-decoration:none;">🗓️</a></td>
+            <td style="text-align:center;"><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en')" style="font-size:24px; text-decoration:none;">📗</a></td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Quick Action: Support of the selected study -->
       <h3 style="font-size:13px; font-weight:700; color:#333333; margin-top:16px;">Support of the selected study</h3>
       <div style="margin-top:8px; display:flex; gap:12px; font-size:12px;">
-        <a href="#" onclick="openPlanProgressCheck()" style="color:var(--insis-link-blue); text-decoration:underline;">📊 Check remaining credit vouchers (120/144)</a>
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📊 Check remaining credit vouchers (120/144)</a>
         <span>|</span>
-        <a href="#" onclick="navigateTo('master-thesis')" style="color:var(--insis-link-blue); text-decoration:underline;">📜 Master's thesis submission &amp; Errata</a>
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📜 Master's thesis submission &amp; Errata</a>
         <span>|</span>
-        <a href="#" onclick="openModal('confirm-study-modal')" style="color:var(--insis-link-blue); text-decoration:underline;">📄 Electronic Confirmation of Study (PDF)</a>
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📄 Electronic Confirmation of Study (PDF)</a>
       </div>
     </div>
   </main>
 
 
   <!-- =========================================================================
-       VIEW 3: MASTER'S THESIS (Recreated from Screenshots 1 & 5)
+       VIEW 3: MASTER'S THESIS & ERRATA (Screenshots 1 & 5)
+       URL: https://insis.vse.cz/auth/student/zp.pl?lang=en
        ========================================================================= -->
   <main id="view-master-thesis" class="insis-view" style="display:none;">
     <div class="portal-page-container">
-      
-      <!-- Sub-header -->
       <div class="portal-title-block">
         <h2 class="portal-main-heading">Student's portal</h2>
         <div class="portal-subheading">
@@ -431,143 +435,74 @@
         </div>
       </div>
 
-      <!-- Rounded Tab Buttons -->
       <div class="insis-portal-tabs">
-        <button class="tab-btn" onclick="navigateTo('student-portal')">My College</button>
-        <button class="tab-btn" onclick="alert('E-study record')">E-study record</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/studium.pl?lang=en')">My College</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/arch_studia.pl?lang=en')">E-study record</button>
         <button class="tab-btn" onclick="alert('My schoolmates')">My schoolmates</button>
         <button class="tab-btn" onclick="alert('Study details')">Study details</button>
         <button class="tab-btn" onclick="alert('Map of my study')">Map of my study</button>
-        <button class="tab-btn" onclick="alert('Course e-plans')">Course e-plans</button>
-        <button class="tab-btn" onclick="alert('List of topics')">List of topics</button>
-        <button class="tab-btn" onclick="alert('Coursework submissions')">Coursework submissions</button>
-        <button class="tab-btn" onclick="openPlanProgressCheck()">Plan progress check</button>
-        <button class="tab-btn" onclick="alert('My lectures sheet')">My lectures sheet</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/katalog/?lang=en')">Course e-plans</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/temata_zp.pl?lang=en')">List of topics</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en')">Coursework submissions</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en')">Plan progress check</button>
+        <button class="tab-btn" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zaznamnik.pl?lang=en')">My lectures sheet</button>
         <button class="tab-btn" onclick="alert('My favourite courses')">My favourite courses</button>
       </div>
 
-      <p class="portal-intro-text">
-        Use the application to work with a final thesis.
-      </p>
+      <p class="portal-intro-text">Use the application to work with a final thesis.</p>
 
-      <!-- Section: Basic Information -->
       <div class="thesis-section-title">Basic information</div>
       <div class="thesis-section-sub">Basic information about a final thesis</div>
 
       <table class="thesis-info-table">
         <tbody>
-          <tr>
-            <td class="label-cell">Type of thesis:</td>
-            <td class="value-cell">Master's thesis</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Thesis title:</td>
-            <td class="value-cell">Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Author:</td>
-            <td class="value-cell"><a href="#" onclick="alert('Author profile: George Joseph, FIS ISM')">George Joseph</a></td>
-          </tr>
-          <tr>
-            <td class="label-cell">Study:</td>
-            <td class="value-cell">FIS C-ISM-MBI pres [term 5, E]</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Department:</td>
-            <td class="value-cell"><a href="#" onclick="alert('Department of Information Technology (KIT), FIS VŠE')">Department of Information Technology (FIS)</a></td>
-          </tr>
-          <tr>
-            <td class="label-cell">Thesis supervisor:</td>
-            <td class="value-cell"><a href="#" onclick="alert('Supervisor: Ing. Pavel Sládek, Ph.D.')">Ing. Pavel Sládek, Ph.D.</a></td>
-          </tr>
-          <tr>
-            <td class="label-cell">Assignment completeness:</td>
-            <td class="value-cell" style="font-weight:400;">changes in assignment made by student have been confirmed by supervisor; student can no longer edit the assignment</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Status:</td>
-            <td class="value-cell">current theses</td>
-          </tr>
+          <tr><td class="label-cell">Type of thesis:</td><td class="value-cell">Master's thesis</td></tr>
+          <tr><td class="label-cell">Thesis title:</td><td class="value-cell">Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague</td></tr>
+          <tr><td class="label-cell">Author:</td><td class="value-cell"><a href="#" onclick="alert('Author: George Joseph')">George Joseph</a></td></tr>
+          <tr><td class="label-cell">Study:</td><td class="value-cell">FIS C-ISM-MBI pres [term 5, E]</td></tr>
+          <tr><td class="label-cell">Department:</td><td class="value-cell"><a href="#" onclick="alert('Department of Information Technology (FIS)')">Department of Information Technology (FIS)</a></td></tr>
+          <tr><td class="label-cell">Thesis supervisor:</td><td class="value-cell"><a href="#" onclick="alert('Supervisor: Ing. Pavel Sládek, Ph.D.')">Ing. Pavel Sládek, Ph.D.</a></td></tr>
+          <tr><td class="label-cell">Assignment completeness:</td><td class="value-cell" style="font-weight:400;">changes in assignment made by student have been confirmed by supervisor; student can no longer edit the assignment</td></tr>
+          <tr><td class="label-cell">Status:</td><td class="value-cell">current theses</td></tr>
         </tbody>
       </table>
 
-      <!-- Dynamic Thesis Submission Banner Alert -->
       <div id="thesis-alert-banner" class="insis-banner-alert">
         <span style="font-size:16px;">ℹ️</span>
         <span id="thesis-banner-text">Thesis has not been entered &ndash; Final thesis has not been entered in the information system.</span>
       </div>
 
-      <!-- Section: Display and download files -->
       <div class="thesis-section-title">Display and download files</div>
       <div class="thesis-section-sub">The following group of icons represents an application which helps to display the information about the final thesis.</div>
 
       <div class="icons-action-grid">
-        <!-- 1. Instructions -->
-        <a class="icon-action-item" onclick="openInstructionsModal()">
-          <div class="icon-img-box" style="color:#d35400;">🔄📋</div>
-          <span class="icon-item-label">Instructions for submission process of final thesis</span>
-        </a>
-
-        <!-- 2. Approval of assignment -->
-        <a class="icon-action-item" onclick="alert('Approval of assignment: Protocol confirmed by student, supervisor and Head of Department.')">
-          <div class="icon-img-box" style="color:#27ae60;">📑✅</div>
-          <span class="icon-item-label">Approval of assignment</span>
-        </a>
-
-        <!-- 3. Situation check -->
-        <a class="icon-action-item" onclick="alert('Situation check: Formal assignment complete. Plagiarism scan ready.')">
-          <div class="icon-img-box" style="color:#f39c12;">📁2️⃣</div>
-          <span class="icon-item-label">Situation check</span>
-        </a>
-
-        <!-- 4. Display the assignment form -->
-        <a class="icon-action-item" onclick="alert('Opening official assignment protocol PDF...')">
-          <div class="icon-img-box" style="color:#2980b9;">📄🔍</div>
-          <span class="icon-item-label">Display the assignment form</span>
-        </a>
-
-        <!-- 5. Display additional information -->
-        <a class="icon-action-item" onclick="alert('Display additional information: Abstract and keywords overview.')">
-          <div class="icon-img-box" style="color:#007bb6;">📁ℹ️</div>
-          <span class="icon-item-label">Display additional information</span>
-        </a>
-
-        <!-- 6. Postponement of release -->
-        <a class="icon-action-item" onclick="alert('Postponement of release: Public inspection deferred request (§ 47b).')">
-          <div class="icon-img-box" style="color:#16a085;">📁🔒</div>
-          <span class="icon-item-label">Postponement of release</span>
-        </a>
+        <a class="icon-action-item" onclick="openInstructionsModal()"><div class="icon-img-box" style="color:#d35400;">🔄📋</div><span class="icon-item-label">Instructions for submission process of final thesis</span></a>
+        <a class="icon-action-item" onclick="alert('Approval of assignment confirmed.')"><div class="icon-img-box" style="color:#27ae60;">📑✅</div><span class="icon-item-label">Approval of assignment</span></a>
+        <a class="icon-action-item" onclick="alert('Situation check complete.')"><div class="icon-img-box" style="color:#f39c12;">📁2️⃣</div><span class="icon-item-label">Situation check</span></a>
+        <a class="icon-action-item" onclick="alert('Displaying assignment form protocol...')"><div class="icon-img-box" style="color:#2980b9;">📄🔍</div><span class="icon-item-label">Display the assignment form</span></a>
+        <a class="icon-action-item" onclick="alert('Displaying additional info...')"><div class="icon-img-box" style="color:#007bb6;">📁ℹ️</div><span class="icon-item-label">Display additional information</span></a>
+        <a class="icon-action-item" onclick="alert('Postponement of release')"><div class="icon-img-box" style="color:#16a085;">📁🔒</div><span class="icon-item-label">Postponement of release</span></a>
       </div>
 
-      <!-- Section: Editing application -->
       <div class="thesis-section-title">Editing application</div>
-      <div class="thesis-section-sub">
-        The following icons represent the transactions that need to be made to successfully submit a final thesis. The order of transactions defines the correct order of the conducted steps. The state of progress displayed above the icon suggests the state of completeness of the required data. If there is no state of progress displayed, then the transaction is optional.
-      </div>
+      <div class="thesis-section-sub">The following icons represent the transactions that need to be made to successfully submit a final thesis.</div>
 
       <div class="icons-action-grid">
-        <!-- 1. Insert additional information -->
         <div class="icon-action-item" onclick="openAddInfoModal()">
           <div id="badge-add-info" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#007bb6;">📁➕</div>
           <span class="icon-item-label">Insert additional information</span>
         </div>
-
-        <!-- 2. Insert the thesis and the appendices -->
         <div class="icon-action-item" onclick="openUploadThesisModal()">
           <div id="badge-upload" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#007bb6;">📁📎</div>
           <span class="icon-item-label">Insert the thesis and the appendices</span>
         </div>
-
-        <!-- 3. Thesis submission -->
         <div class="icon-action-item" onclick="confirmThesisSubmission()">
           <div id="badge-submit" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#27ae60;">📗➔</div>
           <span class="icon-item-label">Thesis submission</span>
         </div>
-
-        <!-- 4. INSERT ERRATA (§ 47b) - The Critical Errata Feature -->
         <div class="icon-action-item" onclick="openErrataModal()" style="border: 2px dashed #f39c12; border-radius:8px; padding:4px;">
           <div id="badge-errata" class="status-badge-above badge-amber-warn">!</div>
           <div class="icon-img-box" style="color:#d35400;">📝📎</div>
@@ -575,7 +510,6 @@
         </div>
       </div>
 
-      <!-- Attached Errata Status (When active) -->
       <div id="errata-active-panel" style="display:none; margin-top:16px; border:1px solid #fde68a; background:#fffdf5; border-radius:6px; padding:14px;">
         <h4 style="color:#92400e; font-size:13px; margin-bottom:6px;">📋 Attached Errata Corrections Protocol:</h4>
         <div style="font-size:12px; color:#78350f;">
@@ -584,16 +518,31 @@
           <em>Corrections document is permanently attached to the thesis file under § 47b and forwarded to the state exam committee.</em>
         </div>
       </div>
-
     </div>
   </main>
 
 
   <!-- =========================================================================
-       MODAL DIALOGS (Interactive Workflows)
+       VIEW 4: GENERIC AUTHENTIC InSIS DYNAMIC PAGE VIEW
+       (Renders the remaining paths: SZZ, Kontrola plánu, Rozvrh, Úřadovna, etc.)
        ========================================================================= -->
+  <main id="view-generic-page" class="insis-view" style="display:none;">
+    <div class="portal-page-container">
+      <div class="portal-title-block">
+        <h2 class="portal-main-heading" id="generic-page-title">InSIS Application</h2>
+        <div class="portal-subheading" id="generic-page-sub">Prague University of Economics and Business (VŠE)</div>
+      </div>
 
-  <!-- Modal 1: Errata Upload (§ 47b) -->
+      <div id="generic-page-content" class="content-card" style="background:#fff; border:1px solid #d0d7de; border-radius:6px; padding:20px;">
+        <!-- Filled dynamically by router in app.js -->
+      </div>
+    </div>
+  </main>
+
+
+  <!-- =========================================================================
+       MODALS: Errata, Add Info, Upload, Plan Check, Confirm Study
+       ========================================================================= -->
   <div id="errata-modal" class="insis-modal-overlay">
     <div class="insis-modal-window">
       <div class="insis-modal-header">
@@ -604,33 +553,16 @@
         <p style="margin-bottom:10px;">
           Under <strong>Higher Education Act § 47b</strong> and VŠE Study Regulations, submitted theses cannot be altered once confirmed. If you discover factual or typographical errors after submission, upload an official <strong>Errata PDF</strong>.
         </p>
-
         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px; margin-bottom:14px;">
           <strong>Sample Corrections Table:</strong>
           <table style="width:100%; border-collapse:collapse; margin-top:6px; font-size:11px;">
-            <thead>
-              <tr style="background:#edf2f7;">
-                <th style="border:1px solid #cbd5e0; padding:4px;">Page / Section</th>
-                <th style="border:1px solid #cbd5e0; padding:4px;">Original Text</th>
-                <th style="border:1px solid #cbd5e0; padding:4px;">Corrected Text</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="border:1px solid #cbd5e0; padding:4px;">Page 24, Section 3.2</td>
-                <td style="border:1px solid #cbd5e0; padding:4px;">"sample size of 15"</td>
-                <td style="border:1px solid #cbd5e0; padding:4px;">"sample size of 25"</td>
-              </tr>
-            </tbody>
+            <thead><tr style="background:#edf2f7;"><th style="border:1px solid #cbd5e0; padding:4px;">Page / Section</th><th style="border:1px solid #cbd5e0; padding:4px;">Original Text</th><th style="border:1px solid #cbd5e0; padding:4px;">Corrected Text</th></tr></thead>
+            <tbody><tr><td style="border:1px solid #cbd5e0; padding:4px;">Page 24, Section 3.2</td><td style="border:1px solid #cbd5e0; padding:4px;">"sample size of 15"</td><td style="border:1px solid #cbd5e0; padding:4px;">"sample size of 25"</td></tr></tbody>
           </table>
         </div>
-
         <label style="font-weight:700; display:block; margin-bottom:4px;">Select Errata PDF file:</label>
         <input type="file" id="errata-file-picker" accept=".pdf" style="font-size:12px; margin-bottom:12px;">
-
-        <div style="font-size:11px; color:#555555;">
-          * Note: Your supervisor <strong>Ing. Pavel Sládek, Ph.D.</strong> will be notified automatically to review and acknowledge the errata before defense.
-        </div>
+        <div style="font-size:11px; color:#555555;">* Supervisor <strong>Ing. Pavel Sládek, Ph.D.</strong> will be notified automatically to acknowledge the errata before defense.</div>
       </div>
       <div class="insis-modal-footer">
         <button onclick="closeModal('errata-modal')" style="padding:6px 12px; border:1px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">Cancel</button>
@@ -639,22 +571,16 @@
     </div>
   </div>
 
-  <!-- Modal 2: Insert Additional Information -->
   <div id="add-info-modal" class="insis-modal-overlay">
     <div class="insis-modal-window">
-      <div class="insis-modal-header">
-        <span>Insert Additional Information (Abstract &amp; Keywords)</span>
-        <button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('add-info-modal')">✕</button>
-      </div>
+      <div class="insis-modal-header"><span>Insert Additional Information</span><button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('add-info-modal')">✕</button></div>
       <div class="insis-modal-body">
         <label style="font-weight:700; display:block; margin-bottom:2px;">English Abstract:</label>
-        <textarea id="abstract-en" rows="3" style="width:100%; font-size:12px; margin-bottom:10px; padding:6px;">This master's thesis develops and verifies a grounded GenAI chatbot tailored to international students at VŠE Prague.</textarea>
-
+        <textarea rows="3" style="width:100%; font-size:12px; margin-bottom:10px; padding:6px;">This master's thesis develops and verifies a grounded GenAI chatbot tailored to international students at VŠE Prague.</textarea>
         <label style="font-weight:700; display:block; margin-bottom:2px;">Czech Abstract (Abstrakt):</label>
-        <textarea id="abstract-cz" rows="3" style="width:100%; font-size:12px; margin-bottom:10px; padding:6px;">Tato diplomová práce vyvíjí a ověřuje GenAI chatbota určeného pro mezinárodní studenty na VŠE v Praze.</textarea>
-
-        <label style="font-weight:700; display:block; margin-bottom:2px;">Keywords (English &amp; Czech):</label>
-        <input type="text" value="GenAI, RAG, InSIS, VŠE, Higher Education, Student Experience, Errata" style="width:100%; font-size:12px; padding:6px;">
+        <textarea rows="3" style="width:100%; font-size:12px; margin-bottom:10px; padding:6px;">Tato diplomová práce vyvíjí a ověřuje GenAI chatbota určeného pro mezinárodní studenty na VŠE v Praze.</textarea>
+        <label style="font-weight:700; display:block; margin-bottom:2px;">Keywords:</label>
+        <input type="text" value="GenAI, RAG, InSIS, VŠE, Higher Education, Errata" style="width:100%; font-size:12px; padding:6px;">
       </div>
       <div class="insis-modal-footer">
         <button onclick="saveAdditionalInfo()" style="padding:6px 14px; background:#005596; color:white; border:none; border-radius:4px; font-weight:700; cursor:pointer;">Save Information</button>
@@ -662,23 +588,15 @@
     </div>
   </div>
 
-  <!-- Modal 3: Upload Thesis & Appendices -->
   <div id="upload-thesis-modal" class="insis-modal-overlay">
     <div class="insis-modal-window">
-      <div class="insis-modal-header">
-        <span>Insert the thesis and the appendices</span>
-        <button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('upload-thesis-modal')">✕</button>
-      </div>
+      <div class="insis-modal-header"><span>Insert Thesis and Appendices</span><button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('upload-thesis-modal')">✕</button></div>
       <div class="insis-modal-body">
-        <label style="font-weight:700; display:block; margin-bottom:4px;">Upload Thesis PDF (Full Text):</label>
-        <input type="file" id="thesis-pdf-picker" accept=".pdf" style="font-size:12px; margin-bottom:12px;">
-
-        <label style="font-weight:700; display:block; margin-bottom:4px;">Upload Supplementary ZIP (Prototype / Datasets):</label>
+        <label style="font-weight:700; display:block; margin-bottom:4px;">Upload Thesis PDF:</label>
+        <input type="file" accept=".pdf" style="font-size:12px; margin-bottom:12px;">
+        <label style="font-weight:700; display:block; margin-bottom:4px;">Upload Supplementary ZIP:</label>
         <input type="file" accept=".zip" style="font-size:12px; margin-bottom:12px;">
-
-        <div style="background:#eaf2fa; border:1px solid #bcd7f2; padding:8px; border-radius:4px; font-size:11px;">
-          Files uploaded here are automatically submitted to <strong>Theses.cz</strong> for plagiarism checking.
-        </div>
+        <div style="background:#eaf2fa; border:1px solid #bcd7f2; padding:8px; border-radius:4px; font-size:11px;">Files will be automatically routed to <strong>Theses.cz</strong> for plagiarism checking.</div>
       </div>
       <div class="insis-modal-footer">
         <button onclick="saveThesisUpload()" style="padding:6px 14px; background:#005596; color:white; border:none; border-radius:4px; font-weight:700; cursor:pointer;">Upload Files</button>
@@ -686,54 +604,20 @@
     </div>
   </div>
 
-  <!-- Modal 4: Plan Progress Check (Credit Vouchers) -->
-  <div id="plan-check-modal" class="insis-modal-overlay">
-    <div class="insis-modal-window">
-      <div class="insis-modal-header">
-        <span>Plan Progress Check &ndash; Credit Vouchers</span>
-        <button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('plan-check-modal')">✕</button>
-      </div>
-      <div class="insis-modal-body">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:4px; text-align:center;">
-            <div style="font-size:11px; color:#555;">Initial Voucher Allocation</div>
-            <div style="font-size:22px; font-weight:700; color:#004b87;">144 Vouchers</div>
-            <div style="font-size:11px; color:#27ae60;">Master's Degree (120 ECTS + 20% margin)</div>
-          </div>
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:4px; text-align:center;">
-            <div style="font-size:11px; color:#555;">Remaining Voucher Balance</div>
-            <div style="font-size:22px; font-weight:700; color:#27ae60;">120 Vouchers</div>
-            <div style="font-size:11px; color:#555;">24 used in WS 2026/2027</div>
-          </div>
-        </div>
-        <p style="font-size:12px; color:#444;">
-          <strong>Study Regulation:</strong> You must earn at least 9 ECTS in your first semester, and at least 20 ECTS across any two consecutive semesters to maintain active study enrollment.
-        </p>
-      </div>
-      <div class="insis-modal-footer">
-        <button onclick="closeModal('plan-check-modal')" style="padding:6px 14px; background:#005596; color:white; border:none; border-radius:4px; font-weight:700; cursor:pointer;">Close</button>
-      </div>
-    </div>
-  </div>
-
 
   <!-- =========================================================================
-       FLOATING CONTROLS: Scroll Arrows & VŠE Buddy Bot Trigger
+       FLOATING CONTROLS: Scroll Arrows & VŠE Buddy Bot
        ========================================================================= -->
-  
-  <!-- Floating VŠE Buddy Bot Pill (Positioned authentically) -->
   <div class="floating-bot-pill" onclick="toggleBotDrawer()">
     <span>🎓</span>
     <span>VŠE Buddy Bot</span>
   </div>
 
-  <!-- Floating Scroll Arrows (Visible on right edge like original InSIS) -->
   <div class="floating-scroll-controls">
     <button class="scroll-circle-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">⬆</button>
     <button class="scroll-circle-btn" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Scroll to bottom">⬇</button>
   </div>
 
-  <!-- Embedded VŠE Buddy Bot Drawer -->
   <div id="bot-drawer" class="bot-drawer hidden">
     <div class="bot-drawer-header">
       <div style="display:flex; align-items:center; gap:8px;">
@@ -742,24 +626,18 @@
       </div>
       <button class="bot-drawer-close" onclick="toggleBotDrawer()">✕</button>
     </div>
-
-    <!-- Messages Container -->
     <div id="bot-messages-area" class="bot-messages-area">
       <div class="bot-msg-bubble assistant">
         Hello <strong>George</strong>! I am your <strong>VŠE Buddy</strong> assistant integrated with InSIS.
         <br><br>
-        How can I help you with your Master's thesis, credit vouchers, course registration, or visa procedures today?
+        Ask me about your Master's thesis, credit vouchers, course registration, or visa procedures!
       </div>
     </div>
-
-    <!-- Quick Chips -->
     <div class="bot-quick-chips-strip">
       <button class="mini-chip" onclick="sendBotPrompt('How do I submit errata for my Master\'s thesis in InSIS?')">📝 How do I submit errata?</button>
       <button class="mini-chip" onclick="sendBotPrompt('How many credit vouchers do I have as a Master student?')">🎓 Credit vouchers check</button>
       <button class="mini-chip" onclick="sendBotPrompt('What are the thesis submission deadlines and steps?')">📜 Thesis submission steps</button>
     </div>
-
-    <!-- Input Strip -->
     <div class="bot-input-strip">
       <input type="text" id="bot-input-field" placeholder="Ask about InSIS, errata, credits..." onkeydown="handleBotKey(event)">
       <button onclick="submitBotMessage()">Send</button>

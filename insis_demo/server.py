@@ -41,6 +41,39 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
         demo_dir = str(Path(__file__).resolve().parent)
         super().__init__(*args, directory=demo_dir, **kwargs)
 
+    def do_GET(self):
+        # 1. API: insis-links JSON
+        if self.path.startswith("/api/insis-links"):
+            all_urls_path = Path(__file__).resolve().parent / "all_urls.json"
+            if all_urls_path.exists():
+                resp_bytes = all_urls_path.read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+                return
+
+        # 2. Check if a physical file exists on disk
+        req_clean = self.path.split("?")[0].lstrip("/")
+        demo_dir = Path(__file__).resolve().parent
+        file_path = demo_dir / req_clean
+
+        if req_clean and file_path.exists() and file_path.is_file():
+            # Real static asset (styles.css, app.js, all_urls.json, etc.)
+            super().do_GET()
+        else:
+            # 3. SPA Fallback: Serve index.html for all InSIS URLs!
+            index_file = demo_dir / "index.html"
+            content = index_file.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(content)
+
     def do_POST(self):
         if self.path == "/api/chat":
             content_length = int(self.headers.get("Content-Length", 0))
