@@ -257,20 +257,40 @@ class BuddyBot:
         # -------------------------------------------------------------
         prompt_content = prompts.build_prompt_with_context(question, context_chunks)
 
-        # Format conversation history for Gemini (last 6 messages)
-        recent_history = history[-config.MAX_HISTORY_MESSAGES:] if history else []
+        # Format conversation history for Gemini (excluding the current turn)
+        # If the caller already added the current question to history, exclude it to avoid duplication
+        past_history = []
+        if history:
+            if history[-1].get("role") == "user" and history[-1].get("content", "").strip() == question.strip():
+                past_history = history[:-1]
+            else:
+                past_history = history
+
+        recent_history = past_history[-config.MAX_HISTORY_MESSAGES:] if past_history else []
         gemini_contents: List[types.Content] = []
 
+        # Enforce strict alternating turns (user -> model -> user -> model)
+        last_role = None
         for msg in recent_history:
             role = "user" if msg.get("role") == "user" else "model"
+            content = msg.get("content", "").strip()
+            if not content:
+                continue
+            if role == last_role:
+                continue
             gemini_contents.append(
                 types.Content(
                     role=role,
-                    parts=[types.Part.from_text(text=msg.get("content", ""))],
+                    parts=[types.Part.from_text(text=content)],
                 )
             )
+            last_role = role
 
-        # Append current user prompt
+        # If previous history ended with user, pop it to guarantee our prompt_content is the single user turn
+        if gemini_contents and gemini_contents[-1].role == "user":
+            gemini_contents.pop()
+
+        # Append current user prompt with grounded RAG context
         gemini_contents.append(
             types.Content(
                 role="user",

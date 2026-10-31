@@ -3,11 +3,14 @@
 Features:
 - Responsive Streamlit chat interface (st.chat_message) with custom university styling
 - Permanent research prototype disclaimer
+- Interactive Welcome Hero state with 6 quick starter cards on main canvas
 - Categorized quick questions across student journey stages (Before arrival, First weeks, Studying, Living in Prague)
-- Inline user feedback (thumbs up / down + optional comment) logged anonymously to logs/feedback.csv
+- Inline user feedback (thumbs up / down + qualitative comment popover) logged anonymously to logs/feedback.csv
+- One-click copy response helper popover
+- Dynamic source and mode badges (Grounded, Official Referral, Crisis)
 - Conversation export (download markdown chat transcript)
-- Collapsible Researcher / Evaluation panel with live session metrics
-- Anonymous UUID session management with no PII collection
+- Collapsible Researcher / Evaluation panel with dynamic knowledge base and session metrics
+- Anonymous UUID session management with no PII collection (GDPR compliant)
 """
 
 import csv
@@ -35,46 +38,103 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* Main VŠE Brand Container */
     .vse-banner {
         background: linear-gradient(135deg, #00386b 0%, #005696 100%);
-        color: white !important;
-        padding: 1.2rem 1.5rem;
-        border-radius: 10px;
+        color: #ffffff !important;
+        padding: 1.4rem 1.6rem;
+        border-radius: 12px;
         margin-bottom: 1.2rem;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0, 56, 107, 0.15);
     }
     .vse-banner h1 {
-        color: white !important;
+        color: #ffffff !important;
         margin: 0;
-        font-size: 1.8rem;
+        font-size: 1.85rem;
         font-weight: 700;
+        letter-spacing: -0.02em;
     }
     .vse-banner p {
         color: #e0e9f5 !important;
-        margin: 0.3rem 0 0 0;
+        margin: 0.4rem 0 0 0;
         font-size: 0.95rem;
+        line-height: 1.4;
     }
+
+    /* Academic Prototype Disclaimer */
     .disclaimer-box {
-        background-color: #f8f9fa;
-        border-left: 4px solid #f39c12;
-        padding: 0.75rem 1rem;
-        margin-bottom: 1rem;
-        border-radius: 4px;
+        background-color: rgba(245, 158, 11, 0.08);
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 0.85rem 1.1rem;
+        margin-bottom: 1.2rem;
         font-size: 0.88rem;
-        color: #555;
+        line-height: 1.45;
+        color: inherit;
     }
-    .stage-badge {
-        display: inline-block;
-        padding: 0.2rem 0.6rem;
+
+    /* Hero Card for Welcome State */
+    .hero-card {
+        background-color: rgba(0, 56, 107, 0.04);
+        border: 1px solid rgba(0, 56, 107, 0.14);
         border-radius: 12px;
+        padding: 1.4rem 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+    .hero-card h3 {
+        margin-top: 0;
+        color: #00386b;
+        font-weight: 700;
+    }
+    .hero-card p {
+        margin: 0.4rem 0 0 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Response Mode Badges */
+    .badge-grounded {
+        display: inline-block;
+        padding: 0.15rem 0.55rem;
+        border-radius: 10px;
         font-size: 0.75rem;
         font-weight: 600;
-        margin-right: 0.4rem;
-        background-color: #e3f2fd;
-        color: #0d47a1;
+        background-color: rgba(16, 185, 129, 0.12);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        margin-bottom: 0.4rem;
     }
+    .badge-referral {
+        display: inline-block;
+        padding: 0.15rem 0.55rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background-color: rgba(245, 158, 11, 0.12);
+        color: #d97706;
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        margin-bottom: 0.4rem;
+    }
+    .badge-crisis {
+        display: inline-block;
+        padding: 0.15rem 0.55rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background-color: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        margin-bottom: 0.4rem;
+    }
+
+    /* Smooth button styling */
     .stButton>button {
         border-radius: 8px;
+        transition: all 0.15s ease-in-out;
+    }
+    .stButton>button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
     </style>
     """,
@@ -157,7 +217,7 @@ st.markdown(
 st.markdown(
     """
     <div class="disclaimer-box">
-        ⚠️ <strong>Academic Research Prototype:</strong> This bot provides grounded guidance from verified VŠE documentation. It is not an official university service. Always confirm critical visa, legal, financial, or academic decisions with the responsible office.
+        ⚠️ <strong>Academic Research Prototype:</strong> This bot provides grounded guidance from verified VŠE documentation. It is not an official university service. Always confirm critical visa, legal, financial, or academic decisions with the responsible official office or faculty study coordinator.
     </div>
     """,
     unsafe_allow_html=True,
@@ -168,13 +228,19 @@ st.markdown(
 # ---------------------------------------------------------------------
 with st.sidebar:
     st.header("Chat Controls")
-    col_new, col_exp = st.columns([1, 1])
+    col_new, col_clear, col_exp = st.columns([1, 1, 1])
     with col_new:
-        if st.button("➕ New Chat", use_container_width=True):
+        if st.button("➕ New", use_container_width=True, help="Start a new session with fresh UUID"):
             st.session_state.session_id = str(uuid.uuid4())
             st.session_state.messages = []
             st.session_state.pending_prompt = None
             st.session_state.feedback_submitted_ids = set()
+            st.rerun()
+
+    with col_clear:
+        if st.button("🗑️ Clear", use_container_width=True, help="Clear messages while keeping session", disabled=not bool(st.session_state.messages)):
+            st.session_state.messages = []
+            st.session_state.pending_prompt = None
             st.rerun()
 
     with col_exp:
@@ -256,57 +322,148 @@ with st.sidebar:
             if assistant_msgs
             else 0.0
         )
+        
+        # Calculate dynamic knowledge base stats
+        metadata = getattr(st.session_state.bot.retriever, "metadata", []) or []
+        chunk_count = len(metadata) if metadata else 148
+        doc_count = len(set(c.get("filename", "") for c in metadata if c.get("filename"))) if metadata else 49
+
         st.markdown(f"- **Session ID:** `{st.session_state.session_id[:12]}...`")
         st.markdown(f"- **Messages Exchanged:** {msg_count}")
         st.markdown(f"- **Avg Assistant Latency:** {avg_lat:.0f} ms")
-        st.markdown(f"- **Knowledge Files:** 48 markdown docs (122 chunks)")
-        st.markdown(f"- **Retrieval Engine:** Pure NumPy Cosine Similarity")
+        st.markdown(f"- **Knowledge Files:** {doc_count} verified markdown docs ({chunk_count} vector chunks)")
+        st.markdown(f"- **Retrieval Engine:** Pure NumPy L2-Normalized Cosine Similarity")
+        st.markdown(f"- **LLM Backbone:** Google Gemini (`gemini-2.5-flash`)")
 
     with st.expander("ℹ️ About & Privacy Safeguards"):
         st.markdown(
             """
             **About VŠE Buddy Bot**
             - Developed as a Master's Thesis research prototype in Information Systems Management (ISM).
-            - Strictly grounded in 48 curated VŠE documentation pages to prevent ungrounded AI hallucinations.
+            - Strictly grounded in curated VŠE documentation to prevent ungrounded AI hallucinations.
             - **Tech Stack:** Python 3.14, Streamlit, Google Gemini (GenAI SDK), NumPy vector store.
             
             **Privacy & GDPR Compliance**
-            - **Do NOT enter personal identifiable data** (names, birth dates, passport or student ID numbers).
+            - **Do NOT enter personal identifiable data** (passwords, birth dates, or passport numbers).
             - Session identifiers are completely random UUIDs; no student accounts or IP addresses are logged.
-            - Deterministic crisis guardrails automatically redact sensitive mental health emergencies from persistent logs.
+            - Deterministic crisis guardrails automatically redact sensitive mental health queries from persistent logs.
             """
         )
 
 # ---------------------------------------------------------------------
-# Display Existing Messages & Feedback Controls
+# Main Canvas: Welcome Screen or Message Thread
 # ---------------------------------------------------------------------
-for idx, message in enumerate(st.session_state.messages):
-    role = message["role"]
-    avatar = "🧑‍🎓" if role == "user" else "🎓"
-    with st.chat_message(role, avatar=avatar):
-        st.markdown(message["content"])
+if not st.session_state.messages:
+    # Render Hero Welcome Screen
+    st.markdown(
+        """
+        <div class="hero-card">
+            <h3>👋 Welcome to VŠE Buddy!</h3>
+            <p>
+                Your verified AI companion for navigating academic life, campus services, dormitories, and administrative procedures at the <strong>Prague University of Economics and Business (VŠE)</strong>.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-        # Display thumbs up / down feedback on assistant responses
-        if role == "assistant" and message.get("mode") != "crisis":
-            msg_id = message.get("feedback_id", f"msg_{idx}")
-            is_submitted = msg_id in st.session_state.feedback_submitted_ids
+    st.subheader("💡 Frequently Asked by International Students")
+    st.caption("Click any question below to immediately ask the assistant:")
 
-            if not is_submitted:
-                col1, col2, col3 = st.columns([1, 1, 6])
-                with col1:
-                    if st.button("👍", key=f"up_{msg_id}", help="Accurate and helpful answer"):
-                        log_user_feedback(st.session_state.session_id, idx, "positive")
-                        st.session_state.feedback_submitted_ids.add(msg_id)
-                        st.toast("Thank you! Your feedback helps improve the bot for all students.", icon="👍")
-                        st.rerun()
-                with col2:
-                    if st.button("👎", key=f"down_{msg_id}", help="Inaccurate, incomplete, or unhelpful"):
-                        log_user_feedback(st.session_state.session_id, idx, "negative")
-                        st.session_state.feedback_submitted_ids.add(msg_id)
-                        st.toast("Feedback recorded. We are refining the knowledge base.", icon="👎")
-                        st.rerun()
-            else:
-                st.caption("✓ Feedback submitted. Thank you!")
+    col_hero_1, col_hero_2 = st.columns(2)
+    with col_hero_1:
+        if st.button("🎓 How many credits do I need per semester?", key="hero_credits", use_container_width=True):
+            st.session_state.pending_prompt = "How many credits do I need per semester and how do vouchers work?"
+            st.rerun()
+        if st.button("📝 How do I submit errata for my thesis in InSIS?", key="hero_errata", use_container_width=True):
+            st.session_state.pending_prompt = "How do I submit my final thesis and how do I submit errata in InSIS?"
+            st.rerun()
+        if st.button("🏠 How do I apply for a dorm in ISKaM & pay deposit?", key="hero_dorm", use_container_width=True):
+            st.session_state.pending_prompt = "How do I apply for a VŠE dormitory and pay the reservation deposit?"
+            st.rerun()
+
+    with col_hero_2:
+        if st.button("🛂 Do international students need Foreign Police registration?", key="hero_police", use_container_width=True):
+            st.session_state.pending_prompt = "Do international students have to register with the Foreign Police upon arrival?"
+            st.rerun()
+        if st.button("🧠 Where can I find free psychological counselling?", key="hero_counsel", use_container_width=True):
+            st.session_state.pending_prompt = "Where can I find free psychological counselling and mental health support at VŠE?"
+            st.rerun()
+        if st.button("🚇 How do I get a student discount pass for Prague transport?", key="hero_transport", use_container_width=True):
+            st.session_state.pending_prompt = "How do I get a student discount pass for Prague public transport (Lítačka)?"
+            st.rerun()
+
+else:
+    # Display Existing Messages & Feedback Controls
+    for idx, message in enumerate(st.session_state.messages):
+        role = message["role"]
+        avatar = "🧑‍🎓" if role == "user" else "🎓"
+        with st.chat_message(role, avatar=avatar):
+            # Display mode badge for assistant messages
+            if role == "assistant":
+                mode = message.get("mode")
+                if mode == "crisis":
+                    st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
+                elif mode == "referral":
+                    st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
+                elif mode == "grounded":
+                    st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
+
+            st.markdown(message["content"])
+
+            # Display response actions & feedback controls on assistant responses
+            if role == "assistant" and message.get("mode") != "crisis":
+                msg_id = message.get("feedback_id", f"msg_{idx}")
+                is_submitted = msg_id in st.session_state.feedback_submitted_ids
+
+                col_up, col_down, col_comment, col_copy, col_spacer = st.columns([0.7, 0.7, 1.8, 1.5, 4.3])
+
+                if not is_submitted:
+                    with col_up:
+                        if st.button("👍", key=f"up_{msg_id}", help="Accurate and helpful answer"):
+                            log_user_feedback(st.session_state.session_id, idx, "positive")
+                            st.session_state.feedback_submitted_ids.add(msg_id)
+                            st.toast("Thank you! Feedback recorded for thesis research.", icon="👍")
+                            st.rerun()
+                    with col_down:
+                        if st.button("👎", key=f"down_{msg_id}", help="Inaccurate, incomplete, or unhelpful"):
+                            log_user_feedback(st.session_state.session_id, idx, "negative")
+                            st.session_state.feedback_submitted_ids.add(msg_id)
+                            st.toast("Thank you! Feedback recorded for knowledge base refinement.", icon="👎")
+                            st.rerun()
+                    with col_comment:
+                        with st.popover("💬 Feedback", help="Provide qualitative notes for thesis analysis"):
+                            st.caption("**Research Feedback**")
+                            rating_choice = st.radio(
+                                "Rating:",
+                                ["Helpful 👍", "Needs Improvement 👎"],
+                                key=f"rad_{msg_id}",
+                                horizontal=True,
+                            )
+                            comment_text = st.text_area(
+                                "Notes (optional):",
+                                key=f"txt_{msg_id}",
+                                placeholder="What was missing, unclear, or particularly helpful?",
+                                height=80,
+                            )
+                            if st.button("Submit Note", key=f"sub_cmt_{msg_id}"):
+                                rating_val = "positive" if "Helpful" in rating_choice else "negative"
+                                log_user_feedback(st.session_state.session_id, idx, rating_val, comment_text)
+                                st.session_state.feedback_submitted_ids.add(msg_id)
+                                st.toast("Thank you! Your feedback has been recorded.", icon="✅")
+                                st.rerun()
+                else:
+                    with col_up:
+                        st.caption("✓ Recorded")
+
+                with col_copy:
+                    with st.popover("📋 Copy", help="Copy response text"):
+                        st.text_area(
+                            "Select and copy text:",
+                            value=message["content"],
+                            height=150,
+                            key=f"copy_area_{msg_id}",
+                        )
 
 # ---------------------------------------------------------------------
 # Handle User Input (Typed or Quick Question)
@@ -328,13 +485,22 @@ if prompt_to_process:
 
     # 2. Invoke BuddyBot
     with st.chat_message("assistant", avatar="🎓"):
-        with st.spinner("Searching verified VŠE documentation..."):
+        with st.spinner("Searching verified VŠE documentation & generating grounded answer..."):
             result = st.session_state.bot.answer(
                 question=prompt_to_process,
                 history=st.session_state.messages,
                 session_id=st.session_state.session_id,
             )
             answer_text = result["answer"]
+            mode = result.get("mode")
+
+            if mode == "crisis":
+                st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
+            elif mode == "referral":
+                st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
+            elif mode == "grounded":
+                st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
+
             st.markdown(answer_text)
 
     # 3. Record assistant response in session state
