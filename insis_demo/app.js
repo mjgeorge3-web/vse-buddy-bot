@@ -1,144 +1,213 @@
-// InSIS Demo Interactive Application Logic & VŠE Buddy Bot Integration
+// Authentic InSIS Demo Application & Embedded VŠE Buddy Bot Logic
 
 let chatHistory = [];
+let hasEnteredInfo = false;
+let hasUploadedPdf = false;
+let isThesisSubmitted = false;
 
-// Tab Navigation
-function switchTab(tabId) {
-  // Hide all tab contents
-  const allTabs = document.querySelectorAll(".tab-content");
-  allTabs.forEach((tab) => {
-    tab.style.display = "none";
+// -----------------------------------------------------------------------------
+// 1. Navigation Between InSIS Views
+// -----------------------------------------------------------------------------
+function navigateTo(viewId) {
+  const views = ["personal-admin", "student-portal", "master-thesis"];
+  views.forEach((v) => {
+    const el = document.getElementById("view-" + v);
+    if (el) el.style.display = "none";
   });
 
-  // Show target tab
-  const targetTab = document.getElementById("tab-" + tabId);
-  if (targetTab) {
-    targetTab.style.display = "block";
+  const target = document.getElementById("view-" + viewId);
+  if (target) {
+    target.style.display = "block";
   }
 
-  // Update nav-bar active class
-  const navItems = document.querySelectorAll(".nav-item");
-  navItems.forEach((item) => {
-    item.classList.remove("active");
-  });
-
-  // Match corresponding nav item
-  const tabIndexMap = {
-    dashboard: 0,
-    thesis: 1,
-    timetable: 2,
-    courses: 3,
-    financing: 4,
-    uradovna: 5,
-    schedule: 6,
-  };
-  const activeIdx = tabIndexMap[tabId];
-  if (activeIdx !== undefined && navItems[activeIdx]) {
-    navItems[activeIdx].classList.add("active");
+  // Update Breadcrumb Path
+  const breadcrumbEl = document.getElementById("breadcrumb-dynamic");
+  if (viewId === "personal-admin") {
+    breadcrumbEl.innerHTML = "&raquo; Personal administration";
+  } else if (viewId === "student-portal") {
+    breadcrumbEl.innerHTML = '&raquo; <a href="#" onclick="navigateTo(\'student-portal\')">My College</a>';
+  } else if (viewId === "master-thesis") {
+    breadcrumbEl.innerHTML = '&raquo; <a href="#" onclick="navigateTo(\'student-portal\')">My College</a> &raquo; <strong>Master\'s thesis</strong>';
   }
 
-  // Scroll to top of content
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// Course Catalogue Filter
-function filterCourses() {
-  const input = document.getElementById("course-search-input").value.toLowerCase().trim();
-  const table = document.getElementById("courses-table");
-  const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+// -----------------------------------------------------------------------------
+// 2. Modal Handlers
+// -----------------------------------------------------------------------------
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = "flex";
+}
 
-  for (let i = 0; i < rows.length; i++) {
-    const text = rows[i].textContent.toLowerCase();
-    if (text.includes(input)) {
-      rows[i].style.display = "";
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = "none";
+}
+
+function openHelpModal() {
+  alert(
+    "InSIS Help & Support:\n\n" +
+    "• For course enrollment assistance, contact the study coordinator at FIS.\n" +
+    "• For technical login issues, visit the IT Helpdesk at Žižkov Old Building (SB).\n" +
+    "• Or ask the VŠE Buddy Bot in the bottom right corner!"
+  );
+}
+
+function openSearchModal() {
+  const q = prompt("Thematic search across InSIS (e.g. thesis, timetable, credits):");
+  if (q) {
+    if (q.toLowerCase().includes("thesis") || q.toLowerCase().includes("errata")) {
+      navigateTo("master-thesis");
+    } else if (q.toLowerCase().includes("credit") || q.toLowerCase().includes("voucher")) {
+      openPlanProgressCheck();
     } else {
-      rows[i].style.display = "none";
+      alert(`Search results for "${q}": Found 3 relevant applications in InSIS.`);
     }
   }
 }
 
-// Errata Upload Simulation
-function simulateErrataUpload() {
-  const fileInput = document.getElementById("errata-file-input");
-  const statusMsg = document.getElementById("errata-status-msg");
-  const preview = document.getElementById("existing-errata-preview");
-
-  const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "Errata_Thesis_Final_Corrections.pdf";
-
-  statusMsg.style.display = "block";
-  statusMsg.innerHTML = `
-    <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:10px; border-radius:6px; color:#065f46;">
-      <strong>✓ Errata Upload Confirmed:</strong> File <code>${fileName}</code> successfully uploaded to InSIS archive.<br>
-      Electronic protocol <strong>#ERR-2026-84920194</strong> dispatched to supervisor <em>Ing. Jan Novák, Ph.D.</em> for review under § 47b.
-    </div>
-  `;
-
-  preview.style.display = "block";
+function openInstructionsModal() {
+  alert(
+    "Instructions for Submission Process of Final Thesis:\n\n" +
+    "1. Fill in English and Czech title, abstract, and keywords.\n" +
+    "2. Upload the thesis full text in PDF format (and optional ZIP attachments).\n" +
+    "3. Confirm final electronic submission before the semester deadline.\n" +
+    "4. Note: Once submitted, the file is locked and routed to Theses.cz for plagiarism check.\n" +
+    "5. If errors are found post-submission, use 'Insert Errata' (Vložit errata) under § 47b."
+  );
 }
 
-// Confirmation of Study Download Simulation
-function simulateDownloadConfirmation() {
-  const dummyText = `
-PRAGUE UNIVERSITY OF ECONOMICS AND BUSINESS (VŠE)
-FACULTY OF INFORMATICS AND STATISTICS (FIS)
-------------------------------------------------------------------------
-ELECTRONIC CONFIRMATION OF STUDY (POTVRZENÍ O STUDIU)
-Student: Alex Taylor, born 1999-05-14
-Student ID (xname): x_taya01
-Programme: Information Systems Management (ISM) - Master
-Form: Full-time
-Academic Year: 2026/2027
-Semester: Winter Semester
-
-Status: Enrolled Regular Student in Good Academic Standing.
-Qualified Electronic Stamp: DIGITALLY SEALED BY VŠE CERTIFICATE AUTHORITY
-Date of Issue: ${new Date().toISOString()}
-Verification URL: https://insis.vse.cz/overeni/?token=84920194-CONF
-------------------------------------------------------------------------
-  `;
-
-  const blob = new Blob([dummyText], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Confirmation_of_Study_VSE_Alex_Taylor.txt";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+function openAddInfoModal() {
+  openModal("add-info-modal");
 }
 
-// Floating Bot Controls
-function toggleBotPanel() {
-  const panel = document.getElementById("bot-panel");
-  panel.classList.toggle("hidden");
-  if (!panel.classList.contains("hidden")) {
-    document.getElementById("bot-user-input").focus();
+function saveAdditionalInfo() {
+  hasEnteredInfo = true;
+  closeModal("add-info-modal");
+  const badge = document.getElementById("badge-add-info");
+  if (badge) {
+    badge.className = "status-badge-above badge-green-check";
+    badge.textContent = "✓";
+  }
+  alert("Abstracts and keywords successfully saved into InSIS!");
+}
+
+function openUploadThesisModal() {
+  openModal("upload-thesis-modal");
+}
+
+function saveThesisUpload() {
+  hasUploadedPdf = true;
+  closeModal("upload-thesis-modal");
+  const badge = document.getElementById("badge-upload");
+  if (badge) {
+    badge.className = "status-badge-above badge-green-check";
+    badge.textContent = "✓";
+  }
+  alert("Master's thesis PDF and supplementary files uploaded. Plagiarism check scheduled via Theses.cz.");
+}
+
+function confirmThesisSubmission() {
+  if (!hasEnteredInfo || !hasUploadedPdf) {
+    const proceed = confirm(
+      "Notice: You haven't completed both preliminary steps (Abstracts & PDF). Would you like to automatically populate sample files and submit?"
+    );
+    if (!proceed) return;
+    saveAdditionalInfo();
+    saveThesisUpload();
+  }
+
+  isThesisSubmitted = true;
+  const badge = document.getElementById("badge-submit");
+  if (badge) {
+    badge.className = "status-badge-above badge-green-check";
+    badge.textContent = "✓";
+  }
+
+  const alertBanner = document.getElementById("thesis-alert-banner");
+  const bannerText = document.getElementById("thesis-banner-text");
+  if (alertBanner && bannerText) {
+    alertBanner.className = "insis-banner-alert locked-success";
+    bannerText.innerHTML = "<strong>Thesis entered and locked (Odevzdáno).</strong> File registered in InSIS archive. Theses.cz protocol: 2.1% similarity.";
+  }
+
+  alert(
+    "Confirmation:\n\n" +
+    "Elektronická verze závěrečné práce byla odevzdána a bylo potvrzeno její korektní vložení.\n" +
+    "Proces vkládání je tímto ukončen. Práci již nelze modifikovat.\n\n" +
+    "If you need to submit corrections, use the 'Insert errata' option."
+  );
+}
+
+function openErrataModal() {
+  openModal("errata-modal");
+}
+
+function submitErrataFile() {
+  const picker = document.getElementById("errata-file-picker");
+  const fileName = picker && picker.files.length > 0 ? picker.files[0].name : "Errata_Thesis_Corrections_George_Joseph.pdf";
+
+  closeModal("errata-modal");
+
+  const badgeErrata = document.getElementById("badge-errata");
+  if (badgeErrata) {
+    badgeErrata.className = "status-badge-above badge-green-check";
+    badgeErrata.textContent = "✓";
+  }
+
+  const panel = document.getElementById("errata-active-panel");
+  if (panel) {
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth" });
+  }
+
+  alert(
+    `✓ Errata Upload Confirmed!\n\n` +
+    `File: ${fileName}\n` +
+    `Protocol: #ERR-2026-84920194\n` +
+    `Notification dispatched to thesis supervisor Ing. Pavel Sládek, Ph.D. under § 47b.`
+  );
+}
+
+function openPlanProgressCheck() {
+  openModal("plan-check-modal");
+}
+
+// -----------------------------------------------------------------------------
+// 3. Floating VŠE Buddy Bot Logic
+// -----------------------------------------------------------------------------
+function toggleBotDrawer() {
+  const drawer = document.getElementById("bot-drawer");
+  drawer.classList.toggle("hidden");
+  if (!drawer.classList.contains("hidden")) {
+    document.getElementById("bot-input-field").focus();
   }
 }
 
-function handleInputKey(event) {
+function handleBotKey(event) {
   if (event.key === "Enter") {
-    submitUserMessage();
+    submitBotMessage();
   }
 }
 
-function sendQuickPrompt(promptText) {
-  document.getElementById("bot-user-input").value = promptText;
-  submitUserMessage();
+function sendBotPrompt(text) {
+  document.getElementById("bot-input-field").value = text;
+  submitBotMessage();
 }
 
-async function submitUserMessage() {
-  const inputEl = document.getElementById("bot-user-input");
+async function submitBotMessage() {
+  const inputEl = document.getElementById("bot-input-field");
   const query = inputEl.value.trim();
   if (!query) return;
 
   inputEl.value = "";
-  appendMessage("user", query);
+  appendBotBubble("user", query);
   chatHistory.push({ role: "user", content: query });
 
   // Add temporary loading indicator
-  const loadingBubble = appendMessage("assistant", "Searching verified VŠE documentation...");
+  const loadingBubble = appendBotBubble("assistant", "Searching verified VŠE documentation...");
 
   try {
     const response = await fetch("/api/chat", {
@@ -149,101 +218,89 @@ async function submitUserMessage() {
 
     if (response.ok) {
       const data = await response.json();
-      loadingBubble.innerHTML = formatMarkdownAnswer(data.answer);
+      loadingBubble.innerHTML = formatBotMarkdown(data.answer);
       chatHistory.push({ role: "assistant", content: data.answer });
-      // Contextual InSIS navigation suggestion if errata is discussed
-      if (query.toLowerCase().includes("errata") || query.toLowerCase().includes("thesis")) {
-        appendContextNav("📜 Switch to InSIS Final Thesis & Errata Tab", "thesis");
-      } else if (query.toLowerCase().includes("credit") || query.toLowerCase().includes("voucher")) {
-        appendContextNav("🏠 View Credit Vouchers on Dashboard", "dashboard");
-      } else if (query.toLowerCase().includes("symbol") || query.toLowerCase().includes("tuition")) {
-        appendContextNav("💳 View Variable Symbol in Financing Tab", "financing");
+
+      // InSIS contextual deep link triggers based on query
+      const qLower = query.toLowerCase();
+      if (qLower.includes("errata") || qLower.includes("thesis")) {
+        appendContextLink("📜 Open Master's Thesis & Errata Page in InSIS", () => {
+          navigateTo("master-thesis");
+          toggleBotDrawer();
+        });
+      } else if (qLower.includes("voucher") || qLower.includes("credit")) {
+        appendContextLink("📊 Open Credit Voucher Wallet (120/144)", () => {
+          openPlanProgressCheck();
+          toggleBotDrawer();
+        });
+      } else if (qLower.includes("confirm") || qLower.includes("study")) {
+        appendContextLink("📄 Open Electronic Confirmation of Study", () => {
+          alert("Opening Electronic Confirmation of Study dialog...");
+        });
       }
     } else {
       throw new Error("API call failed");
     }
   } catch (err) {
-    // Graceful offline fallback with accurate grounded responses
-    const fallbackAnswer = generateFallbackAnswer(query);
-    loadingBubble.innerHTML = formatMarkdownAnswer(fallbackAnswer);
-    chatHistory.push({ role: "assistant", content: fallbackAnswer });
+    const fallback = getContextualFallback(query);
+    loadingBubble.innerHTML = formatBotMarkdown(fallback);
+    chatHistory.push({ role: "assistant", content: fallback });
   }
 
-  // Scroll to bottom of chat
-  const container = document.getElementById("bot-messages");
+  const container = document.getElementById("bot-messages-area");
   container.scrollTop = container.scrollHeight;
 }
 
-function appendMessage(role, text) {
-  const container = document.getElementById("bot-messages");
+function appendBotBubble(role, text) {
+  const container = document.getElementById("bot-messages-area");
   const bubble = document.createElement("div");
-  bubble.className = `bot-bubble ${role}`;
-  bubble.innerHTML = formatMarkdownAnswer(text);
-  container.appendChild(blobWrapper(bubble));
+  bubble.className = `bot-msg-bubble ${role}`;
+  bubble.innerHTML = formatBotMarkdown(text);
+  container.appendChild(bubble);
   container.scrollTop = container.scrollHeight;
   return bubble;
 }
 
-function blobWrapper(bubble) {
-  return bubble;
-}
-
-function appendContextNav(buttonLabel, tabId) {
-  const container = document.getElementById("bot-messages");
-  const navBtn = document.createElement("button");
-  navBtn.className = "chip-btn";
-  navBtn.style.alignSelf = "flex-start";
-  navBtn.style.background = "#e0f2fe";
-  navBtn.style.color = "#0369a1";
-  navBtn.style.borderColor = "#7dd3fc";
-  navBtn.style.marginTop = "4px";
-  navBtn.innerHTML = buttonLabel;
-  navBtn.onclick = () => {
-    switchTab(tabId);
-    toggleBotPanel();
-  };
-  container.appendChild(navBtn);
+function appendContextLink(label, actionFn) {
+  const container = document.getElementById("bot-messages-area");
+  const btn = document.createElement("button");
+  btn.className = "mini-chip";
+  btn.style.background = "#e0f2fe";
+  btn.style.color = "#004b87";
+  btn.style.borderColor = "#90cdf4";
+  btn.style.fontWeight = "700";
+  btn.style.marginTop = "4px";
+  btn.innerHTML = label;
+  btn.onclick = actionFn;
+  container.appendChild(btn);
   container.scrollTop = container.scrollHeight;
 }
 
-function formatMarkdownAnswer(text) {
+function formatBotMarkdown(text) {
   if (!text) return "";
-  let formatted = text
+  return text
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\n\n/g, "<br><br>")
     .replace(/\n\*/g, "<br>• ")
     .replace(/\n/g, "<br>");
-  return formatted;
 }
 
-// Client-side fallback knowledge in case /api/chat is invoked offline
-function generateFallbackAnswer(query) {
+function getContextualFallback(query) {
   const q = query.toLowerCase();
   if (q.includes("errata") || q.includes("thesis")) {
-    return "To submit errata in InSIS:\n" +
-      "1. Navigate to **Student's Portal** -> **Final Thesis**.\n" +
-      "2. Under the student editing section, click **'Insert Errata' (Vložit errata)**.\n" +
-      "3. Upload your structured corrections document strictly in **PDF format**.\n" +
-      "4. Inform your supervisor (*vedoucí práce*) so they can acknowledge the corrections before your defense [48-final-thesis-submission-defense-and-errata.md].";
+    return "To submit errata for your Master's thesis in InSIS:\n" +
+      "1. Navigate to **My College** -> **Master's thesis**.\n" +
+      "2. Under the editing application, click **'Insert errata' (Vložit errata)**.\n" +
+      "3. Upload your structured corrections PDF.\n" +
+      "4. Your supervisor **Ing. Pavel Sládek, Ph.D.** will receive notification to acknowledge it prior to your defense under § 47b [48-final-thesis-submission-defense-and-errata.md].";
   } else if (q.includes("credit") || q.includes("voucher")) {
-    return "Credit requirements at VŠE:\n" +
-      "• **Standard Load:** 30 ECTS credits per semester (60 ECTS per academic year).\n" +
-      "• **Minimum Threshold:** At least 9 ECTS in your first semester, or 20 ECTS across any two consecutive semesters to avoid expulsion.\n" +
-      "• **Voucher Budget:** Bachelor students receive 216 vouchers (for 180 ECTS degree); Master students receive 144 vouchers (for 120 ECTS degree).\n" +
-      "• Extra vouchers provide a 20% safety margin for failed or elective courses [07-study-regulations-and-credit-system.md].";
-  } else if (q.includes("variable symbol") || q.includes("symbol") || q.includes("tuition")) {
-    return "To find your Variable Symbol:\n" +
-      "1. Go to InSIS -> **Student's Portal** -> **Study Financing (Financování studia)**.\n" +
-      "2. Your unique Variable Symbol (VS) is displayed next to your student account details.\n" +
-      "3. Always include this VS in every bank transfer to ensure your payment is paired correctly [17-insis-portal.md].";
-  } else if (q.includes("police") || q.includes("registration")) {
-    return "Foreign Police registration:\n" +
-      "• Non-EU students must register with the Czech Foreign Police within **3 working days** of arrival.\n" +
-      "• EU students must register within **30 days**.\n" +
-      "• If you live in a VŠE dormitory, SKM reports your accommodation automatically, but you must register in person if staying in private housing [45-foreign-police-and-residence-permit-extensions.md].";
+    return "Master's Credit Voucher System at VŠE:\n" +
+      "• Master's students receive **144 vouchers** for a standard 120 ECTS degree.\n" +
+      "• Standard pace is **30 ECTS** per semester.\n" +
+      "• You must earn at least **9 ECTS** in your first semester, or **20 ECTS** across any two consecutive semesters to maintain active enrollment [07-study-regulations-and-credit-system.md].";
   } else {
-    return "I found information from verified VŠE documentation. For specific inquiries regarding official regulations, please visit the **Document Office (Úřadovna)** or consult your faculty study coordinator [04-admission-office-and-applications.md].";
+    return "I found information from verified VŠE documentation. Feel free to explore the modules in InSIS or ask for specific details!";
   }
 }

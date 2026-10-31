@@ -1,20 +1,29 @@
-/* Authentic InSIS (Integrated Study Information System - VŠE) Styling */
+/* ==========================================================================
+   AUTHENTIC VŠE InSIS (Integrated Study Information System) STYLESHEET
+   Accurately recreated from original InSIS portal screenshots
+   ========================================================================== */
+
 :root {
-  --insis-blue-primary: #1a3b5c;
-  --insis-blue-secondary: #005696;
-  --insis-blue-light: #e8f1f8;
-  --insis-header-bg: #142d48;
-  --insis-nav-bg: #204969;
-  --insis-nav-hover: #2e6088;
-  --insis-bg: #f4f6f9;
+  --insis-top-navy: #1b355a;
+  --insis-title-blue: #004b87;
+  --insis-sub-blue: #007bb6;
+  --insis-link-blue: #005596;
+  --insis-userbar-bg: #eaf2fa;
+  --insis-userbar-border: #bcd7f2;
+  --insis-breadcrumb-bg: #f4f4f4;
+  --insis-breadcrumb-border: #e2e2e2;
+  --insis-card-header: #9ea8b3;
+  --insis-card-border: #d0d7de;
   --insis-card-bg: #ffffff;
-  --insis-border: #d0d7de;
-  --insis-text: #24292f;
-  --insis-text-muted: #57606a;
-  --insis-accent-amber: #d97706;
-  --insis-accent-green: #16a34a;
-  --insis-accent-red: #dc2626;
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --insis-text-main: #222222;
+  --insis-text-muted: #555555;
+  --insis-warn-red: #c0392b;
+  --insis-warn-bg: #fdeeed;
+  --insis-warn-border: #f5c6cb;
+  --insis-info-bg: #fdfbe2;
+  --insis-info-border: #f0e9a4;
+  --font-serif: "Georgia", "Times New Roman", Times, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
 * {
@@ -24,536 +33,834 @@
 }
 
 body {
-  font-family: var(--font-family);
-  background-color: var(--insis-bg);
-  color: var(--insis-text);
-  line-height: 1.5;
-  font-size: 14px;
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: var(--insis-text-main);
+  line-height: 1.45;
+  font-size: 13px;
+  position: relative;
+  min-height: 100vh;
 }
 
-/* InSIS Top Utility Bar */
-.top-bar {
-  background-color: var(--insis-header-bg);
-  color: #e0e9f5;
+/* --------------------------------------------------------------------------
+   1. TOP NAVY BAR & AUTHENTIC InSIS HEADER
+   -------------------------------------------------------------------------- */
+.insis-top-bar {
+  background-color: var(--insis-top-navy);
+  color: #ffffff;
+  height: 28px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.insis-top-bar a {
+  color: #ffffff;
+  text-decoration: none;
+  margin-left: 12px;
+}
+
+.insis-top-bar a:hover {
+  text-decoration: underline;
+}
+
+/* Brand Header */
+.insis-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.vse-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.vse-circle-logo {
+  width: 72px;
+  height: 72px;
+  border: 2px solid #005696;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 4px;
+}
+
+.vse-circle-logo .arch-text-top {
+  font-size: 7px;
+  font-weight: 700;
+  color: #005696;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.vse-circle-logo .logo-main-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: #005696;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.vse-circle-logo .arch-text-bot {
+  font-size: 7px;
+  font-weight: 700;
+  color: #005696;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.insis-title-area {
+  margin-left: 20px;
+}
+
+.insis-title-area h1 {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--insis-title-blue);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.insis-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--insis-text-muted);
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   2. LOGGED IN USER STRIP
+   -------------------------------------------------------------------------- */
+.insis-user-bar {
+  background-color: var(--insis-userbar-bg);
+  border-top: 1px solid var(--insis-userbar-border);
+  border-bottom: 1px solid var(--insis-userbar-border);
   padding: 6px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.top-bar-left {
+.insis-user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 16px;
 }
 
-.vse-logo-badge {
-  background-color: #ffffff;
-  color: var(--insis-blue-primary);
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
+.insis-user-name {
+  font-weight: 700;
+  color: #1a2a3a;
 }
 
-.top-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.insis-user-link {
+  color: var(--insis-link-blue);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-.lang-switch a {
-  color: #a5c2e0;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 2px 4px;
+.insis-user-bar .user-close {
+  color: #555555;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
 }
 
-.lang-switch a.active {
-  color: #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.user-status {
-  background: rgba(255, 255, 255, 0.12);
-  padding: 3px 10px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* InSIS Main Header */
-.main-header {
-  background: linear-gradient(135deg, var(--insis-blue-primary) 0%, var(--insis-blue-secondary) 100%);
-  color: white;
-  padding: 16px 20px;
+/* --------------------------------------------------------------------------
+   3. BREADCRUMBS STRIP
+   -------------------------------------------------------------------------- */
+.insis-breadcrumbs {
+  background-color: var(--insis-breadcrumb-bg);
+  border-bottom: 1px solid var(--insis-breadcrumb-border);
+  padding: 7px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 12px;
 }
 
-.header-title h1 {
-  font-size: 20px;
-  font-weight: 700;
+.breadcrumb-path {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.breadcrumb-path a {
+  color: #333333;
+  text-decoration: none;
+}
+
+.breadcrumb-path a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-tools {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.header-title p {
-  font-size: 12px;
-  color: #c9ddf0;
-  margin-top: 2px;
-}
-
-.header-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* InSIS Horizontal Menu / Navigation */
-.nav-bar {
-  background-color: var(--insis-nav-bg);
-  display: flex;
-  overflow-x: auto;
-  padding: 0 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.nav-item {
-  color: #e0e9f5;
-  padding: 10px 16px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  display: flex;
+.tool-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #333333;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
-  border-bottom: 3px solid transparent;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  text-decoration: none;
 }
 
-.nav-item:hover {
-  background-color: var(--insis-nav-hover);
-  color: #ffffff;
-}
-
-.nav-item.active {
-  background-color: var(--insis-nav-hover);
-  color: #ffffff;
-  border-bottom: 3px solid #ffcc00;
-  font-weight: 600;
-}
-
-/* Main Container Grid */
-.container {
-  max-width: 1280px;
-  margin: 20px auto;
-  padding: 0 15px;
+/* --------------------------------------------------------------------------
+   4. NOTICE BANNERS (Personal Data Check & Mobile App)
+   -------------------------------------------------------------------------- */
+.insis-notices-container {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 18px 24px;
 }
 
-@media (max-width: 900px) {
-  .container {
+@media (max-width: 800px) {
+  .insis-notices-container {
     grid-template-columns: 1fr;
   }
 }
 
-/* Sidebar Menu */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.sidebar-card {
-  background: var(--insis-card-bg);
-  border: 1px solid var(--insis-border);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.sidebar-header {
-  background: #f0f4f8;
-  padding: 10px 14px;
-  font-weight: 600;
-  font-size: 13px;
-  border-bottom: 1px solid var(--insis-border);
-  color: var(--insis-blue-primary);
+.notice-box {
+  border-radius: 4px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
 }
 
-.sidebar-menu {
-  list-style: none;
+.notice-box.warning-red {
+  background-color: var(--insis-warn-bg);
+  border: 1px solid var(--insis-warn-border);
 }
 
-.sidebar-menu li a {
-  display: block;
-  padding: 9px 14px;
-  color: var(--insis-text);
-  text-decoration: none;
-  font-size: 13px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.15s;
+.notice-box.info-yellow {
+  background-color: var(--insis-info-bg);
+  border: 1px solid var(--insis-info-border);
 }
 
-.sidebar-menu li a:hover, .sidebar-menu li a.active {
-  background: var(--insis-blue-light);
-  color: var(--insis-blue-primary);
-  font-weight: 600;
-}
-
-/* Main Content Area */
-.main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.content-card {
-  background: var(--insis-card-bg);
-  border: 1px solid var(--insis-border);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.card-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--insis-blue-primary);
-  margin-bottom: 12px;
+.notice-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid var(--insis-blue-light);
-  padding-bottom: 8px;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
 }
 
-/* Breadcrumb */
-.breadcrumb {
-  font-size: 12px;
-  color: var(--insis-text-muted);
-  margin-bottom: 12px;
+.icon-red {
+  background-color: #d93829;
 }
 
-.breadcrumb a {
-  color: var(--insis-blue-secondary);
-  text-decoration: none;
+.icon-blue {
+  background-color: #0088cc;
 }
 
-/* Stat Cards Row */
-.stats-grid {
+.notice-content {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.notice-content a {
+  color: var(--insis-link-blue);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   5. PERSONAL ADMINISTRATION MODULES GRID (13 authentic cards)
+   -------------------------------------------------------------------------- */
+.pa-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 24px 8px 24px;
+}
+
+.btn-open-all {
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #444444;
+}
+
+.pa-modules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 0 24px 20px 24px;
+}
+
+@media (max-width: 1050px) {
+  .pa-modules-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .pa-modules-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pa-card {
+  border: 1px solid var(--insis-card-border);
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--insis-card-bg);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.pa-card-header {
+  background-color: var(--insis-card-header);
+  color: #ffffff;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pa-card-body {
+  padding: 10px 14px;
+  display: flex;
+  gap: 12px;
+  min-height: 130px;
+}
+
+.pa-card-icon {
+  font-size: 32px;
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2px;
+}
+
+.pa-links-list {
+  list-style: none;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.pa-links-list li a {
+  color: var(--insis-link-blue);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pa-links-list li a::before {
+  content: "▫";
+  font-size: 10px;
+  color: #777777;
+}
+
+.pa-links-list li a:hover {
+  text-decoration: underline;
+}
+
+/* Footer Stats Strip */
+.insis-stats-box {
+  margin: 10px 24px 30px 24px;
+  border: 1px solid #d5d5d5;
+  background-color: #ffffff;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-style: italic;
+  color: #444444;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   6. STUDENT'S PORTAL & MASTER'S THESIS VIEW STYLING
+   -------------------------------------------------------------------------- */
+.portal-page-container {
+  padding: 16px 24px;
+}
+
+.portal-title-block {
+  margin-bottom: 14px;
+}
+
+.portal-main-heading {
+  font-size: 20px;
+  color: var(--insis-sub-blue);
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.portal-subheading {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333333;
+}
+
+/* Rounded Navigation Tabs */
+.insis-portal-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: none;
+}
+
+.tab-btn {
+  background-color: #ffffff;
+  border: 1px solid #b8c4d1;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--insis-link-blue);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tab-btn:hover {
+  background-color: #eaf2fa;
+}
+
+.tab-btn.active {
+  border-color: #555555;
+  color: #111111;
+  font-weight: 700;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.portal-intro-text {
+  font-size: 12px;
+  color: #444444;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* Active Study Table */
+.insis-study-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
   margin-bottom: 20px;
 }
 
-.stat-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 14px;
-  text-align: center;
-}
-
-.stat-box .stat-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--insis-text-muted);
-  font-weight: 600;
-}
-
-.stat-box .stat-value {
-  font-size: 22px;
+.insis-study-table th {
+  background-color: #e1f0fa;
+  color: #004b87;
   font-weight: 700;
-  color: var(--insis-blue-primary);
-  margin: 4px 0;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid #c2dcf0;
 }
 
-.stat-box .stat-sub {
-  font-size: 11px;
-  color: var(--insis-accent-green);
-  font-weight: 500;
+.insis-study-table td {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  vertical-align: middle;
 }
 
-/* Tables */
-.insis-table {
+.bullet-green-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #27ae60;
+  display: inline-block;
+  box-shadow: 0 0 0 2px #d4efdf;
+}
+
+/* Master's Thesis Details Card */
+.thesis-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111111;
+  margin: 14px 0 2px 0;
+}
+
+.thesis-section-sub {
+  font-size: 12px;
+  color: #555555;
+  margin-bottom: 10px;
+}
+
+.thesis-info-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
-  margin-top: 10px;
+  font-size: 12px;
+  margin-bottom: 16px;
 }
 
-.insis-table th {
-  background: #f0f4f8;
-  color: var(--insis-blue-primary);
+.thesis-info-table td {
+  padding: 5px 8px;
+  vertical-align: top;
+}
+
+.thesis-info-table td.label-cell {
+  width: 220px;
+  color: #333333;
+}
+
+.thesis-info-table td.value-cell {
   font-weight: 600;
-  padding: 10px;
-  text-align: left;
-  border: 1px solid var(--insis-border);
+  color: #111111;
 }
 
-.insis-table td {
-  padding: 9px 10px;
-  border: 1px solid var(--insis-border);
+.thesis-info-table td.value-cell a {
+  color: var(--insis-link-blue);
+  text-decoration: underline;
 }
 
-.insis-table tr:nth-child(even) {
-  background: #fafbfc;
-}
-
-.insis-table tr:hover {
-  background: #f1f5f9;
-}
-
-/* Status Badges */
-.status-pill {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.status-locked {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.status-active {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.status-warning {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-info {
-  background: #e0f2fe;
-  color: #075985;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: var(--insis-blue-secondary);
-  color: white;
-}
-.btn-primary:hover {
-  background: var(--insis-blue-primary);
-}
-
-.btn-secondary {
-  background: #e5e7eb;
-  color: #374151;
-  border-color: #d1d5db;
-}
-.btn-secondary:hover {
-  background: #d1d5db;
-}
-
-.btn-amber {
-  background: #f59e0b;
-  color: white;
-}
-.btn-amber:hover {
-  background: #d97706;
-}
-
-/* Errata Box */
-.errata-box {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-left: 4px solid #f59e0b;
-  padding: 16px;
-  border-radius: 6px;
-  margin: 15px 0;
-}
-
-/* Floating VŠE Buddy Bot Widget */
-.floating-bot-launcher {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: linear-gradient(135deg, #00386b 0%, #005696 100%);
-  color: white;
-  padding: 12px 18px;
-  border-radius: 30px;
+/* Alert Notification Banner in Thesis View */
+.insis-banner-alert {
+  background-color: #eaf4fd;
+  border: 1px solid #bce0fd;
+  border-radius: 4px;
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 6px 16px rgba(0, 56, 107, 0.35);
-  cursor: pointer;
-  z-index: 1000;
-  font-weight: 600;
-  font-size: 14px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b6cb8;
+  margin-bottom: 20px;
 }
 
-.floating-bot-launcher:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 56, 107, 0.45);
+.insis-banner-alert.locked-success {
+  background-color: #e8f8f0;
+  border-color: #a3e4c1;
+  color: #1e824c;
 }
 
-.bot-panel {
-  position: fixed;
-  bottom: 85px;
-  right: 24px;
-  width: 400px;
-  height: 580px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+/* Action Icons Grid (Display and download files / Editing application) */
+.icons-action-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 14px 0 24px 0;
+  padding: 10px 0;
+}
+
+.icon-action-item {
   display: flex;
   flex-direction: column;
-  z-index: 1000;
-  border: 1px solid var(--insis-border);
+  align-items: center;
+  text-align: center;
+  width: 90px;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.status-badge-above {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.badge-red-x {
+  background-color: #e74c3c;
+}
+
+.badge-green-check {
+  background-color: #27ae60;
+}
+
+.badge-amber-warn {
+  background-color: #f39c12;
+}
+
+.icon-img-box {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+}
+
+.icon-item-label {
+  font-size: 11px;
+  color: var(--insis-link-blue);
+  margin-top: 6px;
+  line-height: 1.25;
+}
+
+.icon-action-item:hover .icon-item-label {
+  text-decoration: underline;
+}
+
+/* Errata Modal Dialog */
+.insis-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.insis-modal-window {
+  background: #ffffff;
+  width: 600px;
+  max-width: 95%;
+  border-radius: 6px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #777777;
 }
 
-.bot-panel.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px) scale(0.95);
+.insis-modal-header {
+  background-color: var(--insis-top-navy);
+  color: white;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
 }
 
-.bot-panel-header {
+.insis-modal-body {
+  padding: 18px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.insis-modal-footer {
+  background: #f0f0f0;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #dddddd;
+}
+
+/* --------------------------------------------------------------------------
+   7. FLOATING CONTROLS (Scroll Arrows & VŠE Buddy Bot)
+   -------------------------------------------------------------------------- */
+.floating-scroll-controls {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.scroll-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.15s;
+}
+
+.scroll-circle-btn:hover {
+  background-color: #2d3748;
+}
+
+/* Floating AI Bot Assistant Trigger */
+.floating-bot-pill {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
   background: linear-gradient(135deg, #00386b 0%, #005696 100%);
   color: white;
-  padding: 12px 16px;
+  padding: 10px 18px;
+  border-radius: 25px;
   display: flex;
   align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 56, 107, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: transform 0.15s;
+}
+
+.floating-bot-pill:hover {
+  transform: translateY(-2px);
+}
+
+/* Bot Drawer */
+.bot-drawer {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  width: 400px;
+  height: 580px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+  border: 1px solid #b8c4d1;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.bot-drawer.hidden {
+  display: none;
+}
+
+.bot-drawer-header {
+  background-color: var(--insis-top-navy);
+  color: white;
+  padding: 10px 14px;
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.bot-panel-header h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.bot-panel-close {
+.bot-drawer-close {
   background: none;
   border: none;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.bot-messages {
+.bot-messages-area {
   flex: 1;
   overflow-y: auto;
-  padding: 14px;
+  padding: 12px;
+  background-color: #f7f9fa;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: #f8fafc;
+  gap: 10px;
 }
 
-.bot-bubble {
-  max-width: 85%;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 13px;
+.bot-msg-bubble {
+  max-width: 88%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
-.bot-bubble.assistant {
-  background: white;
-  color: #1e293b;
+.bot-msg-bubble.assistant {
+  background: #ffffff;
+  color: #222222;
   align-self: flex-start;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border: 1px solid #d5dbe0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-.bot-bubble.user {
-  background: #005696;
-  color: white;
+.bot-msg-bubble.user {
+  background: var(--insis-link-blue);
+  color: #ffffff;
   align-self: flex-end;
 }
 
-.bot-quick-chips {
-  padding: 8px 12px;
-  background: white;
+.bot-quick-chips-strip {
+  padding: 6px 10px;
+  background: #ffffff;
   border-top: 1px solid #e2e8f0;
   display: flex;
-  gap: 6px;
+  gap: 5px;
   overflow-x: auto;
 }
 
-.chip-btn {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
+.mini-chip {
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
   border-radius: 12px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   font-size: 11px;
   cursor: pointer;
   white-space: nowrap;
-  color: #1e293b;
+  color: #2d3748;
 }
 
-.chip-btn:hover {
+.mini-chip:hover {
   background: #e2e8f0;
 }
 
-.bot-input-area {
-  padding: 10px 12px;
-  background: white;
-  border-top: 1px solid var(--insis-border);
+.bot-input-strip {
+  padding: 8px 10px;
+  background: #ffffff;
+  border-top: 1px solid #d0d7de;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
-.bot-input-area input {
+.bot-input-strip input {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid var(--insis-border);
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 12px;
   outline: none;
 }
 
-.bot-input-area input:focus {
-  border-color: var(--insis-blue-secondary);
-}
-
-.bot-send-btn {
-  background: var(--insis-blue-secondary);
+.bot-input-strip button {
+  background: var(--insis-link-blue);
   color: white;
   border: none;
-  padding: 0 14px;
-  border-radius: 6px;
+  padding: 0 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 12px;
 }
