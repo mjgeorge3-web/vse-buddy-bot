@@ -42,7 +42,40 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=demo_dir, **kwargs)
 
     def do_GET(self):
-        # 1. API: insis-links JSON
+        # 1. API: InSIS Navigation Database Query
+        if self.path.startswith("/api/insis/navigate"):
+            import urllib.parse
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query_str = params.get("q", [""])[0]
+            limit_val = int(params.get("limit", [3])[0])
+
+            try:
+                import insis_nav_db
+                routes = insis_nav_db.search_routes(query_str, limit=limit_val)
+                payload = {
+                    "query": query_str,
+                    "count": len(routes),
+                    "results": routes
+                }
+            except Exception as e:
+                payload = {
+                    "query": query_str,
+                    "count": 0,
+                    "error": str(e),
+                    "results": []
+                }
+
+            resp_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(resp_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+            return
+
+        # 1b. API: insis-links JSON
         if self.path.startswith("/api/insis-links"):
             all_urls_path = Path(__file__).resolve().parent / "all_urls.json"
             if all_urls_path.exists():

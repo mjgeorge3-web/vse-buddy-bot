@@ -1360,6 +1360,106 @@
     "text": "Final thesis submission, InSIS errata, defense and reviews at VŠE\n\n## 7. Thesis Defense Presentation (Obhajoba)\n1. **Prerequisites:** All required coursework and ECTS credits completed (180 ECTS for Bachelor, 120 ECTS for Master), thesis submitted on time.\n2. **Registration:** Register for the defense date under **Student's Portal** → **State Final Exams (SZZ / Státnice)**.\n3. **Presentation:** Prepare a 5–10 minute presentation (PowerPoint or PDF slides):\n   - Background, motivation, and practical relevance.\n   - Research questions / objectives.\n   - Methodology and dataset / prototype implementation.\n   - Key findings, evaluation metrics, and thesis contribution.\n4. **Defense Procedure:**\n   - Introduction of candidate and thesis title by the committee chair.\n   - Student delivers the presentation.\n   - Reading of the supervisor's and opponent's reviews.\n   - Student presents direct, prepared answers to the review questions.\n   - Open discussion and questions from committee members.\n   - Closed committee deliberation and final grade announcement."
   },
   {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#0",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n# Complete directory of official InSIS portals, deep links and documentation references"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#1",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 1. Main InSIS Portals & Authentication Links\n- **InSIS Public Portal (English):** https://insis.vse.cz/?lang=en\n- **InSIS Personal Administration Login (`/auth/`):** https://insis.vse.cz/auth/?lang=en\n- **First Login to InSIS Instructions:** https://insis.vse.cz/navod/?lang=en\n- **Multi-Factor Authentication (MFA / TOTP Setup):** https://insis.vse.cz/auth/system/totp.pl?lang=en\n- **System Integrators (Faculty & Department Contacts):** https://insis.vse.cz/dok/integratori.pl?lang=en\n- **Official InSIS Help & Documentation Index:** https://insis.vse.cz/dok/help.pl?lang=en\n- **InSIS Operations & Usage Statistics:** https://insis.vse.cz/system/agregat.pl?lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#2",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 2. Authenticated Student's Portal (My College / Portál studenta)\n- **Student's Portal Main Dashboard:** https://insis.vse.cz/auth/student/studium.pl?lang=en\n- **Course Registration & Enrollment (Registrace a zápis předmětů):** https://insis.vse.cz/auth/student/registrace.pl?lang=en\n- **Check of Study Plan & Credit Vouchers (Kontrola studijního plánu):** https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en\n- **E-Study Record / Transcript of Records (E-výkaz o studiu):** https://insis.vse.cz/auth/student/arch_studia.pl?lang=en\n- **Exam Dates & Exam Registration (Přihlašování na zkoušky):** https://insis.vse.cz/auth/student/zkousky.pl?lang=en\n- **Coursework Submission / Drop-in Box (Odevzdávárna):** https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en\n- **My Lectures Sheet / Continuous Grades (Záznamník učitele):** https://insis.vse.cz/auth/student/zaznamnik.pl?lang=en\n- **Personal Weekly Timetable & iCal Export (Můj rozvrh):** https://insis.vse.cz/auth/katalog/rozvrhy_view.pl?lang=en\n- **Course Evaluation Survey by Students (Studentská evaluace):** https://insis.vse.cz/auth/anketa/?lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#3",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 3. Final Thesis, Errata & State Final Exams (Závěrečné práce a SZZ)\n- **Public Final Theses Repository & Search:** https://insis.vse.cz/zp/?lang=en\n- **Final Theses by Department:** https://insis.vse.cz/zp/portal_zp.pl?prehled=pracoviste;lang=en\n- **Final Theses at Faculty of Informatics and Statistics (FIS):** https://insis.vse.cz/zp/portal_zp.pl?id=40;pracoviste=40;prehled=pracoviste;lang=en\n- **Final Theses by Supervisor:** https://insis.vse.cz/zp/portal_zp.pl?prehled=vedouci;lang=en\n- **Final Theses by Study Programme:** https://insis.vse.cz/zp/portal_zp.pl?prehled=program;lang=en\n- **Authenticated Final Thesis Submission & Insert Errata (`§ 47b`):** https://insis.vse.cz/auth/student/zp.pl?lang=en\n- **List of Final Thesis Topics (Témata závěrečných prací):** https://insis.vse.cz/auth/student/temata_zp.pl?lang=en\n- **State Final Exams & Defense Registration (SZZ / Státnice):** https://insis.vse.cz/auth/student/szz.pl?lang=en\n- **InSIS Help – Final Theses Guide:** https://insis.vse.cz/help.pl?page=10002;lang=en\n- **InSIS Help – Final Examinations & Official Outcomes:** https://insis.vse.cz/help.pl?page=10761;lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#4",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 4. Course Catalogue, Study Plans & Faculty Timetables\n- **Public Course Catalogue (All Semesters):** https://insis.vse.cz/katalog/?lang=en\n- **Course Catalogue – Courses Taught in Foreign Languages:** https://insis.vse.cz/katalog/index.pl?jak=pro_cizince;lang=en\n- **Course Catalogue – Search by Department:** https://insis.vse.cz/katalog/index.pl?jak=dle_pracovist;lang=en\n- **Study Plans & Degree Programmes Overview:** https://insis.vse.cz/katalog/plany.pl?lang=en\n- **Study Plans – Faculty of Informatics and Statistics (FIS):** https://insis.vse.cz/katalog/plany.pl?fakulta=40;lang=en\n- **Study Plans – Faculty of International Relations (FMV):** https://insis.vse.cz/katalog/plany.pl?fakulta=20;lang=en\n- **Study Plans – Faculty of Business Administration (FPH):** https://insis.vse.cz/katalog/plany.pl?fakulta=30;lang=en\n- **Study Plans – Faculty of Finance and Accounting (FFÚ):** https://insis.vse.cz/katalog/plany.pl?fakulta=10;lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#5",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n- **Study Plans – Faculty of Economics (NF):** https://insis.vse.cz/katalog/plany.pl?fakulta=50;lang=en\n- **Study Plans – Faculty of Management (FM):** https://insis.vse.cz/katalog/plany.pl?fakulta=60;lang=en\n- **Weekly Course Timetables (Public View):** https://insis.vse.cz/katalog/rozvrhy_view.pl?lang=en\n- **Electronic Study Materials (Public e-Library):** https://insis.vse.cz/eknihovna/?lang=en\n- **Academic Year Schedule (All Faculties):** https://insis.vse.cz/student/harmonogram.pl?lang=en\n- **Academic Year Schedule – FIS:** https://insis.vse.cz/student/harmonogram.pl?fakulta=40;lang=en\n- **Academic Year Schedule – International Office (OZS):** https://insis.vse.cz/student/harmonogram.pl?fakulta=114;lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#6",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 5. eAgenda, Confirmations, Document Server & Personal Management\n- **Official Electronic Confirmation of Study (Signed PDF):** https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en\n- **Personal Document Storage (Úschovna dokumentů):** https://insis.vse.cz/auth/uschovna/?lang=en\n- **Electronic Document Office / Contact Centre (Úřadovna):** https://insis.vse.cz/auth/uradovna/?lang=en\n- **Personal Data & Prague Address Check (Osobní údaje):** https://insis.vse.cz/auth/lide/moje_udaje.pl?lang=en\n- **Internal InSIS Mailbox:** https://insis.vse.cz/auth/posta/?lang=en\n- **Public Document Server (Official Regulations & Decrees):** https://insis.vse.cz/dok_server/?lang=en\n- **Public Document Server – Rectorate & Study Regulations:** https://insis.vse.cz/dok_server/slozka.pl?id=318;lang=en\n- **Public Document Server – VŠE Statute:** https://insis.vse.cz/dok_server/slozka.pl?id=7707;lang=en\n- **Public Document Server – FIS Official Noticeboard:** https://insis.vse.cz/dok_server/slozka.pl?id=321;lang=en\n- **Single Digital Gateway (EU Regulation 2018/1724):** https://insis.vse.cz/sdg?lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#7",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 6. Study Financing, Tuition Fees, Scholarships & Admissions\n- **Public Study Financing Portal:** https://insis.vse.cz/financovani/index.pl?lang=en\n- **Authenticated Study Financing, Variable Symbol & Bank Accounts:** https://insis.vse.cz/auth/financovani/index.pl?lang=en\n- **VŠE Study Finance Information Portal:** https://studyfinance.vse.cz/financing\n- **Authenticated Scholarships & Accommodation Grant Portal:** https://insis.vse.cz/auth/stipendia/?lang=en\n- **Public Scholarship Announcements Folder:** https://insis.vse.cz/dok_server/slozka.pl?id=76487;lang=en\n- **E-Application Form to Study at VŠE:** https://insis.vse.cz/prihlaska/?lang=en\n- **Pre-Enrollment Confirmation (Elektronická návratka):** https://insis.vse.cz/navratka/?lang=en\n- **Extra-Semestral & Lifelong Courses on Offer:** https://insis.vse.cz/kurzy/nabidka_kurzu.pl?lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#8",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n## 7. University Directories, ID Cards & Official InSIS Help Topics\n- **People Directory at VŠE (Search Staff & Faculty):** https://insis.vse.cz/lide/?lang=en\n- **Departments & Organizational Structure:** https://insis.vse.cz/pracoviste/pracoviste.pl?lang=en\n- **Thematic Search Across InSIS:** https://insis.vse.cz/hledani/?lang=en\n- **Student ID Card Validity Verification:** https://insis.vse.cz/karty/platnost.pl?lang=en\n- **Identification Card Types in Use:** https://insis.vse.cz/karty/typy_karet.pl?lang=en\n- **InSIS Help – Registration Coupons (Credit Vouchers):** https://insis.vse.cz/help.pl?page=15874;lang=en\n- **InSIS Help – Course Registrations:** https://insis.vse.cz/help.pl?page=8448;lang=en\n- **InSIS Help – Course Enrollment Rounds:** https://insis.vse.cz/help.pl?page=12328;lang=en\n- **InSIS Help – Exam Period & Registration:** https://insis.vse.cz/help.pl?page=15873;lang=en\n- **InSIS Help – Study Plan & Standard Progression:** https://insis.vse.cz/help.pl?page=15212;lang=en"
+  },
+  {
+    "chunk_id": "49-insis-complete-reference-links-directory.md#9",
+    "doc_id": "49-insis-complete-reference-links-directory.md",
+    "title": "Complete directory of official InSIS portals, deep links and documentation references",
+    "source_url": "https://insis.vse.cz/?lang=en, https://insis.vse.cz/dok/help.pl?lang=en, https://insis.vse.cz/auth/?lang=en",
+    "date_saved": "2026-10-31",
+    "unverified": false,
+    "is_contacts": false,
+    "text": "Complete directory of official InSIS portals, deep links and documentation references\n\n- **InSIS Help – Study Average Score (GPA Calculation):** https://insis.vse.cz/help.pl?page=8544;lang=en\n- **InSIS Help – Scholarships:** https://insis.vse.cz/help.pl?page=11263;lang=en\n- **InSIS Help – Financing and Fees:** https://insis.vse.cz/help.pl?page=10782;lang=en"
+  },
+  {
     "chunk_id": "contacts.md#0",
     "doc_id": "contacts.md",
     "title": "Verified VŠE contacts (international office, faculties, counselling, housing, IT, emergencies)",

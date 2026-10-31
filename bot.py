@@ -253,6 +253,49 @@ class BuddyBot:
             context_chunks = chunks
 
         # -------------------------------------------------------------
+        # 4b. InSIS Navigation Database Integration
+        # -------------------------------------------------------------
+        # If the student asks about InSIS workflows, portals, or navigation,
+        # retrieve exact procedural breadcrumbs and click sequences.
+        insis_triggers = [
+            "insis", "portal", "where", "how do i", "how can i", "path", "find",
+            "enroll", "register", "submit", "upload", "thesis", "voucher", "exam",
+            "timetable", "grades", "confirmation", "tuition", "variable symbol",
+            "password", "otp", "zapis", "diplomka", "rozvrh", "koleje", "iskam"
+        ]
+        q_lower = question.lower()
+        if any(term in q_lower for term in insis_triggers):
+            try:
+                import insis_nav_db
+                nav_routes = insis_nav_db.search_routes(question, limit=1)
+                if nav_routes:
+                    top_nav = nav_routes[0]
+                    nav_chunk = {
+                        "id": f"insis_nav_{top_nav['task_id']}",
+                        "doc_id": "insis_nav_db",
+                        "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
+                        "source_url": top_nav["official_url"],
+                        "date_saved": "2026-10-31",
+                        "unverified": False,
+                        "score": 0.98,
+                        "text": (
+                            f"InSIS Navigation Task: {top_nav['title_en']} ({top_nav['title_cs']})\n"
+                            f"Category: {top_nav['category']} | InSIS Path: {top_nav['portal_path']}\n"
+                            f"Breadcrumb Trail: {top_nav['breadcrumbs']}\n"
+                            f"Step-by-Step Instructions:\n{top_nav['step_by_step_instructions']}\n"
+                            f"Prerequisites: {top_nav.get('prerequisites', 'None')}\n"
+                            f"Important Note: {top_nav.get('common_pitfalls', 'None')}\n"
+                            f"Interactive Demo: {top_nav['demo_url']}\n"
+                        ),
+                        "is_insis_nav": True,
+                    }
+                    context_chunks = [nav_chunk] + [c for c in context_chunks if not c.get("is_insis_nav")]
+                    if mode == "no_context":
+                        mode = "normal"
+            except Exception as e:
+                print(f"[InSIS DB Query Warning]: {e}")
+
+        # -------------------------------------------------------------
         # 5. Gemini Generation
         # -------------------------------------------------------------
         prompt_content = prompts.build_prompt_with_context(question, context_chunks)
