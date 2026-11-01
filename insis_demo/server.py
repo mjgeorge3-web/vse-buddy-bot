@@ -10,7 +10,7 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import json
 import os
 from pathlib import Path
@@ -302,16 +302,19 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
 
 
 def run(port=8502):
+    print("⏳ Pre-warming BuddyBot knowledge engine...", flush=True)
+    get_bot()
+    print("✅ BuddyBot engine ready!", flush=True)
     server_address = ("", port)
-    httpd = HTTPServer(server_address, InSISDemoHandler)
-    print(f"============================================================")
-    print(f"🚀 InSIS Demo Website running at: http://localhost:{port}")
-    print(f"🎓 Embedded VŠE Buddy Bot API ready at: http://localhost:{port}/api/chat")
-    print(f"============================================================")
+    httpd = ThreadingHTTPServer(server_address, InSISDemoHandler)
+    print(f"============================================================", flush=True)
+    print(f"🚀 InSIS Demo Website running at: http://localhost:{port}", flush=True)
+    print(f"🎓 Embedded VŠE Buddy Bot API ready at: http://localhost:{port}/api/chat", flush=True)
+    print(f"============================================================", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopping InSIS Demo Server...")
+        print("\nStopping InSIS Demo Server...", flush=True)
         httpd.server_close()
 
 
