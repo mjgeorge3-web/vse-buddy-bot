@@ -195,6 +195,23 @@ body {
   background: #f6f8fa;
 }
 
+.btn-public-continue {
+  width: 100%;
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-public-continue:hover {
+  background: #e0f2fe;
+}
+
 .login-footer-links {
   margin-top: 20px;
   padding-top: 15px;
@@ -296,30 +313,29 @@ body {
 
 .insis-title-area h1 {
   font-family: var(--font-serif);
-  font-size: 26px;
+  font-size: 25px;
   font-weight: 400;
-  color: var(--insis-title-blue);
+  color: #008ad0;
   margin: 0;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 
 .insis-header-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--insis-text-muted);
   margin-top: 4px;
 }
 
 /* --------------------------------------------------------------------------
-   2. LOGGED IN USER STRIP
+   2. LOGGED IN / PUBLIC USER STRIP
    -------------------------------------------------------------------------- */
 .insis-user-bar {
-  background-color: var(--insis-userbar-bg);
-  border-top: 1px solid var(--insis-userbar-border);
-  border-bottom: 1px solid var(--insis-userbar-border);
-  padding: 6px 20px;
+  background-color: #e6f3fb;
+  min-height: 28px;
+  padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -354,9 +370,10 @@ body {
    3. BREADCRUMBS STRIP
    -------------------------------------------------------------------------- */
 .insis-breadcrumbs {
-  background-color: var(--insis-breadcrumb-bg);
-  border-bottom: 1px solid var(--insis-breadcrumb-border);
-  padding: 7px 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin: 10px 12px 0 12px;
+  padding: 7px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1030,4 +1047,229 @@ body {
   cursor: pointer;
   font-weight: 700;
   font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   8. AUTHENTIC PUBLIC InSIS HOMEPAGE (No Login Required - Screenshots 1 & 2)
+   -------------------------------------------------------------------------- */
+.public-insis-container {
+  padding: 24px 36px 50px 32px;
+  max-width: 1180px;
+}
+
+.public-cat-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 26px;
+}
+
+.public-cat-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.public-cat-body {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.public-cat-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 2px;
+}
+
+.public-cat-links {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #222222;
+}
+
+.public-cat-links .pub-bullet {
+  color: #222222;
+  margin: 0 5px;
+  font-weight: 700;
+}
+
+.public-cat-links .pub-bullet:first-child {
+  margin-left: 4px;
+}
+
+.public-cat-links a {
+  color: #0b5394;
+  text-decoration: underline;
+  border-radius: 3px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.public-cat-links a:hover {
+  color: #003366;
+}
+
+.public-cat-links a.pub-bold-link {
+  font-weight: 700;
+}
+
+.public-lang-footer {
+  margin-top: 26px;
+  margin-left: 42px;
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+
+.public-lang-footer .pub-square-bullet {
+  color: #1b91e5;
+  font-style: normal;
+  margin-right: 4px;
+}
+
+.public-lang-footer a {
+  color: #0b5394;
+  font-style: italic;
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   9. BOT STATUS BAR, CHECKLIST CARD & PAGE HIGHLIGHT PULSE
+   -------------------------------------------------------------------------- */
+.bot-status-strip {
+  background: #f0f6fc;
+  border-bottom: 1px solid #d4e4f4;
+  padding: 5px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  gap: 8px;
+}
+
+.bot-status-badge {
+  font-weight: 600;
+  color: #1e3a5f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bot-status-badge.public {
+  color: #0369a1;
+}
+
+.bot-status-link {
+  color: #005596;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bot-gdpr-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bot-msg-bubble a {
+  color: #005596;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.bot-msg-bubble.user a {
+  color: #ffffff;
+}
+
+/* Interactive Pre-Arrival / Onboarding Checklist Card inside Bot Chat */
+.bot-checklist-card {
+  background: #ffffff;
+  border: 1px solid #bcd7f2;
+  border-radius: 8px;
+  padding: 10px 11px;
+  font-size: 11.5px;
+  box-shadow: 0 2px 6px rgba(0, 85, 150, 0.08);
+}
+
+.bot-checklist-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 6px 0 8px 0;
+}
+
+.bot-checklist-controls select {
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.bot-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.bot-checklist-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  cursor: pointer;
+  flex: 1;
+  line-height: 1.35;
+}
+
+.bot-checklist-ask {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: none;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bot-checklist-ask:hover {
+  background: #bae6fd;
+}
+
+/* Spotlight pulse when Bot points to an item on Public or Authenticated InSIS */
+@keyframes insisSpotlightPulse {
+  0% {
+    background-color: #fef08a;
+    box-shadow: 0 0 0 3px #facc15;
+  }
+  50% {
+    background-color: #fde047;
+    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0.45);
+  }
+  100% {
+    background-color: #fef9c3;
+    box-shadow: 0 0 0 2px #eab308;
+  }
+}
+
+.insis-highlight-pulse {
+  animation: insisSpotlightPulse 1.1s ease-in-out 3;
+  background-color: #fef9c3 !important;
+  box-shadow: 0 0 0 2px #eab308 !important;
+  padding: 1px 4px;
+  border-radius: 4px;
 }

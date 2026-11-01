@@ -172,7 +172,46 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             self.wfile.write(resp_bytes)
             return
 
-        # 1b. API: insis-links JSON
+        # 1e. API: Tailored Pre-Arrival & Onboarding Checklist (Works with or without login)
+        if self.path.startswith("/api/vse/checklist"):
+            import urllib.parse
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            origin_val = params.get("origin", ["non_eu"])[0]
+            housing_val = params.get("housing", ["dorm"])[0]
+            stage_val = params.get("stage", ["pre_arrival"])[0]
+
+            try:
+                import student_profile
+                items = student_profile.get_onboarding_checklist(
+                    origin=origin_val,
+                    housing=housing_val,
+                    stage=stage_val,
+                )
+                payload = {
+                    "origin": origin_val,
+                    "housing": housing_val,
+                    "stage": stage_val,
+                    "count": len(items),
+                    "items": items,
+                }
+            except Exception as e:
+                payload = {
+                    "error": str(e),
+                    "count": 0,
+                    "items": [],
+                }
+
+            resp_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(resp_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+            return
+
+        # 1f. API: insis-links JSON
         if self.path.startswith("/api/insis-links"):
             all_urls_path = Path(__file__).resolve().parent / "all_urls.json"
             if all_urls_path.exists():
@@ -213,10 +252,11 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                 data = json.loads(body)
                 question = data.get("question", "")
                 history = data.get("history", [])
+                user_context = data.get("user_context")
 
                 bot = get_bot()
                 if bot:
-                    result = bot.answer(question=question, history=history)
+                    result = bot.answer(question=question, history=history, user_context=user_context)
                     resp_data = {
                         "status": "success",
                         "answer": result.get("answer", ""),

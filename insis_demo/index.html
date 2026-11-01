@@ -15,7 +15,7 @@
     <div class="url-nav-label">
       <span>🌐 InSIS URL:</span>
     </div>
-    <input type="text" id="insis-url-input" class="url-input-box" value="https://insis.vse.cz/auth/?lang=en" onkeydown="handleUrlKey(event)">
+    <input type="text" id="insis-url-input" class="url-input-box" value="https://insis.vse.cz/?lang=en" onkeydown="handleUrlKey(event)">
     <select id="insis-url-select" class="url-dropdown-select" onchange="handleSelectUrl(this.value)">
       <option value="">-- Jump to any of 195 InSIS URLs --</option>
       <!-- Populated dynamically from all_urls.json -->
@@ -25,13 +25,13 @@
 
   <!-- 1. Top Navy Utility Bar -->
   <div class="insis-top-bar">
-    <a href="#" onclick="alert('Jazyk: Čeština')">ČESKY</a>
-    <a href="#" onclick="alert('Jazyk: Slovenčina')">SLOVENSKY</a>
+    <a href="#" onclick="alert('Jazyk: Čeština'); return false;">ČESKY</a>
+    <a href="#" onclick="alert('Jazyk: Slovenčina'); return false;">SLOVENSKY</a>
   </div>
 
   <!-- 2. Authentic Brand Header -->
   <header class="insis-header">
-    <div class="vse-logo-container">
+    <div class="vse-logo-container" style="cursor:pointer;" onclick="goHome()">
       <div class="vse-circle-logo">
         <span class="arch-text-top">UNIVERSITY OF</span>
         <span class="arch-text-top" style="font-size:6px;">ECONOMICS &amp; BUSINESS</span>
@@ -41,41 +41,260 @@
       <div class="insis-title-area">
         <h1>Integrated Study Information System</h1>
         <div class="insis-header-meta">
-          <span>🕒 Oct 31, 2026 &nbsp; 5:01 p.m.</span>
-          <span>📅 Štěpánka</span>
+          <span>🕒 Nov 1, 2026 &nbsp; 0:44 a.m.</span>
+          <span>📅 Felix</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- 3. User Session Bar -->
+  <!-- 3. User Session Bar (Clean pale blue strip when logged out on Public Home, matching original InSIS) -->
   <div class="insis-user-bar" id="insis-user-bar">
-    <div class="insis-user-info" id="user-info-logged-in">
+    <div class="insis-user-info" id="user-info-logged-in" style="display:none;">
       <span><strong>Logged in:</strong> <span class="insis-user-name" id="display-user-name">George Joseph</span></span>
       <a class="insis-user-link" href="https://o365.vse.cz" target="_blank">Office365</a>
-      <a class="insis-user-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/uschovna/?lang=en')">13 documents</a>
-      <a class="insis-user-link" href="#" onclick="alert('0 active tasks pending.')">0 tasks</a>
+      <a class="insis-user-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/uschovna/?lang=en'); return false;">13 documents</a>
+      <a class="insis-user-link" href="#" onclick="alert('0 active tasks pending.'); return false;">0 tasks</a>
       <span style="opacity:0.4;">|</span>
-      <a class="insis-user-link" href="#" onclick="performLogout()" style="color:#c0392b; font-weight:700;">[Log out]</a>
+      <a class="insis-user-link" href="#" onclick="performLogout(); return false;" style="color:#c0392b; font-weight:700;">[Log out]</a>
     </div>
     <div class="insis-user-info" id="user-info-logged-out" style="display:none;">
-      <span>You are currently not logged in.</span>
-      <a class="insis-user-link" href="#" onclick="showLoginView()" style="font-weight:700;">[Log in to InSIS]</a>
+      <a class="insis-user-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/?lang=en'); return false;">&larr; Public InSIS Home</a>
+      <span style="opacity:0.4;">|</span>
+      <a class="insis-user-link" href="#" onclick="showLoginView(); return false;" style="font-weight:700;">Log in to Personal administration</a>
     </div>
-    <div class="user-close" title="Toggle session status" onclick="alert('InSIS session active.')">✕</div>
+    <div class="user-close" id="user-bar-close" style="display:none;" title="Session status" onclick="alert('InSIS session active.')">✕</div>
   </div>
 
   <!-- 4. Breadcrumb Strip -->
   <div class="insis-breadcrumbs" id="insis-breadcrumbs">
     <div class="breadcrumb-path" id="breadcrumb-path">
-      <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/?lang=en')">🏠</a>
-      <span id="breadcrumb-dynamic">&raquo; Personal administration</span>
+      <a href="#" onclick="goHome(); return false;" title="InSIS Home" style="font-size:15px;">🏠</a>
+      <span id="breadcrumb-dynamic">&raquo; <strong>Integrated Study Information System</strong></span>
     </div>
-    <div class="breadcrumb-tools">
-      <a href="#" class="tool-circle" onclick="openSearchModal()" title="Search">🔍</a>
-      <a href="#" class="tool-circle" onclick="openHelpModal()" title="Help">?</a>
+    <div class="breadcrumb-tools" id="breadcrumb-tools">
+      <a href="#" class="tool-circle" onclick="openSearchModal(); return false;" title="Search">🔍</a>
+      <a href="#" class="tool-circle" onclick="openHelpModal(); return false;" title="Help">?</a>
     </div>
   </div>
+
+
+  <!-- =========================================================================
+       VIEW 0: AUTHENTIC PUBLIC InSIS HOMEPAGE (No Login Required)
+       Matches uploaded Screenshots 1 & 2 of https://insis.vse.cz/?lang=en
+       ========================================================================= -->
+  <main id="view-public-home" class="insis-view">
+    <div class="public-insis-container">
+
+      <!-- Row 1: Personal administration -->
+      <div class="public-cat-row" id="pub-row-personal">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <circle cx="24" cy="14" r="9.5" fill="#f3b26b"/>
+            <path d="M8 42 C8 31, 40 31, 40 42 Z" fill="#5e7682"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Personal administration</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-login" class="pub-bold-link" href="#" onclick="showLoginView(); return false;">Log in to the Personal administration of InSIS</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-first-login" href="#" onclick="navigateToUrl('https://insis.vse.cz/navod/?lang=en'); return false;">First log in to InSIS instructions</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/integratori.pl?lang=en'); return false;">System integrators</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Admission procedure -->
+      <div class="public-cat-row" id="pub-row-admission">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <rect x="6" y="6" width="28" height="34" rx="2" fill="#d8e8f8" stroke="#9abbe0" stroke-width="1"/>
+            <rect x="6" y="6" width="28" height="7" rx="1" fill="#2d74b8"/>
+            <line x1="10" y1="18" x2="29" y2="18" stroke="#5b8ec4" stroke-width="2"/>
+            <line x1="10" y1="23" x2="29" y2="23" stroke="#5b8ec4" stroke-width="2"/>
+            <line x1="10" y1="28" x2="25" y2="28" stroke="#5b8ec4" stroke-width="2"/>
+            <line x1="10" y1="33" x2="21" y2="33" stroke="#5b8ec4" stroke-width="2"/>
+            <g transform="translate(27, 29) rotate(-42)">
+              <rect x="-10" y="-3.2" width="20" height="6.4" fill="#f59e0b"/>
+              <polygon points="-10,-3.2 -15,0 -10,3.2" fill="#fde68a"/>
+              <polygon points="-13.2,-1.2 -15,0 -13.2,1.2" fill="#333"/>
+              <rect x="10" y="-3.2" width="3.5" height="6.4" fill="#ef4444"/>
+            </g>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Admission procedure</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-eapp" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/prihlaska/?lang=en'); return false;">E-application form to study at VŠE</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-preenroll" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/navratka/?lang=en'); return false;">Pre-enrollment confirmation for application to study at VŠE</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-courses-offer" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/kurzy/?lang=en'); return false;">Courses on offer</a>
+          </div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/prihlaska/u3v.pl?lang=en'); return false;">Application to U3V</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Information about VŠE -->
+      <div class="public-cat-row" id="pub-row-info">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <circle cx="24" cy="24" r="19" fill="#1b91e5"/>
+            <circle cx="24" cy="14.5" r="2.6" fill="#ffffff"/>
+            <rect x="21.5" y="20" width="5" height="15" rx="1.5" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Information about VŠE</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-persons" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/lide/?lang=en'); return false;">Persons at VŠE</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/karty/overeni.pl?lang=en'); return false;">Validity verification of identification cards</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-depts" href="#" onclick="navigateToUrl('https://insis.vse.cz/pracoviste/pracoviste.pl?lang=en'); return false;">Departments</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/hledani/?lang=en'); return false;">Thematic search</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/karty/typy_karet.pl?lang=en'); return false;">Identification cards in use</a>
+          </div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-docserver" href="#" onclick="navigateToUrl('https://insis.vse.cz/dok_server/?lang=en'); return false;">Public document server</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/sdg/?lang=en'); return false;">Single Digital Gateway</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Study information -->
+      <div class="public-cat-row" id="pub-row-study">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <path d="M5 11 C5 9.5, 6.5 8, 8 8 L18 8 L22 12 L39 12 C40.5 12, 42 13.5, 42 15 L42 36 C42 37.5, 40.5 39, 39 39 L8 39 C6.5 39, 5 37.5, 5 36 Z" fill="#f6c636"/>
+            <circle cx="35" cy="34" r="9.5" fill="#1b91e5"/>
+            <circle cx="35" cy="29.5" r="1.4" fill="#ffffff"/>
+            <rect x="33.7" y="32.2" width="2.6" height="7" rx="0.8" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Study information</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-schedule" href="#" onclick="navigateToUrl('https://insis.vse.cz/harmonogram/harmonogram.pl?lang=en'); return false;">Academic year schedule</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-plans" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/plany.pl?lang=en'); return false;">Study plans</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-catalogue" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/?lang=en'); return false;">Course catalogue</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-materials" href="#" onclick="navigateToUrl('https://insis.vse.cz/eknihovna/?lang=en'); return false;">Electronic study materials</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-theses" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/temata_zp.pl?lang=en'); return false;">Final theses at VŠE</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-timetables" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/rozvrhy.pl?lang=en'); return false;">Timetables</a>
+          </div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/akreditace/prehled.pl?lang=en'); return false;">List of approved accreditation applications</a>
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-financing" href="#" onclick="navigateToUrl('https://insis.vse.cz/financovani/?lang=en'); return false;">Study financing</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: Science and research information -->
+      <div class="public-cat-row" id="pub-row-science">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <rect x="16" y="5" width="12" height="3.5" rx="1" fill="#6b96c3"/>
+            <path d="M18 8.5 L18 16 L9 32 C7.5 35, 9.5 39, 13 39 L31 39 C34.5 39, 36.5 35, 35 32 L26 16 L26 8.5 Z" fill="#cbe2f6" stroke="#8ab4dc" stroke-width="1"/>
+            <path d="M12.5 26 L31.5 26 L35 32 C36.2 34.8, 34.2 38.5, 31 38.5 L13 38.5 C9.8 38.5, 7.8 34.8, 9 32 Z" fill="#b7f032"/>
+            <circle cx="18" cy="32" r="2" fill="#e9f99d"/>
+            <circle cx="24" cy="35" r="1.4" fill="#e9f99d"/>
+            <circle cx="35" cy="34" r="9.5" fill="#1b91e5"/>
+            <circle cx="35" cy="29.5" r="1.4" fill="#ffffff"/>
+            <rect x="33.7" y="32.2" width="2.6" height="7" rx="0.8" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Science and research information</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/veda/projekty.pl?lang=en'); return false;">Projects</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/veda/publikace.pl?lang=en'); return false;">Publications</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 6: Jobs portal -->
+      <div class="public-cat-row" id="pub-row-jobs">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <path d="M16 12 L16 8.5 C16 7, 17 6, 18.5 6 L25.5 6 C27 6, 28 7, 28 8.5 L28 12" fill="none" stroke="#9a3412" stroke-width="2.5"/>
+            <rect x="6" y="12" width="32" height="24" rx="3" fill="#ef5b35"/>
+            <line x1="6" y1="22" x2="38" y2="22" stroke="#c2410c" stroke-width="1.5"/>
+            <rect x="19.5" y="19.5" width="5" height="5" rx="1" fill="#fde68a"/>
+            <polygon points="32,27 44,32 32,37 20,32" fill="#374151"/>
+            <path d="M25 34.5 L25 39.5 C25 41, 39 41, 39 39.5 L39 34.5" fill="#4b5563"/>
+            <line x1="42" y1="32.5" x2="42" y2="40" stroke="#f59e0b" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">Jobs portal</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-internship" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/praxe/registrace_firmy.pl?lang=en'); return false;">Registration of a company to Internship Portal</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 7: About the information system -->
+      <div class="public-cat-row" id="pub-row-about">
+        <div class="public-cat-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="42" height="42">
+            <line x1="24" y1="9" x2="24" y2="39" stroke="#c81010" stroke-width="5.5"/>
+            <line x1="9" y1="24" x2="39" y2="24" stroke="#c81010" stroke-width="5.5"/>
+            <circle cx="24" cy="9" r="5.5" fill="#c81010"/>
+            <circle cx="24" cy="39" r="5.5" fill="#c81010"/>
+            <circle cx="9" cy="24" r="5.5" fill="#c81010"/>
+            <circle cx="39" cy="24" r="5.5" fill="#c81010"/>
+            <circle cx="24" cy="24" r="8.5" fill="#ffffff"/>
+            <circle cx="24" cy="24" r="6" fill="#111111"/>
+          </svg>
+        </div>
+        <div class="public-cat-body">
+          <div class="public-cat-title">About the information system</div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a id="pub-link-docs" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/help.pl?lang=en'); return false;">InSIS documentation</a>
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/system/agregat.pl?lang=en'); return false;">Statistics of using InSIS</a>
+            <span class="pub-bullet">&bull;</span>
+            <a class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/implementace.pl?lang=en'); return false;">Are you thinking of implementing a study information system at your university?</a>
+          </div>
+          <div class="public-cat-links">
+            <span class="pub-bullet">&bull;</span>
+            <a href="#" onclick="navigateToUrl('https://insis.vse.cz/licenses/index.pl?lang=en'); return false;">Overview of components used under the license agreement</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Language Switcher (Exact match to Screenshot 2) -->
+      <div class="public-lang-footer">
+        <div><span class="pub-square-bullet">&#9643;</span> <a href="#" onclick="alert('Česká verze informačního systému'); return false;">Česká verze informačního systému (Czech version)</a></div>
+        <div><span class="pub-square-bullet">&#9643;</span> <a href="#" onclick="alert('Slovenská verzia informačného systému'); return false;">Slovenská verzia informačného systému (Slovak version)</a></div>
+      </div>
+
+    </div>
+  </main>
 
 
   <!-- =========================================================================
@@ -115,10 +334,14 @@
           <span>Log in with university Microsoft 365 account</span>
         </button>
 
+        <button type="button" class="btn-public-continue" onclick="navigateToUrl('https://insis.vse.cz/?lang=en')">
+          &larr; Continue on Public InSIS Page (No account needed)
+        </button>
+
         <div class="login-footer-links">
-          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/navod/?lang=en')">First log in to InSIS instructions</a><br>
-          • <a href="#" onclick="alert('Forgotten password: If you cannot log in, visit the IT Helpdesk with your student ID.')">Forgotten password assistance</a><br>
-          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/help.pl?lang=en')">InSIS documentation and manuals</a>
+          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/navod/?lang=en'); return false;">First log in to InSIS instructions</a><br>
+          • <a href="#" onclick="alert('Forgotten password: If you cannot log in, visit the IT Helpdesk with your student ID.'); return false;">Forgotten password assistance</a><br>
+          • <a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok/help.pl?lang=en'); return false;">InSIS documentation and manuals</a>
         </div>
       </div>
     </div>
@@ -129,7 +352,7 @@
        VIEW 1: PERSONAL ADMINISTRATION (Home screen - Screenshots 2 & 4)
        URL: https://insis.vse.cz/auth/?lang=en
        ========================================================================= -->
-  <main id="view-personal-admin" class="insis-view">
+  <main id="view-personal-admin" class="insis-view" style="display:none;">
     <div class="insis-notices-container">
       <div class="notice-box warning-red">
         <div class="notice-icon-circle icon-red">!</div>
@@ -488,22 +711,22 @@
       <div class="thesis-section-sub">The following icons represent the transactions that need to be made to successfully submit a final thesis.</div>
 
       <div class="icons-action-grid">
-        <div class="icon-action-item" onclick="openAddInfoModal()">
+        <div id="action-add-info" class="icon-action-item" onclick="openAddInfoModal()">
           <div id="badge-add-info" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#007bb6;">📁➕</div>
           <span class="icon-item-label">Insert additional information</span>
         </div>
-        <div class="icon-action-item" onclick="openUploadThesisModal()">
+        <div id="action-upload-thesis" class="icon-action-item" onclick="openUploadThesisModal()">
           <div id="badge-upload" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#007bb6;">📁📎</div>
           <span class="icon-item-label">Insert the thesis and the appendices</span>
         </div>
-        <div class="icon-action-item" onclick="confirmThesisSubmission()">
+        <div id="action-submit-thesis" class="icon-action-item" onclick="confirmThesisSubmission()">
           <div id="badge-submit" class="status-badge-above badge-red-x">✕</div>
           <div class="icon-img-box" style="color:#27ae60;">📗➔</div>
           <span class="icon-item-label">Thesis submission</span>
         </div>
-        <div class="icon-action-item" onclick="openErrataModal()" style="border: 2px dashed #f39c12; border-radius:8px; padding:4px;">
+        <div id="action-errata" class="icon-action-item" onclick="openErrataModal()" style="border: 2px dashed #f39c12; border-radius:8px; padding:4px;">
           <div id="badge-errata" class="status-badge-above badge-amber-warn">!</div>
           <div class="icon-img-box" style="color:#d35400;">📝📎</div>
           <span class="icon-item-label" style="font-weight:700; color:#b45309;">Insert errata (Vložit errata)</span>
@@ -608,9 +831,9 @@
   <!-- =========================================================================
        FLOATING CONTROLS: Scroll Arrows & VŠE Buddy Bot
        ========================================================================= -->
-  <div class="floating-bot-pill" onclick="toggleBotDrawer()">
+  <div class="floating-bot-pill" id="floating-bot-pill" onclick="toggleBotDrawer()">
     <span>🎓</span>
-    <span>VŠE Buddy Bot</span>
+    <span id="floating-bot-label">VŠE Buddy Bot</span>
   </div>
 
   <div class="floating-scroll-controls">
@@ -626,20 +849,26 @@
       </div>
       <button class="bot-drawer-close" onclick="toggleBotDrawer()">✕</button>
     </div>
+
+    <!-- Clean automatic context bar (shows No-Login Public Mode OR Logged-In Student + GDPR toggle) -->
+    <div id="bot-status-strip" class="bot-status-strip">
+      <span id="bot-status-text" class="bot-status-badge public">🌍 Public Access (No account needed)</span>
+      <span id="bot-status-right"></span>
+    </div>
+
     <div id="bot-messages-area" class="bot-messages-area">
-      <div class="bot-msg-bubble assistant">
-        Hello <strong>George</strong>! I am your <strong>VŠE Buddy</strong> assistant integrated with InSIS.
-        <br><br>
-        Ask me about your Master's thesis, credit vouchers, course registration, or visa procedures!
+      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
+        Welcome to <strong>VŠE Prague</strong>! 👋 You can use me <strong>without an InSIS account</strong>.<br><br>
+        Ask me about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), how to apply (E-application)</strong>, or public courses!
       </div>
     </div>
-    <div class="bot-quick-chips-strip">
-      <button class="mini-chip" onclick="sendBotPrompt('How do I submit errata for my Master\'s thesis in InSIS?')">📝 How do I submit errata?</button>
-      <button class="mini-chip" onclick="sendBotPrompt('How many credit vouchers do I have as a Master student?')">🎓 Credit vouchers check</button>
-      <button class="mini-chip" onclick="sendBotPrompt('What are the thesis submission deadlines and steps?')">📜 Thesis submission steps</button>
+
+    <div id="bot-quick-chips" class="bot-quick-chips-strip">
+      <!-- Populated automatically based on No-Login vs. Logged-In Page Context -->
     </div>
+
     <div class="bot-input-strip">
-      <input type="text" id="bot-input-field" placeholder="Ask about InSIS, errata, credits..." onkeydown="handleBotKey(event)">
+      <input type="text" id="bot-input-field" placeholder="Ask about visas, dorms, admission, or InSIS..." onkeydown="handleBotKey(event)">
       <button onclick="submitBotMessage()">Send</button>
     </div>
   </div>

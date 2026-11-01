@@ -173,6 +173,7 @@ class BuddyBot:
         question: str,
         history: Optional[List[Dict[str, str]]] = None,
         session_id: Optional[str] = None,
+        user_context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Main end-to-end question answering pipeline.
         
@@ -348,6 +349,20 @@ class BuddyBot:
                     mode = "normal"
         except Exception as e:
             print(f"[Knowledge DB Query Warning]: {e}")
+
+        # -------------------------------------------------------------
+        # 4c. Public No-Login Context / Live Screen & Personalised Study Context
+        # -------------------------------------------------------------
+        if user_context:
+            try:
+                import student_profile
+                dyn_chunks = student_profile.build_dynamic_context_chunks(question, user_context)
+                if dyn_chunks:
+                    context_chunks = dyn_chunks + [c for c in context_chunks if not c.get("is_dynamic_context")]
+                    if mode == "no_context":
+                        mode = "normal"
+            except Exception as e:
+                print(f"[Dynamic Context Warning]: {e}")
 
         # -------------------------------------------------------------
         # 5. Gemini Generation
