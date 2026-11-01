@@ -2,10 +2,13 @@
 // Authentic InSIS Multi-URL Router, Public/Auth Session Controller & Buddy Bot
 // Supports:
 //   1. No-Login Public InSIS Portal (https://insis.vse.cz/?lang=en)
-//   2. Persistent Authenticated Student Session (George Joseph) across 195 URLs
-//   3. Context-Aware Page Co-Pilot (Idea 1), Personalised Profile (Idea 2),
+//   2. Custom Name + Password ("ism_mastersthesis") Login across all 195 URLs
+//   3. Clean Session Wipe on Logout (both Portal & Bot switch to Public Mode)
+//   4. Context-Aware Page Co-Pilot (Idea 1), Personalised Profile (Idea 2),
 //      Smart Topic Switch (Visas/Stay/Campus), & Interactive Checklist (Idea 3)
 // =============================================================================
+
+const REQUIRED_INSIS_PASSWORD = "ism_mastersthesis";
 
 let allUrlsList = [];
 let chatHistory = [];
@@ -18,23 +21,61 @@ let currentPageTitle = "Public Information Portal";
 let currentPageUrl = "https://insis.vse.cz/?lang=en";
 let isPersonalisedEnabled = true;
 
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 // -----------------------------------------------------------------------------
-// 1. Session & Login Controller (Defaults to Public No-Login View on fresh open)
+// 1. Session & Login Controller
 // -----------------------------------------------------------------------------
+function cleanupLegacySessionKeys() {
+  // Remove any legacy keys from older prototypes so stale names never persist
+  localStorage.removeItem("insis_logged_in");
+  localStorage.removeItem("insis_auth_active");
+  localStorage.removeItem("insis_user_name");
+}
+
 function getLoginSession() {
-  const loggedIn = localStorage.getItem("insis_auth_active");
-  const userName = localStorage.getItem("insis_user_name") || "George Joseph";
+  cleanupLegacySessionKeys();
+  const isAuth = localStorage.getItem("insis_session_v3") === "true";
+  const storedName = (localStorage.getItem("insis_session_user_v3") || "").trim();
   const prefPers = localStorage.getItem("insis_bot_personalised");
   if (prefPers !== null) {
     isPersonalisedEnabled = prefPers === "true";
   }
 
-  if (loggedIn === null) {
-    localStorage.setItem("insis_auth_active", "false");
-    localStorage.setItem("insis_user_name", "George Joseph");
-    return { loggedIn: false, userName: "George Joseph" };
+  if (!isAuth || !storedName) {
+    return { loggedIn: false, userName: "" };
   }
-  return { loggedIn: loggedIn === "true", userName };
+  return { loggedIn: true, userName: storedName };
+}
+
+function resetBotConversationForSession() {
+  chatHistory = [];
+  const session = getLoginSession();
+  const area = document.getElementById("bot-messages-area");
+  if (!area) return;
+
+  if (!session.loggedIn) {
+    area.innerHTML = `
+      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
+        Welcome to <strong>VŠE Prague</strong>! 👋 You are currently <strong>not logged in</strong> (Public Access Mode).<br><br>
+        You can use me without an account &mdash; ask about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), E-application</strong>, or click <strong>📋 Arrival Checklist</strong> below!
+      </div>
+    `;
+  } else {
+    const safeName = escapeHtml(session.userName);
+    area.innerHTML = `
+      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
+        Hello <strong>${safeName}</strong>! 👋 You are signed in to InSIS.<br><br>
+        Ask me about <strong>this InSIS page</strong>, your <strong>credit vouchers (120/144)</strong>, <strong>Master's thesis</strong>, or <strong>visas &amp; dorm stay</strong>!
+      </div>
+    `;
+  }
 }
 
 function updateSessionUI() {
@@ -44,6 +85,7 @@ function updateSessionUI() {
   const closeBtn = document.getElementById("user-bar-close");
   const displayUser = document.getElementById("display-user-name");
   const breadcrumbTools = document.getElementById("breadcrumb-tools");
+  const thesisAuthorLink = document.getElementById("thesis-author-link");
 
   if (session.loggedIn) {
     if (loggedInBar) loggedInBar.style.display = "flex";
@@ -51,11 +93,23 @@ function updateSessionUI() {
     if (closeBtn) closeBtn.style.display = "block";
     if (displayUser) displayUser.textContent = session.userName;
     if (breadcrumbTools) breadcrumbTools.style.display = "flex";
+    if (thesisAuthorLink) {
+      thesisAuthorLink.textContent = session.userName;
+      thesisAuthorLink.onclick = () => {
+        alert(`Author: ${session.userName}`);
+        return false;
+      };
+    }
   } else {
     if (loggedInBar) loggedInBar.style.display = "none";
     if (closeBtn) closeBtn.style.display = "none";
-    // On the main Public InSIS homepage, keep the pale-blue strip completely clean
-    // just like the original VŠE Public InSIS screenshot!
+    if (displayUser) displayUser.textContent = "";
+    if (thesisAuthorLink) {
+      thesisAuthorLink.textContent = "Not logged in";
+      thesisAuthorLink.onclick = () => false;
+    }
+
+    // Keep the pale-blue strip completely clean on the Public InSIS homepage
     if (currentPageKey === "public_home") {
       if (loggedOutBar) loggedOutBar.style.display = "none";
       if (breadcrumbTools) breadcrumbTools.style.display = "none";
@@ -78,36 +132,69 @@ function goHome() {
 }
 
 function performLogout() {
-  localStorage.setItem("insis_auth_active", "false");
+  cleanupLegacySessionKeys();
+  localStorage.setItem("insis_session_v3", "false");
+  localStorage.removeItem("insis_session_user_v3");
+  sessionStorage.removeItem("insis_pending_url");
+
+  // Clear login inputs for next user
+  const userInp = document.getElementById("login-username");
+  const passInp = document.getElementById("login-password");
+  const errBox = document.getElementById("login-error-msg");
+  if (userInp) userInp.value = "";
+  if (passInp) passInp.value = "";
+  if (errBox) errBox.style.display = "none";
+
+  // Immediately wipe bot chat history & switch bot back to Public (Not Logged In) state
+  resetBotConversationForSession();
   navigateToUrl("https://insis.vse.cz/?lang=en");
-  if (chatHistory.length > 0) {
-    appendBotBubble(
-      "assistant",
-      "You have logged out. I am now in **Public Access Mode** — you can still ask me anything about visas, dormitories, campus rooms, admission, or public courses without an account!"
-    );
-  }
 }
 
 function handleLoginSubmit(event) {
   if (event) event.preventDefault();
   const usernameInput = document.getElementById("login-username");
-  const name =
-    usernameInput && usernameInput.value.trim()
-      ? usernameInput.value.trim()
-      : "George Joseph";
-  localStorage.setItem("insis_auth_active", "true");
-  localStorage.setItem("insis_user_name", name);
+  const passwordInput = document.getElementById("login-password");
+  const errorBox = document.getElementById("login-error-msg");
+
+  const name = usernameInput ? usernameInput.value.trim() : "";
+  const pwd = passwordInput ? passwordInput.value.trim() : "";
+
+  if (!name) {
+    if (errorBox) {
+      errorBox.textContent = "Please enter your name to log in.";
+      errorBox.style.display = "block";
+    }
+    if (usernameInput) usernameInput.focus();
+    return;
+  }
+
+  if (pwd !== REQUIRED_INSIS_PASSWORD) {
+    if (errorBox) {
+      errorBox.textContent = "Invalid password. Please enter password: ism_mastersthesis";
+      errorBox.style.display = "block";
+    }
+    if (passwordInput) {
+      passwordInput.value = "";
+      passwordInput.focus();
+    }
+    return;
+  }
+
+  if (errorBox) errorBox.style.display = "none";
+  if (passwordInput) passwordInput.value = "";
+
+  cleanupLegacySessionKeys();
+  localStorage.setItem("insis_session_v3", "true");
+  localStorage.setItem("insis_session_user_v3", name);
+
+  // Reset bot conversation cleanly for this newly authenticated user
+  resetBotConversationForSession();
 
   const pendingUrl =
     sessionStorage.getItem("insis_pending_url") ||
     "https://insis.vse.cz/auth/?lang=en";
   sessionStorage.removeItem("insis_pending_url");
   navigateToUrl(pendingUrl);
-
-  appendBotBubble(
-    "assistant",
-    `Welcome back, **${name}**! 🎓 You are now signed in to InSIS.\n\nI can now also assist with your **current InSIS screen**, **credit vouchers (120/144)**, and **Master's thesis**, alongside visa, dorm, and campus questions.`
-  );
 }
 
 function showLoginView() {
@@ -116,6 +203,9 @@ function showLoginView() {
   currentPageTitle = "Log in to InSIS";
   currentPageUrl = "https://insis.vse.cz/auth/login";
 
+  const errBox = document.getElementById("login-error-msg");
+  if (errBox) errBox.style.display = "none";
+
   const loginView = document.getElementById("view-login");
   if (loginView) loginView.style.display = "block";
   document.getElementById("insis-url-input").value =
@@ -123,6 +213,9 @@ function showLoginView() {
   document.getElementById("breadcrumb-dynamic").innerHTML =
     "&raquo; <strong>Log in to InSIS</strong>";
   updateSessionUI();
+
+  const usernameInput = document.getElementById("login-username");
+  if (usernameInput) usernameInput.focus();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -325,6 +418,7 @@ function navigateToUrl(fullUrl) {
 // -----------------------------------------------------------------------------
 function renderGenericInsisPage(path, fullUrl, meta) {
   const session = getLoginSession();
+  const safeUser = escapeHtml(session.userName || "Public Visitor");
   const genericView = document.getElementById("view-generic-page");
   const titleEl = document.getElementById("generic-page-title");
   const subEl = document.getElementById("generic-page-sub");
@@ -334,15 +428,17 @@ function renderGenericInsisPage(path, fullUrl, meta) {
   genericView.style.display = "block";
   titleEl.textContent = meta.title;
   subEl.textContent = `InSIS VŠE • ${
-    meta.access === "AUTHENTICATED"
-      ? `Authenticated Application (${session.userName})`
+    session.loggedIn
+      ? `Authenticated Session (${session.userName})`
       : "Public Portal (No Login Required)"
   }`;
 
   const homeUrl = session.loggedIn
     ? "https://insis.vse.cz/auth/?lang=en"
     : "https://insis.vse.cz/?lang=en";
-  breadcrumbEl.innerHTML = `&raquo; <a href="#" onclick="navigateToUrl('${homeUrl}'); return false;">Integrated Study Information System</a> &raquo; <strong>${meta.title}</strong>`;
+  breadcrumbEl.innerHTML = `&raquo; <a href="#" onclick="navigateToUrl('${homeUrl}'); return false;">Integrated Study Information System</a> &raquo; <strong>${escapeHtml(
+    meta.title
+  )}</strong>`;
 
   let html = "";
 
@@ -353,7 +449,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         Public guide for newly admitted degree and exchange students before their first login to VŠE systems.
       </p>
       <ol style="font-size:12px; line-height:1.75; margin-left:20px; color:#1e293b;">
-        <li><strong>Receive Credentials:</strong> After official enrollment, your <strong>xname</strong> (e.g. <code>xjosg01</code>) and initial password are sent to your admission email or handed over by your Study Coordinator.</li>
+        <li><strong>Receive Credentials:</strong> After official enrollment, your <strong>xname</strong> and initial password are sent to your admission email or handed over by your Study Coordinator.</li>
         <li><strong>Change Initial Password:</strong> Log in via <a href="#" onclick="showLoginView(); return false;" style="color:#005596; font-weight:700;">Log in to the Personal administration of InSIS</a> and set a strong university password (also used for Eduroam Wi-Fi, Office 365, and ISKaM dorms).</li>
         <li><strong>Activate Two-Factor Authentication (OTP):</strong> Pair an authenticator app (Microsoft/Google Authenticator) under <em>Information system set-up &rarr; OTP authentication</em>.</li>
         <li><strong>Don't have an account yet?</strong> Prospective applicants can apply via the <a href="#" onclick="navigateToUrl('https://insis.vse.cz/prihlaska/?lang=en'); return false;" style="color:#005596; font-weight:700;">E-application form</a> or ask the <strong>🎓 VŠE Buddy Bot</strong> in the bottom-right corner!</li>
@@ -379,7 +475,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
   } else if (path.includes("kontrola_planu.pl")) {
     html = `
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e2e8f0; padding-bottom:8px; margin-bottom:14px;">
-        <h3 style="font-size:16px; color:#004b87;">Check of Study Plan &amp; Credit Vouchers</h3>
+        <h3 style="font-size:16px; color:#004b87;">Check of Study Plan &amp; Credit Vouchers (${safeUser})</h3>
         <span style="background:#e6f4ea; color:#137333; padding:3px 10px; border-radius:12px; font-weight:700;">Active Enrollment</span>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-bottom:20px;">
@@ -429,7 +525,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
     html = `
       <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">State Final Examinations &amp; Defense (Státní závěrečné zkoušky a obhajoby)</h3>
       <p style="font-size:12px; color:#475569; margin-bottom:14px;">
-        Study: <strong>FIS C-ISM-MBI pres</strong> • Academic Year: 2026/2027. Registration for defense slots and oral state examination dates opens following final thesis approval.
+        Student: <strong>${safeUser}</strong> • Study: <strong>FIS C-ISM-MBI pres</strong> • Academic Year: 2026/2027.
       </p>
       <table class="insis-study-table">
         <thead><tr><th>Exam Part</th><th>Supervisor</th><th>Opponent</th><th>Defense Slot</th><th>State</th></tr></thead>
@@ -457,7 +553,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
   } else if (path.includes("financovani")) {
     if (session.loggedIn) {
       html = `
-        <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">Study Financing &amp; Personal Payments</h3>
+        <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">Study Financing &amp; Personal Payments (${safeUser})</h3>
         <table class="thesis-info-table" style="margin-bottom:18px;">
           <tr><td class="label-cell">Bank Account (CZK):</td><td class="value-cell"><strong>19-2696090207 / 0100</strong> (Komerční banka)</td></tr>
           <tr><td class="label-cell">IBAN:</td><td class="value-cell"><code>CZ04 0100 0000 1926 9609 0207</code></td></tr>
@@ -487,7 +583,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         Generate an official digitally signed PDF document bearing the qualified electronic stamp of VŠE. Accepted by Foreign Police, OAMP MVČR, transit authorities (PID / Lítačka), banks, and embassies.
       </p>
       <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:16px; margin-bottom:14px;">
-        <strong>Student:</strong> George Joseph (FIS ISM Master)<br>
+        <strong>Student:</strong> ${safeUser} (FIS ISM Master)<br>
         <strong>Academic Year:</strong> 2026/2027 &bull; Winter Semester<br>
         <strong>Electronic Seal:</strong> Qualified Electronic Timestamp &bull; Verification Token #CONF-84920194
       </div>
@@ -544,11 +640,13 @@ function renderGenericInsisPage(path, fullUrl, meta) {
   } else {
     html = `
       <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:18px;">
-        <h4 style="font-size:14px; color:#004b87; margin-bottom:8px;">${meta.title}</h4>
+        <h4 style="font-size:14px; color:#004b87; margin-bottom:8px;">${escapeHtml(meta.title)}</h4>
         <p style="font-size:12px; color:#475569; line-height:1.6; margin-bottom:12px;">
-          Official InSIS service endpoint: <code>${meta.url}</code><br>
-          Access Level: <strong>${meta.access}</strong> &bull; User Context: <strong>${
-      session.loggedIn ? session.userName + " (Authenticated)" : "Public Visitor (No Login Needed)"
+          Official InSIS service endpoint: <code>${escapeHtml(meta.url)}</code><br>
+          Access Level: <strong>${escapeHtml(meta.access)}</strong> &bull; User Context: <strong>${
+      session.loggedIn
+        ? safeUser + " (Authenticated)"
+        : "Public Visitor (Not Logged In)"
     }</strong>
         </p>
         <div style="font-size:12px; color:#334155; line-height:1.6;">
@@ -573,13 +671,15 @@ function filterCourseList() {
 }
 
 function downloadConfirmationPdf() {
+  const session = getLoginSession();
+  const studentName = session.userName || "Authenticated Student";
+  const fileSafeName = studentName.replace(/[^a-zA-Z0-9_-]+/g, "_");
   const text = `
 PRAGUE UNIVERSITY OF ECONOMICS AND BUSINESS (VŠE)
 FACULTY OF INFORMATICS AND STATISTICS (FIS)
 ------------------------------------------------------------------------
 ELECTRONIC CONFIRMATION OF STUDY (POTVRZENÍ O STUDIU)
-Student: George Joseph
-Student ID: x_jose01
+Student: ${studentName}
 Programme: Information Systems Management (ISM) - Master
 Academic Year: 2026/2027 (Winter Semester)
 Status: Active Enrolled Student in Good Academic Standing.
@@ -591,7 +691,7 @@ Verification: https://insis.vse.cz/overeni/?token=84920194-CONF
   const blob = new Blob([text], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "Confirmation_of_Study_George_Joseph_VSE.txt";
+  a.download = `Confirmation_of_Study_${fileSafeName}_VSE.txt`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -689,11 +789,13 @@ function openErrataModal() {
 }
 
 function submitErrataFile() {
+  const session = getLoginSession();
+  const safeSlug = (session.userName || "Student").replace(/[^a-zA-Z0-9_-]+/g, "_");
   const picker = document.getElementById("errata-file-picker");
   const fileName =
     picker && picker.files.length > 0
       ? picker.files[0].name
-      : "Errata_Thesis_Corrections_George_Joseph.pdf";
+      : `Errata_Thesis_Corrections_${safeSlug}.pdf`;
 
   closeModal("errata-modal");
 
@@ -702,6 +804,9 @@ function submitErrataFile() {
     badgeErrata.className = "status-badge-above badge-green-check";
     badgeErrata.textContent = "✓";
   }
+
+  const fnCode = document.getElementById("errata-uploaded-filename");
+  if (fnCode) fnCode.textContent = fileName;
 
   const panel = document.getElementById("errata-active-panel");
   if (panel) {
@@ -759,14 +864,14 @@ function updateBotContextUI() {
 
   if (!session.loggedIn) {
     statusText.className = "bot-status-badge public";
-    statusText.textContent = "🌍 Public Access · No account needed";
+    statusText.textContent = "🌍 Public Access · Not logged in";
     statusRight.innerHTML =
       '<a class="bot-status-link" onclick="showLoginView()">Log in ➔</a>';
 
     if (welcomeBubble && chatHistory.length === 0) {
       welcomeBubble.innerHTML =
-        "Welcome to <strong>VŠE Prague</strong>! 👋 You can use me <strong>right here without an InSIS account</strong>.<br><br>" +
-        "Ask about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), E-application</strong>, or click <strong>📋 Arrival Checklist</strong> below!";
+        "Welcome to <strong>VŠE Prague</strong>! 👋 You are currently <strong>not logged in</strong> (Public Access Mode).<br><br>" +
+        "You can use me without an account &mdash; ask about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), E-application</strong>, or click <strong>📋 Arrival Checklist</strong> below!";
     }
 
     chipsBox.innerHTML = `
@@ -777,6 +882,7 @@ function updateBotContextUI() {
       <button class="mini-chip" onclick="showInteractiveChecklist()">📋 Arrival Checklist</button>
     `;
   } else {
+    const safeName = escapeHtml(session.userName);
     statusText.className = "bot-status-badge";
     statusText.textContent = `👤 ${session.userName} · 📍 ${currentPageTitle}`;
     statusRight.innerHTML = `
@@ -788,8 +894,8 @@ function updateBotContextUI() {
 
     if (welcomeBubble && chatHistory.length === 0) {
       welcomeBubble.innerHTML =
-        `Hello <strong>${session.userName}</strong>! I am your <strong>VŠE Buddy</strong> assistant.<br><br>` +
-        `Ask about <strong>this InSIS page</strong>, your <strong>credit vouchers (120/144)</strong>, <strong>Master's thesis</strong>, or <strong>visas &amp; dorm stay</strong>!`;
+        `Hello <strong>${safeName}</strong>! 👋 You are signed in to InSIS.<br><br>` +
+        `Ask me about <strong>this InSIS page</strong>, your <strong>credit vouchers (120/144)</strong>, <strong>Master's thesis</strong>, or <strong>visas &amp; dorm stay</strong>!`;
     }
 
     if (currentPageKey === "master_thesis") {
@@ -886,15 +992,14 @@ async function showInteractiveChecklist(
 
     const rowsHtml = items
       .map(
-        (item, idx) => `
+        (item) => `
         <div class="bot-checklist-item">
           <label>
             <input type="checkbox">
-            <span>${item.task}</span>
+            <span>${escapeHtml(item.task)}</span>
           </label>
-          <button class="bot-checklist-ask" data-prompt="${item.prompt.replace(
-            /"/g,
-            "&quot;"
+          <button class="bot-checklist-ask" data-prompt="${escapeHtml(
+            item.prompt
           )}" onclick="sendBotPrompt(this.dataset.prompt)">Ask ➔</button>
         </div>
       `
@@ -904,7 +1009,7 @@ async function showInteractiveChecklist(
     card.innerHTML = `
       <div style="font-weight:700; color:#004b87; display:flex; justify-content:space-between; align-items:center;">
         <span>📋 International Student Checklist</span>
-        <span style="font-size:10px; color:#0369a1;">No login needed</span>
+        <span style="font-size:10px; color:#0369a1;">Works without login</span>
       </div>
       <div class="bot-checklist-controls">
         <select onchange="showInteractiveChecklist(this.value, '${housing}', '${stage}', this.closest('.bot-checklist-card'))">
@@ -942,8 +1047,8 @@ async function submitBotMessage() {
   const session = getLoginSession();
   const userContext = {
     logged_in: session.loggedIn,
-    personalised: isPersonalisedEnabled,
-    user_name: session.userName,
+    personalised: session.loggedIn ? isPersonalisedEnabled : false,
+    user_name: session.loggedIn ? session.userName : "Guest",
     page_key: currentPageKey,
     page_title: currentPageTitle,
     page_url: currentPageUrl,
@@ -1147,6 +1252,8 @@ function getContextualFallback(query, loggedIn) {
 // 7. Initial Startup & Browser History Listener
 // -----------------------------------------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
+  cleanupLegacySessionKeys();
+  resetBotConversationForSession();
   loadInsisUrls();
 
   const currentPath = window.location.pathname;

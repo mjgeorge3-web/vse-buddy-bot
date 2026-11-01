@@ -41,6 +41,11 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
         demo_dir = str(Path(__file__).resolve().parent)
         super().__init__(*args, directory=demo_dir, **kwargs)
 
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma", "no-cache")
+        super().end_headers()
+
     def do_GET(self):
         # 1. API: InSIS Navigation Database Query
         if self.path.startswith("/api/insis/navigate"):

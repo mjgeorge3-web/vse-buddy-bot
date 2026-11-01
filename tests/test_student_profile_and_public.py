@@ -134,3 +134,44 @@ def test_public_home_html_contains_all_seven_authentic_sections():
     ]
     for heading in expected_headings:
         assert heading in html, f"Missing expected public InSIS text: {heading}"
+
+
+def test_custom_user_login_profile_uses_exact_logged_in_name():
+    ctx = {
+        "logged_in": True,
+        "personalised": True,
+        "user_name": "Maria Novak",
+        "page_key": "student_portal",
+    }
+    chunks = student_profile.build_dynamic_context_chunks(
+        "How many credit vouchers do I have left?", ctx
+    )
+    assert len(chunks) == 1
+    assert "Maria Novak" in chunks[0]["title"]
+    assert "Authenticated Student: Maria Novak" in chunks[0]["text"]
+    assert "George Joseph" not in chunks[0]["text"]
+
+
+def test_logged_out_context_never_contains_student_name():
+    ctx = {
+        "logged_in": False,
+        "personalised": False,
+        "user_name": "Guest",
+        "page_key": "public_home",
+    }
+    chunks = student_profile.build_dynamic_context_chunks(
+        "How many credit vouchers do I have left?", ctx
+    )
+    for c in chunks:
+        assert "George Joseph" not in c["text"]
+        assert "student_personal_profile" != c["id"]
+
+
+def test_login_password_and_clean_logout_in_frontend():
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    assert 'REQUIRED_INSIS_PASSWORD = "ism_mastersthesis"' in app_js
+    assert 'localStorage.removeItem("insis_session_user_v3")' in app_js
+    assert "resetBotConversationForSession()" in app_js
+    assert "George Joseph" not in html
+    assert "George Joseph" not in app_js

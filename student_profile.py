@@ -9,35 +9,47 @@ Supports both:
 
 from typing import Any, Dict, List, Optional
 
-# Demo authenticated student profile matching the InSIS simulation
-STUDENT_PROFILES: Dict[str, Dict[str, Any]] = {
-    "george joseph": {
-        "name": "George Joseph",
-        "programme": "Master in Information Systems Management (FIS C-ISM-MBI pres [term 5, E])",
-        "faculty": "Faculty of Informatics and Statistics (FIS)",
-        "study_period": "WS 2026/2027 - FIS",
-        "degree_target_ects": 120,
-        "earned_ects": 90,
-        "remaining_ects_needed": 30,
-        "initial_vouchers": 144,
-        "remaining_vouchers": 120,
-        "used_vouchers_current_sem": 24,
-        "weighted_gpa": 1.42,
-        "variable_symbol": "84920194",
-        "tuition_status": "Cleared (0.00 CZK outstanding)",
-        "thesis_title": "Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague",
-        "thesis_supervisor": "Ing. Pavel Sládek, Ph.D.",
-        "thesis_department": "Department of Information Technology (FIS)",
-        "thesis_assignment_status": "Confirmed by supervisor; student can no longer edit the assignment",
-        "thesis_submission_status": "Final thesis has not yet been entered into InSIS (3 red X editing steps pending: Insert additional info, Insert thesis PDF/appendices, Final submission)",
-        "enrolled_courses": [
-            "4IT445 Advanced Data Analytics (6 ECTS, Mon 09:15 RB 101)",
-            "4SA421 Information Systems Management (6 ECTS, Tue 14:30 SB 204)",
-            "2SE411 European Economic Integration (6 ECTS, Thu 11:00 NB 403)",
-            "1PE401 Business Ethics & Governance (6 ECTS, Fri 09:15 JM 310)",
-        ],
-    }
+# Base ISM Master's student profile template; adapts dynamically to any logged-in student's name
+DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
+    "programme": "Master in Information Systems Management (FIS C-ISM-MBI pres [term 5, E])",
+    "faculty": "Faculty of Informatics and Statistics (FIS)",
+    "study_period": "WS 2026/2027 - FIS",
+    "degree_target_ects": 120,
+    "earned_ects": 90,
+    "remaining_ects_needed": 30,
+    "initial_vouchers": 144,
+    "remaining_vouchers": 120,
+    "used_vouchers_current_sem": 24,
+    "weighted_gpa": 1.42,
+    "variable_symbol": "84920194",
+    "tuition_status": "Cleared (0.00 CZK outstanding)",
+    "thesis_title": "Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague",
+    "thesis_supervisor": "Ing. Pavel Sládek, Ph.D.",
+    "thesis_department": "Department of Information Technology (FIS)",
+    "thesis_assignment_status": "Confirmed by supervisor; student can no longer edit the assignment",
+    "thesis_submission_status": "Final thesis has not yet been entered into InSIS (3 red X editing steps pending: Insert additional info, Insert thesis PDF/appendices, Final submission)",
+    "enrolled_courses": [
+        "4IT445 Advanced Data Analytics (6 ECTS, Mon 09:15 RB 101)",
+        "4SA421 Information Systems Management (6 ECTS, Tue 14:30 SB 204)",
+        "2SE411 European Economic Integration (6 ECTS, Thu 11:00 NB 403)",
+        "1PE401 Business Ethics & Governance (6 ECTS, Fri 09:15 JM 310)",
+    ],
 }
+
+STUDENT_PROFILES: Dict[str, Dict[str, Any]] = {
+    "george joseph": {"name": "George Joseph", **DEFAULT_ISM_PROFILE_TEMPLATE},
+}
+
+
+def get_student_profile(user_name: str) -> Dict[str, Any]:
+    """Return personalised study profile matching the exact logged-in user's name."""
+    clean_name = (user_name or "").strip() or "Authenticated Student"
+    existing = STUDENT_PROFILES.get(clean_name.lower())
+    if existing:
+        return dict(existing)
+    profile = dict(DEFAULT_ISM_PROFILE_TEMPLATE)
+    profile["name"] = clean_name
+    return profile
 
 # Screen-level descriptions for Context-Aware Co-Pilot (Idea 1)
 INSIS_PAGE_DESCRIPTIONS: Dict[str, Dict[str, str]] = {
@@ -99,6 +111,7 @@ SCREEN_DEICTIC_CUES = [
 ]
 
 PERSONAL_STUDY_CUES = [
+    "who am i", "my name", "my profile", "logged in", "my account",
     "my credit", "my voucher", "my thesis", "my gpa", "my grade", "my course",
     "my timetable", "my schedule", "my variable symbol", "my tuition", "my study",
     "how many vouchers do i have", "can i afford to fail", "if i fail", "drop a course",
@@ -203,7 +216,7 @@ def build_dynamic_context_chunks(
 
     # 4. Inject Personalised Study Profile (Idea 2) when opt-in is ON and question relates to personal academics or screen
     if personalised_on and (asks_personal or asks_screen):
-        profile = STUDENT_PROFILES.get(user_name.lower()) or STUDENT_PROFILES["george joseph"]
+        profile = get_student_profile(user_name)
         courses_str = "; ".join(profile["enrolled_courses"])
         extra_chunks.append({
             "id": "student_personal_profile",
