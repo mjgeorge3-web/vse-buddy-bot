@@ -248,3 +248,101 @@ def test_vse_logo_and_academic_demo_disclaimers():
     # In-bot research disclaimer
     assert "Academic Master's Thesis Prototype" in app_js
     assert "Demo Prototype" in app_js
+
+
+def test_logged_in_pending_assignments_with_submission_links():
+    from bot import BuddyBot
+    bot = BuddyBot()
+    ctx = {
+        "logged_in": True,
+        "personalised": True,
+        "user_name": "Alexander Kovac",
+        "page_key": "student_portal"
+    }
+
+    # Verify dynamic profile chunk generation includes structured assignments
+    chunks = student_profile.build_dynamic_context_chunks("what pending assignments do i have to do?", ctx)
+    assert len(chunks) == 1
+    chunk_text = chunks[0]["text"]
+    assert "4IT445" in chunk_text
+    assert "Milestone 2" in chunk_text
+    assert "4SA421" in chunk_text
+    assert "odevzdavarna.pl" in chunk_text
+    assert "Go to 4IT445 Submission Page" in chunk_text
+
+    # Verify bot synthesized answer in fallback/direct mode
+    ans = bot._synthesize_grounded_answer("what assignments are pending?", chunks, ctx)
+    assert "Alexander Kovac" in ans
+    assert "4IT445" in ans
+    assert "4SA421" in ans
+    assert "odevzdavarna.pl" in ans
+    assert "Nov 15, 2026" in ans
+
+
+def test_logged_in_credits_left_detailed_breakdown():
+    from bot import BuddyBot
+    bot = BuddyBot()
+    ctx = {
+        "logged_in": True,
+        "personalised": True,
+        "user_name": "George Joseph",
+        "page_key": "student_portal"
+    }
+
+    chunks = student_profile.build_dynamic_context_chunks("how many credits do i have left to graduate?", ctx)
+    chunk_text = chunks[0]["text"]
+    assert "90" in chunk_text  # earned
+    assert "24" in chunk_text  # enrolled
+    assert "6" in chunk_text   # remaining after current term
+    assert "120" in chunk_text # target and vouchers
+
+    ans = bot._synthesize_grounded_answer("how many credits left", chunks, ctx)
+    assert "90 ECTS" in ans
+    assert "24 ECTS" in ans
+    assert "6 ECTS" in ans
+    assert "120 spare vouchers left" in ans
+
+
+def test_public_guest_assignments_inquiry_safety():
+    from bot import BuddyBot
+    bot = BuddyBot()
+    ctx = {
+        "logged_in": False,
+        "personalised": False,
+        "user_name": "Guest",
+        "page_key": "public_home"
+    }
+
+    # Guest asking about assignments should NOT leak private profile
+    chunks = student_profile.build_dynamic_context_chunks("what assignments do i have to submit?", ctx)
+    for c in chunks:
+        assert "Alexander Kovac" not in c.get("text", "")
+        assert "George Joseph" not in c.get("text", "")
+
+    ans = bot._synthesize_grounded_answer("what assignments do i have to submit?", chunks, ctx)
+    assert "Odevzdávárna" in ans
+    assert "log in with your student credentials" in ans.lower()
+    assert "Alexander Kovac" not in ans
+    assert "4IT445" not in ans  # No personal course leaks for unauthenticated guests
+
+
+def test_coursework_submissions_view_and_ics_in_frontend():
+    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
+
+    # Authentic Coursework Submissions (Odevzdávárna) view exists
+    assert 'id="view-coursework-submissions"' in html
+    assert "Coursework Submissions (Odevzdávárna)" in html
+    assert 'id="vault-4it445"' in html
+    assert 'id="vault-4sa421"' in html
+    assert "handleAssignmentUpload" in html
+
+    # JS router routes to odevzdavarna.pl
+    assert 'cleanPath === "/auth/student/odevzdavarna.pl"' in app_js
+    assert "downloadDeadlinesIcs" in app_js
+    assert "handleAssignmentUpload" in app_js
+
+    # CSS styles action buttons
+    assert ".bot-action-button" in css
+    assert "odevzdavarna-card" in css

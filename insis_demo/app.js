@@ -281,6 +281,7 @@ function hideAllViews() {
     "view-personal-admin",
     "view-student-portal",
     "view-master-thesis",
+    "view-coursework-submissions",
     "view-generic-page",
     "view-login",
   ];
@@ -451,6 +452,32 @@ function navigateToUrl(fullUrl) {
     document.getElementById("view-master-thesis").style.display = "block";
     document.getElementById("breadcrumb-dynamic").innerHTML =
       '&raquo; <a href="#" onclick="navigateToUrl(\'https://insis.vse.cz/auth/student/studium.pl?lang=en\'); return false;">My College</a> &raquo; <strong>Master\'s thesis</strong>';
+  } else if (cleanPath === "/auth/student/odevzdavarna.pl") {
+    currentPageKey = "coursework_submissions";
+    currentPageTitle = "Coursework Submissions";
+    currentPageUrl = fullUrl;
+    document.getElementById("view-coursework-submissions").style.display = "block";
+    document.getElementById("breadcrumb-dynamic").innerHTML =
+      '&raquo; <a href="#" onclick="navigateToUrl(\'https://insis.vse.cz/auth/student/studium.pl?lang=en\'); return false;">My College</a> &raquo; <strong>Coursework submissions</strong>';
+    if (fullUrl.includes("course=4IT445")) {
+      setTimeout(() => {
+        const c = document.getElementById("vault-4it445");
+        if (c) {
+          c.scrollIntoView({ behavior: "smooth" });
+          c.classList.add("insis-highlight-pulse");
+          setTimeout(() => c.classList.remove("insis-highlight-pulse"), 3500);
+        }
+      }, 100);
+    } else if (fullUrl.includes("course=4SA421")) {
+      setTimeout(() => {
+        const c = document.getElementById("vault-4sa421");
+        if (c) {
+          c.scrollIntoView({ behavior: "smooth" });
+          c.classList.add("insis-highlight-pulse");
+          setTimeout(() => c.classList.remove("insis-highlight-pulse"), 3500);
+        }
+      }, 100);
+    }
   } else {
     currentPageKey = cleanPath;
     currentPageTitle = matched.title;
@@ -1337,11 +1364,13 @@ function formatBotMarkdown(text) {
     .replace(
       /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
       (match, label, url) => {
+        const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission");
+        const btnClass = isAction ? 'class="bot-action-button"' : '';
         if (url.startsWith("https://insis.vse.cz")) {
           const safeUrl = url.replace(/'/g, "\\'");
-          return `<a href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;">${label}</a>`;
+          return `<a ${btnClass} href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;">${label}</a>`;
         }
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        return `<a ${btnClass} href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
       }
     )
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
@@ -1355,9 +1384,105 @@ function formatBotMarkdown(text) {
   return formatted + sourcesHtml;
 }
 
+function handleAssignmentUpload(courseCode, fileInputId, statusSpanId) {
+  const input = document.getElementById(fileInputId);
+  const status = document.getElementById(statusSpanId);
+  if (!input || !input.files || input.files.length === 0) {
+    alert("Please select a file to submit (e.g. PDF or ZIP report).");
+    return;
+  }
+  const file = input.files[0];
+  const protocol = "SUB-" + courseCode + "-" + Math.floor(1000 + Math.random() * 9000);
+  if (status) {
+    status.style.background = "#dcfce7";
+    status.style.color = "#15803d";
+    status.innerHTML = `✓ Submitted: <strong>${escapeHtml(file.name)}</strong> (Protocol #${protocol})`;
+  }
+  alert(`Confirmation of Coursework Submission:\n\nCourse: ${courseCode}\nFile: ${file.name} (${(file.size / 1024).toFixed(1)} KB)\nProtocol: #${protocol}\nTimestamp: ${new Date().toLocaleString()}\n\nStatus: Registered in InSIS Coursework Vault.`);
+}
+
+function downloadDeadlinesIcs() {
+  const icsContent = 
+    "BEGIN:VCALENDAR\r\n" +
+    "VERSION:2.0\r\n" +
+    "PRODID:-//VSE Prague//Coursework Deadlines//EN\r\n" +
+    "BEGIN:VEVENT\r\n" +
+    "SUMMARY:4IT445 Milestone 2 - Machine Learning Pipeline Report\r\n" +
+    "DESCRIPTION:Submit into InSIS Coursework Vault. Weight 25 pts.\r\n" +
+    "DTSTART:20261115T215900Z\r\n" +
+    "DTEND:20261115T225900Z\r\n" +
+    "END:VEVENT\r\n" +
+    "BEGIN:VEVENT\r\n" +
+    "SUMMARY:4SA421 Enterprise Architecture Case Study\r\n" +
+    "DESCRIPTION:Submit TOGAF ADM document into InSIS. Weight 30 pts.\r\n" +
+    "DTSTART:20261122T215900Z\r\n" +
+    "DTEND:20261122T225900Z\r\n" +
+    "END:VEVENT\r\n" +
+    "BEGIN:VEVENT\r\n" +
+    "SUMMARY:Master's Thesis Abstract & PDF Submission Deadline\r\n" +
+    "DESCRIPTION:Required by § 47b in InSIS.\r\n" +
+    "DTSTART:20261130T215900Z\r\n" +
+    "DTEND:20261130T225900Z\r\n" +
+    "END:VEVENT\r\n" +
+    "END:VCALENDAR\r\n";
+  const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "VSE_Semester_Deadlines.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  alert("VSE_Semester_Deadlines.ics downloaded! You can import this file directly into Google Calendar, Apple Calendar, or Outlook.");
+}
+
 function getContextualFallback(query, loggedIn) {
   const q = query.toLowerCase();
-  if (q.includes("accomodation") || q.includes("accommodation") || q.includes("dorm") || q.includes("flat") || q.includes("housing")) {
+  if (q.includes("assignment") || q.includes("homework") || q.includes("deadline") || q.includes("due") || q.includes("submission") || q.includes("odevzdavarna")) {
+    if (loggedIn) {
+      return (
+        "**Upcoming Coursework Assignments for WS 2026/2027 (2 urgent)**:\n\n" +
+        "- 🔴 **4IT445 Advanced Data Analytics**: *Milestone 2 - Machine Learning Pipeline Report* (25 pts)\n" +
+        "  **Due**: Nov 15, 2026 (23:59) • 3 days left\n" +
+        "  [📂 Go to 4IT445 Submission Page](https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4IT445&lang=en)\n\n" +
+        "- 🟡 **4SA421 Information Systems Management**: *Enterprise Architecture Case Study* (30 pts)\n" +
+        "  **Due**: Nov 22, 2026 (23:59) • 10 days left\n" +
+        "  [📂 Go to 4SA421 Submission Page](https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4SA421&lang=en)\n\n" +
+        "- 🎓 **Master's Thesis Project**: *Final Abstracts & Full-Text PDF Upload*\n" +
+        "  **Due**: Nov 30, 2026 (23:59) • Thesis Requirement (§ 47b)\n" +
+        "  [🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)\n\n" +
+        "*(2 more assignments due in December)*\n\n" +
+        "<button class=\"bot-action-secondary-btn\" onclick=\"downloadDeadlinesIcs()\">📅 Add Deadlines to Google/Apple Calendar (.ics)</button>"
+      );
+    } else {
+      return (
+        "**InSIS Coursework Submissions (Odevzdávárna)**:\n\n" +
+        "At VŠE, student assignments and seminar papers are submitted electronically in InSIS under:\n" +
+        "**Student's Portal ➔ Coursework submissions (Odevzdávárna)** (`/auth/student/odevzdavarna.pl`).\n\n" +
+        "- Each enrolled course provides dedicated submission drop-boxes with instructions, accepted formats (.pdf, .zip), and file size limits.\n" +
+        "- Once uploaded, InSIS generates a submission timestamp and protocol.\n\n" +
+        "💡 *To view your personal active assignments and direct submission buttons, please log in with your student credentials using the button above.*"
+      );
+    }
+  } else if (q.includes("credit") || q.includes("voucher") || q.includes("left") || q.includes("remaining") || q.includes("progress")) {
+    if (loggedIn) {
+      return (
+        "**Degree Progress & Credit Breakdown (ISM Master's)**:\n\n" +
+        "- 📊 **Degree Target**: **120 ECTS** (Master in Information Systems Management)\n" +
+        "- ✅ **Credits Earned**: **90 ECTS** (75% completed)\n" +
+        "- ⏳ **Enrolled This Semester**: **24 ECTS** across 4 courses in progress\n" +
+        "- 🎯 **Remaining After Current Term**: **Only 6 ECTS!** (Master's Thesis & State Final Exam)\n" +
+        "- 🛡️ **Credit Vouchers Safety**: You have **120 spare vouchers left** (out of 144 initial). Even if you were to retake a course, your voucher safety buffer is completely safe.\n\n" +
+        "[📑 View Full E-Study Record in InSIS](https://insis.vse.cz/auth/student/studium.pl?lang=en)"
+      );
+    } else {
+      return (
+        "**Master's Credit Voucher System at VŠE**:\n\n" +
+        "- Master's students receive **144 vouchers** for a 120 ECTS degree (24 extra vouchers buffer).\n" +
+        "- You must earn at least **9 ECTS** in your first semester, or **20 ECTS** across two consecutive semesters to maintain enrollment.\n\n" +
+        "💡 *To view your individual earned credits and remaining voucher balance, please log in with your student account.*"
+      );
+    }
+  } else if (q.includes("accomodation") || q.includes("accommodation") || q.includes("dorm") || q.includes("flat") || q.includes("housing")) {
     return (
       "Accommodation at VŠE Prague:\n" +
       "- **VŠE Dormitories (SUZ)**: Applied via the ISKaM system (dorms at Jarov, Blanice, Vltava, Rooseveltova).\n" +
@@ -1377,12 +1502,6 @@ function getContextualFallback(query, loggedIn) {
       "- Navigate to **My College** -> **Master's thesis**.\n" +
       "- Under the editing application, click **Insert errata (Vložit errata)**.\n" +
       "- Upload your corrections PDF under § 47b."
-    );
-  } else if (q.includes("credit") || q.includes("voucher")) {
-    return (
-      "Master's Credit Voucher System at VŠE:\n" +
-      "- Master's students receive **144 vouchers** for a 120 ECTS degree.\n" +
-      "- You must earn at least **9 ECTS** in your first semester, or **20 ECTS** across two consecutive semesters."
     );
   }
   return "I found information from verified VŠE documentation. Click 💡 for suggested topics or explore any section on the Public InSIS page!";

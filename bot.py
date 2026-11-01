@@ -25,6 +25,7 @@ import config
 import prompts
 from retriever import Retriever
 import safety
+import student_profile
 
 REFERRAL_TARGETS = {
     "visa_residence": "the VŠE International Office and the Czech Ministry of the Interior (mvcr.cz)",
@@ -164,24 +165,65 @@ class BuddyBot:
         if user_context and user_context.get("logged_in") and user_context.get("personalised"):
             user_name = user_context.get("user_name", "Student")
             profile = student_profile.get_student_profile(user_name)
-            if any(k in ql for k in ["voucher", "credit", "fail", "afford", "left"]):
-                vouchers_left = profile["credit_vouchers_remaining"]
-                total_v = profile["credit_vouchers_total"]
-                gained = profile["credits_gained"]
-                target = profile["credits_required"]
+
+            if any(k in ql for k in ["assignment", "homework", "task", "submission", "due", "deadline", "pending", "odevzdavarna"]):
+                assignments = profile.get("pending_assignments", [])
+                lines = [f"**Upcoming Coursework Assignments for {profile['name']} (WS 2026/2027)**:"]
+                for a in assignments[:2]:
+                    lines.append(
+                        f"- 🔴 **{a['course_code']} ({a['course_name']})**: *{a['task_title']}*\n"
+                        f"  **Due**: {a['due_date']} ({a['days_left']}) • Weight: {a['weight']}\n"
+                        f"  [{a['button_label']}]({a['submission_url']})"
+                    )
+                if len(assignments) > 2:
+                    lines.append(
+                        f"- 🎓 **Master's Thesis Project**: *Final Abstracts & Full-Text PDF Upload*\n"
+                        f"  **Due**: Nov 30, 2026 (23:59) • Thesis Requirement (§ 47b)\n"
+                        f"  [🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
+                    )
+                    lines.append(
+                        f"\n*You have {len(assignments)-2} more upcoming assignments later in the semester.*"
+                    )
+                return "\n\n".join(lines)
+
+            if any(k in ql for k in ["voucher", "credit", "fail", "afford", "left", "remaining", "progress"]):
+                vouchers_left = profile.get("remaining_vouchers", 120)
+                initial_v = profile.get("initial_vouchers", 144)
+                gained = profile.get("earned_ects", 90)
+                target = profile.get("degree_target_ects", 120)
+                in_progress = profile.get("current_enrolled_ects", 24)
+                net_left = profile.get("remaining_ects_after_current_term", 6)
                 return (
-                    f"**Credit Vouchers & Academic Progress for {profile['name']}**:\n\n"
-                    f"- **Remaining Vouchers**: You currently have **{vouchers_left} vouchers** remaining (out of {total_v} total for your {target} ECTS Master's degree).\n"
-                    f"- **Completed Credits**: You have earned **{gained} ECTS** credits so far.\n"
-                    f"- **Failing a Course**: If you fail a 6 ECTS course, 6 vouchers are permanently lost. With **{vouchers_left} vouchers left**, you have ample safety margin to repeat or replace courses.\n"
-                    f"- **Enrolment Rule**: You must gain at least 9 ECTS in your first semester, or 20 ECTS in two consecutive semesters."
+                    f"**Degree Progress & Credit Breakdown for {profile['name']}**:\n\n"
+                    f"- **Degree Target**: **{target} ECTS** ({profile.get('programme', 'Master in ISM')})\n"
+                    f"- **Credits Earned**: **{gained} ECTS** (75% completed)\n"
+                    f"- **Enrolled This Semester (WS 2026/2027)**: **{in_progress} ECTS** (across 4 courses in progress)\n"
+                    f"- **Remaining to Graduate After Current Term**: **Only {net_left} ECTS** (Master's Thesis & State Final Exam)\n"
+                    f"- **Credit Vouchers Safety**: You have **{vouchers_left} spare vouchers left** (out of {initial_v} initial Master's vouchers). Even if you were to retake a course, your voucher safety buffer is completely safe.\n\n"
+                    f"[📑 View Full E-Study Record in InSIS](https://insis.vse.cz/auth/student/studium.pl?lang=en)"
                 )
+
             if any(k in ql for k in ["thesis", "errata", "red x", "3 red"]):
+                thesis_topic = profile.get("thesis_title", "Improving International Student Experience with GenAI based tool at VŠE")
+                supervisor = profile.get("thesis_supervisor", "Ing. Pavel Sládek, Ph.D.")
                 return (
                     f"**Master's Thesis Workflow for {profile['name']}**:\n\n"
-                    f"- **Assigned Topic**: *{profile['thesis_topic']}* (Supervisor: {profile['thesis_supervisor']}).\n"
+                    f"- **Assigned Topic**: *{thesis_topic}* (Supervisor: {supervisor}).\n"
                     f"- **The 3 Red X Icons**: These represent mandatory pre-defense requirements in InSIS (English abstract entry, final thesis PDF upload, and supervisor sign-off).\n"
-                    f"- **Submitting Errata (§ 47b)**: In InSIS, navigate to **My College** -> **Master's thesis**. Under the application options, click **Insert errata (Vložit errata)** to upload corrections approved by your supervisor."
+                    f"- **Submitting Errata (§ 47b)**: In InSIS, navigate to **My College** -> **Master's thesis**. Under the application options, click **Insert errata (Vložit errata)** to upload corrections approved by your supervisor.\n\n"
+                    f"[🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
+                )
+
+        # Handle unauthenticated / guest inquiries about assignments
+        if not user_context or not user_context.get("logged_in"):
+            if any(k in ql for k in ["assignment", "homework", "task", "submission", "due", "deadline", "odevzdavarna"]):
+                return (
+                    "**InSIS Coursework Submissions (Odevzdávárna)**:\n\n"
+                    "At VŠE, student assignments and seminar papers are submitted electronically in InSIS under:\n"
+                    "**Student's Portal ➔ Coursework submissions (Odevzdávárna)** (`/auth/student/odevzdavarna.pl`).\n\n"
+                    "- Each enrolled course provides dedicated submission drop-boxes with instructions, accepted formats (.pdf, .zip), and file size limits.\n"
+                    "- Once uploaded, InSIS generates a submission timestamp and protocol.\n\n"
+                    "💡 *To view your personal active assignments and direct submission links, please log in with your student credentials using the button above.*"
                 )
 
         # 2. Extract grounded paragraphs from top chunks

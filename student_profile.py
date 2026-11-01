@@ -16,7 +16,9 @@ DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
     "study_period": "WS 2026/2027 - FIS",
     "degree_target_ects": 120,
     "earned_ects": 90,
+    "current_enrolled_ects": 24,
     "remaining_ects_needed": 30,
+    "remaining_ects_after_current_term": 6,
     "initial_vouchers": 144,
     "remaining_vouchers": 120,
     "used_vouchers_current_sem": 24,
@@ -33,6 +35,56 @@ DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
         "4SA421 Information Systems Management (6 ECTS, Tue 14:30 SB 204)",
         "2SE411 European Economic Integration (6 ECTS, Thu 11:00 NB 403)",
         "1PE401 Business Ethics & Governance (6 ECTS, Fri 09:15 JM 310)",
+    ],
+    "pending_assignments": [
+        {
+            "id": "4it445_m2",
+            "course_code": "4IT445",
+            "course_name": "Advanced Data Analytics",
+            "task_title": "Milestone 2 - Machine Learning Pipeline Report",
+            "due_date": "Nov 15, 2026 (23:59)",
+            "urgency": "urgent",
+            "days_left": "3 days left",
+            "weight": "25 points",
+            "submission_url": "https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4IT445&lang=en",
+            "button_label": "📂 Go to 4IT445 Submission Page",
+        },
+        {
+            "id": "4sa421_cs",
+            "course_code": "4SA421",
+            "course_name": "Information Systems Management",
+            "task_title": "Enterprise Architecture Case Study",
+            "due_date": "Nov 22, 2026 (23:59)",
+            "urgency": "upcoming",
+            "days_left": "10 days left",
+            "weight": "30 points",
+            "submission_url": "https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4SA421&lang=en",
+            "button_label": "📂 Go to 4SA421 Submission Page",
+        },
+        {
+            "id": "thesis_abstract",
+            "course_code": "DIP-THESIS",
+            "course_name": "Master's Thesis",
+            "task_title": "Insert Additional Info (Abstracts & Keywords) & Upload Thesis PDF",
+            "due_date": "Nov 30, 2026 (23:59)",
+            "urgency": "upcoming",
+            "days_left": "18 days left",
+            "weight": "Thesis Requirement (§ 47b)",
+            "submission_url": "https://insis.vse.cz/auth/student/zp.pl?lang=en",
+            "button_label": "🎓 Go to Master's Thesis Submission Area",
+        },
+        {
+            "id": "2se411_pb",
+            "course_code": "2SE411",
+            "course_name": "European Economic Integration",
+            "task_title": "Policy Brief Essay",
+            "due_date": "Dec 05, 2026 (23:59)",
+            "urgency": "later",
+            "days_left": "23 days left",
+            "weight": "20 points",
+            "submission_url": "https://insis.vse.cz/auth/student/odevzdavarna.pl?course=2SE411&lang=en",
+            "button_label": "📂 Go to 2SE411 Submission Page",
+        },
     ],
 }
 
@@ -101,6 +153,19 @@ INSIS_PAGE_DESCRIPTIONS: Dict[str, Dict[str, str]] = {
             "3. 'Thesis submission' (irreversible lock), plus 'Insert errata (§ 47b)'."
         ),
     },
+    "coursework_submissions": {
+        "title": "Student's Portal » Coursework Submissions (Odevzdávárna)",
+        "url": "https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en",
+        "summary": (
+            "The student is viewing Coursework Submissions (Odevzdávárna). "
+            "Active course drop-boxes: "
+            "1. 4IT445 Advanced Data Analytics: 'Milestone 2 - Machine Learning Pipeline Report' (Due: Nov 15, 2026, 23:59, max 20 MB PDF/ZIP, Status: Pending submission); "
+            "2. 4SA421 Information Systems Management: 'Enterprise Architecture Case Study' (Due: Nov 22, 2026, 23:59, max 25 MB PDF, Status: Pending submission); "
+            "3. 2SE411 European Economic Integration: 'Policy Brief Essay' (Due: Dec 05, 2026, 23:59, max 10 MB PDF, Status: Not yet opened); "
+            "4. 1PE401 Business Ethics & Governance: 'Ethical Dilemma Presentation Slides' (Due: Dec 12, 2026, 23:59, Status: Not yet opened). "
+            "On screen features: Select assignment drop-box, browse file upload, submit button, and submission protocol verification."
+        ),
+    },
 }
 
 # Topic cue lists for Smart Topic Check
@@ -118,6 +183,9 @@ PERSONAL_STUDY_CUES = [
     "how many vouchers", "how many credit vouchers", "vouchers left", "vouchers remaining",
     "can i afford to fail", "if i fail", "drop a course", "do i have enough",
     "my supervisor", "am i eligible", "my balance", "left", "remaining",
+    "assignment", "assignments", "homework", "task", "tasks", "submission", "submissions",
+    "odevzdavarna", "odevzdani", "odevzdání", "due", "deadline", "deadlines", "pending", "to do",
+    "credits left", "credits remaining", "degree progress", "how many credits",
 ]
 
 EXTERNAL_LIFE_STAY_VISA_CUES = [
@@ -224,6 +292,16 @@ def build_dynamic_context_chunks(
     if personalised_on and (asks_personal or asks_screen):
         profile = get_student_profile(user_name)
         courses_str = "; ".join(profile["enrolled_courses"])
+        assignments = profile.get("pending_assignments", [])
+        assignments_lines = []
+        for a in assignments:
+            assignments_lines.append(
+                f"- {a['course_code']} ({a['course_name']}): '{a['task_title']}' | "
+                f"Due: {a['due_date']} ({a['days_left']}) | Weight: {a['weight']} | "
+                f"Direct Link: [{a['button_label']}]({a['submission_url']})"
+            )
+        assignments_str = "\n".join(assignments_lines)
+
         extra_chunks.append({
             "id": "student_personal_profile",
             "doc_id": "insis_student_profile",
@@ -237,14 +315,19 @@ def build_dynamic_context_chunks(
                 f"Programme: {profile['programme']} ({profile['faculty']})\n"
                 f"Active Period: {profile['study_period']}\n"
                 f"Credits Earned: {profile['earned_ects']} / {profile['degree_target_ects']} ECTS "
-                f"({profile['remaining_ects_needed']} ECTS remaining to graduate)\n"
+                f"({profile['remaining_ects_needed']} ECTS needed to graduate)\n"
+                f"Current Enrolled Semester Credits: {profile.get('current_enrolled_ects', 24)} ECTS (in progress this semester across 4 courses)\n"
+                f"Net Remaining to Graduate After Current Semester: {profile.get('remaining_ects_after_current_term', 6)} ECTS\n"
                 f"Credit Vouchers: {profile['remaining_vouchers']} remaining out of {profile['initial_vouchers']} initial Master's vouchers "
-                f"({profile['used_vouchers_current_sem']} used in current semester)\n"
+                f"({profile['used_vouchers_current_sem']} used in current semester; voucher buffer is safe)\n"
                 f"Weighted GPA: {profile['weighted_gpa']} (scale 1=Excellent to 4=Fail)\n"
                 f"Tuition Variable Symbol: {profile['variable_symbol']} | Tuition Status: {profile['tuition_status']}\n"
                 f"Enrolled Courses: {courses_str}\n"
+                f"Pending Coursework Assignments & Deadlines:\n{assignments_str}\n"
                 f"Master's Thesis: '{profile['thesis_title']}' | Supervisor: {profile['thesis_supervisor']} | "
-                f"Assignment: {profile['thesis_assignment_status']} | Submission: {profile['thesis_submission_status']}"
+                f"Assignment: {profile['thesis_assignment_status']} | Submission: {profile['thesis_submission_status']} | "
+                f"Direct Thesis Link: [🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)\n"
+                f"Direct Study Record Link: [📑 View Full E-Study Record](https://insis.vse.cz/auth/student/studium.pl?lang=en)"
             ),
             "is_dynamic_context": True,
         })

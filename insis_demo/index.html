@@ -763,6 +763,119 @@
 
 
   <!-- =========================================================================
+       VIEW 3B: COURSEWORK SUBMISSIONS (Odevzdávárna)
+       URL: https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en
+       ========================================================================= -->
+  <main id="view-coursework-submissions" class="insis-view" style="display:none;">
+    <div class="portal-page-container">
+      <div class="portal-title-block">
+        <h2 class="portal-main-heading">Coursework Submissions (Odevzdávárna)</h2>
+        <div class="portal-subheading">Winter Semester 2026/2027 &bull; Faculty of Informatics and Statistics (FIS)</div>
+      </div>
+
+      <!-- InSIS Study Tabs Bar -->
+      <div class="insis-subnav-strip">
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/studium.pl?lang=en'); return false;">My College</a>
+        <a href="#" onclick="alert('E-study record: 90 ECTS earned, 24 in progress'); return false;">E-study record</a>
+        <a href="#" onclick="alert('Course e-plans'); return false;">Course e-plans</a>
+        <a href="#" class="active" onclick="return false;">Coursework submissions</a>
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en'); return false;">Final thesis</a>
+      </div>
+
+      <!-- Information Alert Banner -->
+      <div class="insis-banner-alert" style="margin-top:14px; background:#f0f9ff; border-left:4px solid #0284c7; color:#0369a1; padding:12px 16px; border-radius:6px;">
+        <strong>ℹ Submission Vault Guidelines:</strong> Files submitted into InSIS coursework folders are validated for size and MIME format. A confirmation protocol with cryptographic hash and server timestamp is generated upon upload.
+      </div>
+
+      <!-- Course Submissions Container -->
+      <div class="odevzdavarna-container" style="margin-top:18px; display:flex; flex-direction:column; gap:16px;">
+
+        <!-- 1. 4IT445 Advanced Data Analytics -->
+        <div id="vault-4it445" class="odevzdavarna-card" style="border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span style="background:#0284c7; color:#ffffff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:4px;">4IT445</span>
+              <strong style="font-size:15px; color:#0f172a; margin-left:6px;">Advanced Data Analytics</strong>
+              <div style="font-size:12px; color:#64748b; margin-top:2px;">Lecturer: doc. Ing. Petr Doucek, CSc. &bull; Mon 09:15 RB 101</div>
+            </div>
+            <span class="badge-urgent-pill" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px;">
+              🔴 Deadline: Nov 15, 2026 (23:59) &bull; 3 days left
+            </span>
+          </div>
+
+          <div style="margin-top:12px; padding:10px 14px; background:#f8fafc; border-radius:6px; border-left:3px solid #0284c7;">
+            <div style="font-weight:700; color:#1e293b; font-size:13px;">Topic Vault: Milestone 2 &ndash; Machine Learning Pipeline Report</div>
+            <div style="font-size:12px; color:#475569; margin-top:3px;">
+              Deliverable: End-to-end model evaluation notebook (PDF report + optional ZIP code archive). Weight: <strong>25 points</strong>. Max size: 20 MB.
+            </div>
+          </div>
+
+          <!-- Submission Action Bar -->
+          <div style="margin-top:14px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <input type="file" id="file-input-4it445" style="font-size:12px;">
+            <button class="btn-vault-upload" onclick="handleAssignmentUpload('4IT445', 'file-input-4it445', 'status-4it445')" style="background:#004b87; color:#ffffff; border:none; padding:7px 14px; border-radius:4px; font-weight:700; font-size:12px; cursor:pointer;">
+              📥 Submit Assignment to 4IT445
+            </button>
+            <span id="status-4it445" style="font-size:12px; font-weight:600; color:#b45309; background:#fef3c7; padding:4px 10px; border-radius:12px;">
+              Status: Pending Submission
+            </span>
+          </div>
+        </div>
+
+        <!-- 2. 4SA421 Information Systems Management -->
+        <div id="vault-4sa421" class="odevzdavarna-card" style="border:1px solid #cbd5e1; border-radius:8px; background:#ffffff; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span style="background:#0284c7; color:#ffffff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:4px;">4SA421</span>
+              <strong style="font-size:15px; color:#0f172a; margin-left:6px;">Information Systems Management</strong>
+              <div style="font-size:12px; color:#64748b; margin-top:2px;">Lecturer: prof. Ing. Alena Fischerová, CSc. &bull; Tue 14:30 SB 204</div>
+            </div>
+            <span class="badge-upcoming-pill" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px;">
+              🟡 Deadline: Nov 22, 2026 (23:59) &bull; 10 days left
+            </span>
+          </div>
+
+          <div style="margin-top:12px; padding:10px 14px; background:#f8fafc; border-radius:6px; border-left:3px solid #0284c7;">
+            <div style="font-weight:700; color:#1e293b; font-size:13px;">Topic Vault: Enterprise Architecture Case Study</div>
+            <div style="font-size:12px; color:#475569; margin-top:3px;">
+              Deliverable: TOGAF ADM architecture definition document in PDF format. Weight: <strong>30 points</strong>. Max size: 25 MB.
+            </div>
+          </div>
+
+          <!-- Submission Action Bar -->
+          <div style="margin-top:14px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <input type="file" id="file-input-4sa421" style="font-size:12px;">
+            <button class="btn-vault-upload" onclick="handleAssignmentUpload('4SA421', 'file-input-4sa421', 'status-4sa421')" style="background:#004b87; color:#ffffff; border:none; padding:7px 14px; border-radius:4px; font-weight:700; font-size:12px; cursor:pointer;">
+              📥 Submit Assignment to 4SA421
+            </button>
+            <span id="status-4sa421" style="font-size:12px; font-weight:600; color:#b45309; background:#fef3c7; padding:4px 10px; border-radius:12px;">
+              Status: Pending Submission
+            </span>
+          </div>
+        </div>
+
+        <!-- 3. Master's Thesis Direct Link Box -->
+        <div class="odevzdavarna-card" style="border:1px dashed #0284c7; border-radius:8px; background:#f0f9ff; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <span style="background:#0f766e; color:#ffffff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:4px;">THESIS</span>
+              <strong style="font-size:14px; color:#0f172a; margin-left:6px;">Master's Thesis Electronic Submission Area</strong>
+              <div style="font-size:12px; color:#475569; margin-top:2px;">
+                Required by § 47b: Insert English/Czech abstracts, keywords, and thesis PDF/A file.
+              </div>
+            </div>
+            <button onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en')" style="background:#0f766e; color:#ffffff; border:none; padding:7px 14px; border-radius:4px; font-weight:700; font-size:12px; cursor:pointer;">
+              🎓 Go to Master's Thesis Area &rarr;
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+
+  <!-- =========================================================================
        VIEW 4: GENERIC AUTHENTIC InSIS DYNAMIC PAGE VIEW
        (Renders the remaining paths: SZZ, Kontrola plánu, Rozvrh, Úřadovna, etc.)
        ========================================================================= -->

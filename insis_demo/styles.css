@@ -1855,3 +1855,70 @@ body {
   padding: 1px 4px;
   border-radius: 4px;
 }
+
+/* ==========================================================================
+   Interactive Bot Action Shortcut Buttons (Deep Links to InSIS Submission Pages)
+   ========================================================================== */
+.bot-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff !important;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-decoration: none !important;
+  margin: 6px 4px 6px 0;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.bot-action-button:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(2, 132, 199, 0.35);
+  color: #ffffff !important;
+}
+
+.bot-action-button:active {
+  transform: translateY(0);
+}
+
+.bot-action-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #004b87 !important;
+  padding: 4px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  text-decoration: none !important;
+  transition: all 0.12s ease;
+}
+
+.bot-action-secondary-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* Coursework Submissions Vault Styling */
+.odevzdavarna-card {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.odevzdavarna-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-vault-upload:hover {
+  background: #003666 !important;
+}
+
