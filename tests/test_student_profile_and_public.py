@@ -346,3 +346,23 @@ def test_coursework_submissions_view_and_ics_in_frontend():
     # CSS styles action buttons
     assert ".bot-action-button" in css
     assert "odevzdavarna-card" in css
+
+
+def test_public_secondary_links_scope_interceptor():
+    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+
+    # Scope notice modal exists in HTML
+    assert 'id="out-of-scope-modal"' in html
+    assert "Academic Prototype Notice" in html
+    assert "Module Outside Research Scope" in html
+    assert 'id="btn-out-of-scope-real-link"' in html
+
+    # Primary login link is preserved
+    assert 'id="pub-link-login"' in html
+    assert "showLoginView()" in html
+
+    # JS interceptor handles public links without misleading pages
+    assert "setupPublicLinkInterceptors" in app_js
+    assert "handlePublicOutOfScope" in app_js
+    assert "!session.loggedIn" in app_js

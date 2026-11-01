@@ -423,6 +423,20 @@ function navigateToUrl(fullUrl) {
 
   const cleanPath = fullUrl.replace("https://insis.vse.cz", "").split("?")[0];
 
+  // If user is NOT logged in and attempts to access any public submodules,
+  // show the prototype scope notice instead of misleading fake pages!
+  if (!session.loggedIn && cleanPath !== "" && cleanPath !== "/" && cleanPath !== "/index.pl") {
+    handlePublicOutOfScope(matched.title, fullUrl);
+    currentPageKey = "public_home";
+    currentPageTitle = "Public Information Portal";
+    currentPageUrl = "https://insis.vse.cz/?lang=en";
+    document.getElementById("view-public-home").style.display = "block";
+    document.getElementById("breadcrumb-dynamic").innerHTML =
+      "&raquo; <strong>Integrated Study Information System</strong>";
+    updateSessionUI();
+    return;
+  }
+
   // 0. Public InSIS Root (No Login Required - Screenshots 1 & 2)
   if (cleanPath === "" || cleanPath === "/" || cleanPath === "/index.pl") {
     currentPageKey = "public_home";
@@ -791,6 +805,47 @@ function openModal(id) {
 function closeModal(id) {
   const m = document.getElementById(id);
   if (m) m.style.display = "none";
+}
+
+let currentOutOfScopeTopic = "Selected Module";
+let currentOutOfScopeUrl = "https://insis.vse.cz/?lang=en";
+
+function handlePublicOutOfScope(title, url) {
+  currentOutOfScopeTopic = (title || "Selected InSIS Module").trim();
+  currentOutOfScopeUrl = url || "https://insis.vse.cz/?lang=en";
+  const titleEl = document.getElementById("out-of-scope-feature-title");
+  if (titleEl) {
+    titleEl.textContent = `"${currentOutOfScopeTopic}" is outside research scope`;
+  }
+  const linkEl = document.getElementById("btn-out-of-scope-real-link");
+  if (linkEl) {
+    linkEl.href = currentOutOfScopeUrl;
+  }
+  openModal("out-of-scope-modal");
+}
+
+function setupPublicLinkInterceptors() {
+  const container = document.getElementById("view-public-home");
+  if (!container) return;
+  const links = container.querySelectorAll("a");
+  links.forEach((a) => {
+    // Keep primary login link completely functional
+    if (a.id === "pub-link-login") return;
+    const title = a.textContent.trim();
+    const onclickStr = a.getAttribute("onclick") || "";
+    let url = "https://insis.vse.cz/?lang=en";
+    const m = onclickStr.match(/navigateToUrl\('([^']+)'\)/);
+    if (m) url = m[1];
+
+    a.onclick = function (e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      handlePublicOutOfScope(title, url);
+      return false;
+    };
+  });
 }
 
 function openInstructionsModal() {
@@ -1529,6 +1584,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   navigateToUrl(initialUrl);
+  setupPublicLinkInterceptors();
 });
 
 window.addEventListener("popstate", () => {

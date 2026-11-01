@@ -896,6 +896,43 @@
   <!-- =========================================================================
        MODALS: Errata, Add Info, Upload, Plan Check, Confirm Study
        ========================================================================= -->
+  <!-- Out-of-Scope Research Prototype Scope Modal -->
+  <div id="out-of-scope-modal" class="insis-modal-overlay" style="display:none;">
+    <div class="insis-modal-window" style="max-width:540px;">
+      <div class="insis-modal-header" style="background:#004b87;">
+        <span>🔬 Academic Prototype Notice</span>
+        <button style="background:none; border:none; color:white; font-size:16px; cursor:pointer;" onclick="closeModal('out-of-scope-modal')">✕</button>
+      </div>
+      <div class="insis-modal-body">
+        <div style="font-size:14px; font-weight:700; color:#0f172a; margin-bottom:8px;" id="out-of-scope-feature-title">
+          Module Outside Research Scope
+        </div>
+        <p style="font-size:12.5px; color:#334155; line-height:1.55; margin:0 0 10px 0;">
+          This web application is an independent <strong>academic research simulation</strong> developed for an Information Systems Management (ISM) Master's thesis at VŠE.
+        </p>
+        <p style="font-size:12.5px; color:#334155; line-height:1.55; margin:0 0 14px 0;">
+          The research focuses on the <strong>AI Student Assistant (VŠE Buddy Bot)</strong> and <strong>authenticated study administration</strong> (coursework drop-boxes, ECTS credit tracking, thesis filing). Public institutional databases (such as staff directories, card validity systems, and external forms) are intentionally out of scope.
+        </p>
+        <div style="background:#f1f5f9; border-left:3px solid #004b87; padding:10px 12px; border-radius:4px; font-size:12px; color:#1e293b; margin-bottom:14px;">
+          💡 <strong>How to continue evaluating the prototype:</strong>
+          <ul style="margin:6px 0 0 18px; padding:0;">
+            <li style="margin-bottom:4px;"><strong>Student Portal Experience:</strong> Click <em>Log in to Personal administration</em> (any name, password: <code>ism_mastersthesis</code>).</li>
+            <li><strong>Public Inquiries:</strong> Open the <strong>VŠE Buddy Bot</strong> in the bottom-right corner to ask about admissions, visas, dorms, and campus policies without an account!</li>
+          </ul>
+        </div>
+      </div>
+      <div class="insis-modal-footer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <a id="btn-out-of-scope-real-link" href="https://insis.vse.cz/?lang=en" target="_blank" rel="noopener noreferrer" style="font-size:11.5px; color:#0284c7; text-decoration:underline;">
+          Open real InSIS page (insis.vse.cz) ↗
+        </a>
+        <div style="display:flex; gap:8px;">
+          <button onclick="closeModal('out-of-scope-modal')" style="padding:6px 12px; border:1px solid #ccc; background:#fff; border-radius:4px; cursor:pointer; font-size:12px;">Close</button>
+          <button onclick="closeModal('out-of-scope-modal'); showLoginView();" style="padding:6px 14px; background:#005596; color:white; border:none; border-radius:4px; font-weight:700; cursor:pointer; font-size:12px;">🔑 Log In to Personal Administration</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="errata-modal" class="insis-modal-overlay">
     <div class="insis-modal-window">
       <div class="insis-modal-header">
