@@ -177,9 +177,12 @@ def test_login_password_and_clean_logout_in_frontend():
     assert "George Joseph" not in app_js
 
 
-def test_multiturn_accommodation_query_isolation():
+def test_multiturn_accommodation_query_isolation(monkeypatch):
     from bot import BuddyBot
     bot = BuddyBot()
+    # Bypass remote embedding call in unit test so it executes instantaneously offline
+    monkeypatch.setattr(bot.retriever, "embed_query", lambda q: None)
+
     history = [
         {"role": "user", "content": "What are the visa and 3-day Foreign Police registration rules for international students?"},
         {"role": "assistant", "content": "You must register with the Czech Foreign Police within 3 working days."}
@@ -214,3 +217,34 @@ def test_multiturn_credit_vouchers_query_isolation():
     assert "Alexander Kovac" in dyn_chunks[0]["title"]
     assert "120" in dyn_chunks[0]["text"]
     assert "144" in dyn_chunks[0]["text"]
+
+
+def test_vse_logo_and_academic_demo_disclaimers():
+    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+
+    # Logo assets exist and are linked in header
+    assert (BASE_DIR / "insis_demo" / "assets" / "vse_logo.svg").exists()
+    assert (BASE_DIR / "insis_demo" / "assets" / "vse_logo.png").exists()
+    assert 'src="assets/vse_logo.svg"' in html
+    assert 'alt="VŠE Prague Logo"' in html
+
+    # Visible academic demo disclaimer banner at the top of the portal
+    assert 'class="insis-demo-banner"' in html
+    assert "DEMO / EXPERIMENTAL" in html
+    assert "Master's Thesis Simulation" in html
+    assert "official VŠE InSIS portal" in html
+    assert "https://insis.vse.cz" in html
+
+    # Demo pill next to title and meta note
+    assert "SIMULATION DEMO" in html
+    assert "Academic Research Environment" in html
+
+    # Prominent footer disclaimer
+    assert "insis-academic-disclaimer-footer" in html
+    assert "Academic Master's Thesis Prototype" in html
+
+    # In-bot research disclaimer
+    assert "Academic Master's Thesis Prototype" in app_js
+    assert "Demo Prototype" in app_js

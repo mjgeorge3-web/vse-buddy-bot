@@ -23,6 +23,21 @@
     <button class="btn-nav-go" onclick="handleGoUrl()">Go</button>
   </div>
 
+  <!-- Top Academic Research Demo Notice Banner -->
+  <aside class="insis-demo-banner" role="alert" aria-label="Academic Demo Disclaimer">
+    <div class="demo-banner-content">
+      <div class="demo-banner-left">
+        <span class="demo-banner-badge">DEMO / EXPERIMENTAL</span>
+        <span class="demo-banner-text">
+          <strong>Master's Thesis Simulation (ISM VŠE):</strong> This website is an independent academic research prototype developed to evaluate an AI student assistant. It is <strong>not</strong> the official VŠE InSIS portal.
+        </span>
+      </div>
+      <a href="https://insis.vse.cz/?lang=en" target="_blank" rel="noopener noreferrer" class="demo-banner-official-link" title="Open the genuine InSIS university portal">
+        Official InSIS (insis.vse.cz) &rarr;
+      </a>
+    </div>
+  </aside>
+
   <!-- 1. Top Navy Utility Bar -->
   <div class="insis-top-bar">
     <a href="#" onclick="alert('Jazyk: Čeština'); return false;">ČESKY</a>
@@ -31,18 +46,18 @@
 
   <!-- 2. Authentic Brand Header -->
   <header class="insis-header">
-    <div class="vse-logo-container" style="cursor:pointer;" onclick="goHome()">
-      <div class="vse-circle-logo">
-        <span class="arch-text-top">UNIVERSITY OF</span>
-        <span class="arch-text-top" style="font-size:6px;">ECONOMICS &amp; BUSINESS</span>
-        <span class="logo-main-text">VŠE</span>
-        <span class="arch-text-bot">PRAGUE</span>
-      </div>
+    <div class="vse-logo-container" style="cursor:pointer;" onclick="goHome()" title="VŠE InSIS Simulation - Return to Public Home">
+      <img src="assets/vse_logo.svg" alt="VŠE Prague Logo" class="vse-official-logo" onerror="this.onerror=null; this.src='assets/vse_logo.png';">
       <div class="insis-title-area">
-        <h1>Integrated Study Information System</h1>
+        <div class="insis-title-row">
+          <h1>Integrated Study Information System</h1>
+          <span class="insis-title-demo-pill" title="Academic simulation developed for Master's thesis research">SIMULATION DEMO</span>
+        </div>
         <div class="insis-header-meta">
           <span>🕒 Nov 1, 2026 &nbsp; 0:44 a.m.</span>
           <span>📅 Felix</span>
+          <span class="insis-meta-dot">&bull;</span>
+          <span class="insis-meta-thesis-note">Academic Research Environment (ISM VŠE)</span>
         </div>
       </div>
     </div>
@@ -828,6 +843,35 @@
       </div>
     </div>
   </div>
+
+  <!-- Academic Research & Non-Official Simulation Disclaimer Footer -->
+  <footer class="insis-academic-disclaimer-footer">
+    <div class="academic-footer-content">
+      <div class="academic-footer-badge">
+        <span>🧪 Academic Master's Thesis Prototype • Non-Official Simulation</span>
+      </div>
+      <p class="academic-footer-desc">
+        This platform is an independent academic research and development simulation created by an <strong>Information Systems Management (ISM)</strong> Master's student at the <strong>Faculty of Informatics and Statistics (FIS), Prague University of Economics and Business (VŠE)</strong>.
+      </p>
+      <div class="academic-footer-details">
+        <div class="academic-notice-item">
+          <strong>Research Purpose:</strong> Developed exclusively for thesis research, architectural proof-of-concept, and usability evaluation of Retrieval-Augmented Generation (RAG) copilots for student support in higher education.
+        </div>
+        <div class="academic-notice-item">
+          <strong>Non-Affiliation Notice:</strong> This simulation is <u>not</u> operated, hosted, or endorsed as an official service by VŠE administration. It contains mock and public demonstration data only.
+        </div>
+        <div class="academic-official-row">
+          <span>For all official university services, admissions, course registration, and personal administration, visit:</span>
+          <a href="https://insis.vse.cz/?lang=en" target="_blank" rel="noopener noreferrer" class="footer-official-btn">
+            🔗 Official VŠE InSIS (insis.vse.cz)
+          </a>
+          <a href="https://www.vse.cz/english/" target="_blank" rel="noopener noreferrer" class="footer-official-btn">
+            🌐 VŠE University Website (vse.cz)
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 
   <!-- =========================================================================

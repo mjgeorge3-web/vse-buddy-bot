@@ -252,6 +252,74 @@ body {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   Top Academic Research Demo Banner (High Visibility Disclaimer)
+   ========================================================================== */
+.insis-demo-banner {
+  background: linear-gradient(90deg, #1e3a8a 0%, #0369a1 60%, #0284c7 100%);
+  color: #ffffff;
+  padding: 8px 24px;
+  font-size: 12px;
+  border-bottom: 2px solid #f59e0b;
+  position: relative;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.demo-banner-content {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.demo-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.demo-banner-badge {
+  background-color: #f59e0b;
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.demo-banner-text {
+  font-size: 12px;
+  color: #f8fafc;
+  line-height: 1.4;
+}
+
+.demo-banner-text strong {
+  color: #ffffff;
+}
+
+.demo-banner-official-link {
+  color: #fef08a;
+  text-decoration: underline;
+  font-weight: 700;
+  font-size: 11.5px;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.demo-banner-official-link:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+
 /* Brand Header */
 .insis-header {
   display: flex;
@@ -264,51 +332,32 @@ body {
 .vse-logo-container {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
-.vse-circle-logo {
-  width: 72px;
-  height: 72px;
-  border: 2px solid #005696;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  padding: 4px;
+/* Authentic Downloaded VŠE Logo Image */
+.vse-official-logo {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 56, 107, 0.12));
+  transition: transform 0.18s ease;
 }
 
-.vse-circle-logo .arch-text-top {
-  font-size: 7px;
-  font-weight: 700;
-  color: #005696;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  line-height: 1;
-}
-
-.vse-circle-logo .logo-main-text {
-  font-size: 20px;
-  font-weight: 800;
-  color: #005696;
-  line-height: 1.1;
-  letter-spacing: -0.5px;
-}
-
-.vse-circle-logo .arch-text-bot {
-  font-size: 7px;
-  font-weight: 700;
-  color: #005696;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  line-height: 1;
+.vse-official-logo:hover {
+  transform: scale(1.03);
 }
 
 .insis-title-area {
-  margin-left: 20px;
+  margin-left: 6px;
+}
+
+.insis-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .insis-title-area h1 {
@@ -320,6 +369,19 @@ body {
   letter-spacing: -0.2px;
 }
 
+.insis-title-demo-pill {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .insis-header-meta {
   display: flex;
   align-items: center;
@@ -327,6 +389,107 @@ body {
   font-size: 11.5px;
   color: var(--insis-text-muted);
   margin-top: 4px;
+}
+
+.insis-meta-dot {
+  color: #94a3b8;
+}
+
+.insis-meta-thesis-note {
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* ==========================================================================
+   Academic Research & Simulation Disclaimer Footer
+   ========================================================================== */
+.insis-academic-disclaimer-footer {
+  margin-top: 50px;
+  background-color: #f8fafc;
+  border-top: 2px solid #e2e8f0;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 30px 24px 36px;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.academic-footer-content {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.academic-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11.5px;
+  margin-bottom: 12px;
+}
+
+.academic-footer-desc {
+  margin: 0 0 14px 0;
+  color: #475569;
+  font-size: 12.5px;
+  max-width: 900px;
+}
+
+.academic-footer-details {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.academic-notice-item {
+  color: #334155;
+  font-size: 11.5px;
+}
+
+.academic-notice-item strong {
+  color: #0f172a;
+}
+
+.academic-official-row {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+}
+
+.footer-official-btn {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #005696;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 11px;
+  transition: all 0.15s ease;
+}
+
+.footer-official-btn:hover {
+  background-color: #005696;
+  color: #ffffff;
+  border-color: #004070;
+  text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -1180,6 +1343,18 @@ body {
   font-size: 11px;
   color: #64748b;
   line-height: 1.35;
+}
+
+.bot-hero-research-note {
+  margin-top: 12px;
+  font-size: 10.5px;
+  color: #64748b;
+  text-align: center;
+  padding: 5px 8px;
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  border: 1px dashed #cbd5e1;
+  width: 100%;
 }
 
 /* Chat Message Bubbles */

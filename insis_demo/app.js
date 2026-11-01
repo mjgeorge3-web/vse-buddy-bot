@@ -65,7 +65,7 @@ function resetBotConversationForSession() {
   if (!session.loggedIn) {
     area.innerHTML = `
       <div class="bot-hero-container">
-        <div class="bot-hero-badge">🌍 Public Guest Access</div>
+        <div class="bot-hero-badge">🌍 Public Guest Access • Demo Prototype</div>
         <div class="bot-hero-title">How can I help you today?</div>
         <div class="bot-hero-sub">Direct AI guidance on VŠE studies, visa rules, dormitories, and InSIS navigation &mdash; no login required.</div>
         <div class="bot-hero-cards">
@@ -91,15 +91,18 @@ function resetBotConversationForSession() {
             </div>
           </div>
         </div>
+        <div class="bot-hero-research-note">
+          🔬 <em>Academic Master's Thesis Prototype (ISM VŠE) • Not an official university service</em>
+        </div>
       </div>
     `;
   } else {
     const safeName = escapeHtml(session.userName);
     area.innerHTML = `
       <div class="bot-hero-container">
-        <div class="bot-hero-badge">🎓 Authenticated Student Mode</div>
+        <div class="bot-hero-badge">🎓 Student Mode • Demo Prototype</div>
         <div class="bot-hero-title">Welcome back, ${safeName}!</div>
-        <div class="bot-hero-sub">I have direct context of your InSIS profile, credit vouchers, thesis progress, and study policies.</div>
+        <div class="bot-hero-sub">I have direct context of your simulated InSIS profile, credit vouchers, thesis progress, and study policies.</div>
         <div class="bot-hero-cards">
           <div class="bot-starter-card" onclick="sendBotPrompt('How many credit vouchers and credits do I have left?')">
             <div class="starter-icon">📊</div>
@@ -122,6 +125,9 @@ function resetBotConversationForSession() {
               <div class="starter-desc">Foreign Police 3-day registration, ISKaM dormitory check-in</div>
             </div>
           </div>
+        </div>
+        <div class="bot-hero-research-note">
+          🔬 <em>Academic Master's Thesis Prototype (ISM VŠE) • Simulated Student Records</em>
         </div>
       </div>
     `;
@@ -912,7 +918,7 @@ function updateBotContextUI() {
   if (!statusText || !statusRight) return;
 
   if (!session.loggedIn) {
-    statusText.textContent = "Guest Access • No Login Needed";
+    statusText.textContent = "Demo Prototype • Guest Access";
     statusRight.innerHTML =
       '<a class="bot-status-link" onclick="showLoginView()">Log in ➔</a>';
 
@@ -927,7 +933,7 @@ function updateBotContextUI() {
       }
     }
   } else {
-    statusText.textContent = `${session.userName} • Personalised`;
+    statusText.textContent = `${session.userName} • Demo Prototype`;
     statusRight.innerHTML = `
       <label class="bot-gdpr-toggle" title="GDPR Opt-In: Allow bot to use your credits, vouchers & thesis status">
         <input type="checkbox" ${isPersonalisedEnabled ? "checked" : ""} onchange="togglePersonalisedMode(this.checked)">
