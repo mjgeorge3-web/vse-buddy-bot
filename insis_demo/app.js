@@ -58,21 +58,71 @@ function resetBotConversationForSession() {
   chatHistory = [];
   const session = getLoginSession();
   const area = document.getElementById("bot-messages-area");
+  const chipsBox = document.getElementById("bot-quick-chips");
+  if (chipsBox) chipsBox.innerHTML = "";
   if (!area) return;
 
   if (!session.loggedIn) {
     area.innerHTML = `
-      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
-        Welcome to <strong>VŠE Prague</strong>! 👋 You are currently <strong>not logged in</strong> (Public Access Mode).<br><br>
-        You can use me without an account &mdash; ask about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), E-application</strong>, or click <strong>📋 Arrival Checklist</strong> below!
+      <div class="bot-hero-container">
+        <div class="bot-hero-badge">🌍 Public Guest Access</div>
+        <div class="bot-hero-title">How can I help you today?</div>
+        <div class="bot-hero-sub">Direct AI guidance on VŠE studies, visa rules, dormitories, and InSIS navigation &mdash; no login required.</div>
+        <div class="bot-hero-cards">
+          <div class="bot-starter-card" onclick="sendBotPrompt('What are the visa and 3-day Foreign Police registration rules for international students?')">
+            <div class="starter-icon">🛂</div>
+            <div class="starter-text">
+              <div class="starter-title">Visa &amp; Police Registration</div>
+              <div class="starter-desc">3-day arrival rule, MOI appointments, accommodation confirmations</div>
+            </div>
+          </div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('How do I find accommodation in VŠE dormitories or private flats in Prague?')">
+            <div class="starter-icon">🏢</div>
+            <div class="starter-text">
+              <div class="starter-title">Dormitories &amp; Accommodation</div>
+              <div class="starter-desc">ISKaM reservations, Jarov/Blanice dorms, leases</div>
+            </div>
+          </div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('How do admissions and the E-application work at VŠE?')">
+            <div class="starter-icon">🎓</div>
+            <div class="starter-text">
+              <div class="starter-title">Admissions &amp; E-Application</div>
+              <div class="starter-desc">Programmes, deadlines, entrance exams, and first login</div>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   } else {
     const safeName = escapeHtml(session.userName);
     area.innerHTML = `
-      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
-        Hello <strong>${safeName}</strong>! 👋 You are signed in to InSIS.<br><br>
-        Ask me about <strong>this InSIS page</strong>, your <strong>credit vouchers (120/144)</strong>, <strong>Master's thesis</strong>, or <strong>visas &amp; dorm stay</strong>!
+      <div class="bot-hero-container">
+        <div class="bot-hero-badge">🎓 Authenticated Student Mode</div>
+        <div class="bot-hero-title">Welcome back, ${safeName}!</div>
+        <div class="bot-hero-sub">I have direct context of your InSIS profile, credit vouchers, thesis progress, and study policies.</div>
+        <div class="bot-hero-cards">
+          <div class="bot-starter-card" onclick="sendBotPrompt('How many credit vouchers and credits do I have left?')">
+            <div class="starter-icon">📊</div>
+            <div class="starter-text">
+              <div class="starter-title">Check My Credit Vouchers</div>
+              <div class="starter-desc">Check your remaining voucher balance (120/144) and minimum progression rules</div>
+            </div>
+          </div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('What do the 3 red Xs mean on my Master\\'s Thesis page and how do I submit errata?')">
+            <div class="starter-icon">📗</div>
+            <div class="starter-text">
+              <div class="starter-title">Master's Thesis Workflow</div>
+              <div class="starter-desc">Resolving the 3 red Xs, abstract entry, and submitting § 47b errata PDF</div>
+            </div>
+          </div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('What are the visa and 3-day Foreign Police registration rules for international students?')">
+            <div class="starter-icon">🛂</div>
+            <div class="starter-text">
+              <div class="starter-title">Visa &amp; Accommodation Rules</div>
+              <div class="starter-desc">Foreign Police 3-day registration, ISKaM dormitory check-in</div>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -858,33 +908,26 @@ function updateBotContextUI() {
   const statusText = document.getElementById("bot-status-text");
   const statusRight = document.getElementById("bot-status-right");
   const chipsBox = document.getElementById("bot-quick-chips");
-  const welcomeBubble = document.getElementById("bot-welcome-bubble");
 
-  if (!statusText || !chipsBox) return;
+  if (!statusText || !statusRight) return;
 
   if (!session.loggedIn) {
-    statusText.className = "bot-status-badge public";
-    statusText.textContent = "🌍 Public Access · Not logged in";
+    statusText.textContent = "Guest Access • No Login Needed";
     statusRight.innerHTML =
       '<a class="bot-status-link" onclick="showLoginView()">Log in ➔</a>';
 
-    if (welcomeBubble && chatHistory.length === 0) {
-      welcomeBubble.innerHTML =
-        "Welcome to <strong>VŠE Prague</strong>! 👋 You are currently <strong>not logged in</strong> (Public Access Mode).<br><br>" +
-        "You can use me without an account &mdash; ask about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), E-application</strong>, or click <strong>📋 Arrival Checklist</strong> below!";
+    if (chipsBox) {
+      if (chatHistory.length > 0) {
+        chipsBox.innerHTML = `
+          <button class="mini-chip" onclick="showInteractiveChecklist()">📋 Arrival Checklist</button>
+          <button class="mini-chip" onclick="sendBotPrompt('How to find accomodation')">🏢 Dorms &amp; Housing</button>
+        `;
+      } else {
+        chipsBox.innerHTML = "";
+      }
     }
-
-    chipsBox.innerHTML = `
-      <button class="mini-chip" onclick="sendBotPrompt('What are the visa and 3-day Foreign Police registration rules for new students?')">🛂 Visa &amp; 3-Day Police</button>
-      <button class="mini-chip" onclick="sendBotPrompt('How do I apply for a VŠE dormitory room and stay in Prague?')">🏢 Dorms &amp; Stay</button>
-      <button class="mini-chip" onclick="sendBotPrompt('How do I submit the E-application form to study at VŠE on this page?')">📝 How to Apply</button>
-      <button class="mini-chip" onclick="sendBotPrompt('How can I view the Course catalogue and Study plans without logging in?')">📚 Public Courses</button>
-      <button class="mini-chip" onclick="showInteractiveChecklist()">📋 Arrival Checklist</button>
-    `;
   } else {
-    const safeName = escapeHtml(session.userName);
-    statusText.className = "bot-status-badge";
-    statusText.textContent = `👤 ${session.userName} · 📍 ${currentPageTitle}`;
+    statusText.textContent = `${session.userName} • Personalised`;
     statusRight.innerHTML = `
       <label class="bot-gdpr-toggle" title="GDPR Opt-In: Allow bot to use your credits, vouchers & thesis status">
         <input type="checkbox" ${isPersonalisedEnabled ? "checked" : ""} onchange="togglePersonalisedMode(this.checked)">
@@ -892,33 +935,80 @@ function updateBotContextUI() {
       </label>
     `;
 
-    if (welcomeBubble && chatHistory.length === 0) {
-      welcomeBubble.innerHTML =
-        `Hello <strong>${safeName}</strong>! 👋 You are signed in to InSIS.<br><br>` +
-        `Ask me about <strong>this InSIS page</strong>, your <strong>credit vouchers (120/144)</strong>, <strong>Master's thesis</strong>, or <strong>visas &amp; dorm stay</strong>!`;
-    }
-
-    if (currentPageKey === "master_thesis") {
-      chipsBox.innerHTML = `
-        <button class="mini-chip" onclick="sendBotPrompt('What do the 3 red X icons on this page mean for my thesis?')">❓ Explain 3 red X icons</button>
-        <button class="mini-chip" onclick="sendBotPrompt('How do I submit errata for my Master\\'s thesis on this page?')">📝 Submit Errata (§ 47b)</button>
-        <button class="mini-chip" onclick="sendBotPrompt('How do I extend my student residence permit or register stay?')">🛂 Visa &amp; Stay</button>
-      `;
-    } else if (currentPageKey === "student_portal") {
-      chipsBox.innerHTML = `
-        <button class="mini-chip" onclick="sendBotPrompt('How many credit vouchers do I have left and can I afford to fail a 6 ECTS course?')">📊 My Vouchers (120/144)</button>
-        <button class="mini-chip" onclick="sendBotPrompt('Where do I click on this page to open my Master\\'s thesis?')">📗 Open Final Thesis</button>
-        <button class="mini-chip" onclick="sendBotPrompt('Where is the nearest washroom in Rajská Building?')">🚽 Nearest WC</button>
-      `;
-    } else {
-      chipsBox.innerHTML = `
-        <button class="mini-chip" onclick="sendBotPrompt('How many credits and credit vouchers do I have left?')">📊 My Credits &amp; Vouchers</button>
-        <button class="mini-chip" onclick="sendBotPrompt('How do I open Student\\'s portal from here?')">🧭 Student's Portal</button>
-        <button class="mini-chip" onclick="sendBotPrompt('Do I need to register with the Foreign Police if I live in a VŠE dorm?')">🛂 Visa &amp; Police</button>
-        <button class="mini-chip" onclick="showInteractiveChecklist()">📋 Checklist</button>
-      `;
+    if (chipsBox) {
+      if (chatHistory.length > 0) {
+        if (currentPageKey === "master_thesis") {
+          chipsBox.innerHTML = `
+            <button class="mini-chip" onclick="sendBotPrompt('What do the 3 red X icons on this page mean for my thesis?')">❓ 3 Red Xs</button>
+            <button class="mini-chip" onclick="sendBotPrompt('How do I submit errata for my Master\\'s thesis on this page?')">📝 Submit Errata</button>
+          `;
+        } else {
+          chipsBox.innerHTML = `
+            <button class="mini-chip" onclick="sendBotPrompt('how many credit vouchers i have left')">📊 My Vouchers</button>
+            <button class="mini-chip" onclick="sendBotPrompt('Where is the nearest washroom in Rajská Building?')">🚽 Nearest WC</button>
+          `;
+        }
+      } else {
+        chipsBox.innerHTML = "";
+      }
     }
   }
+}
+
+function performBotReset() {
+  resetBotConversationForSession();
+  const inputEl = document.getElementById("bot-input-field");
+  if (inputEl) {
+    inputEl.value = "";
+    inputEl.focus();
+  }
+  toggleTopicsPopover(false);
+}
+
+function toggleTopicsPopover(forceState) {
+  const popover = document.getElementById("bot-topics-popover");
+  if (!popover) return;
+  if (typeof forceState === "boolean") {
+    if (forceState) popover.classList.remove("hidden");
+    else popover.classList.add("hidden");
+  } else {
+    popover.classList.toggle("hidden");
+  }
+  if (!popover.classList.contains("hidden")) {
+    renderPopoverTopics();
+  }
+}
+
+function renderPopoverTopics() {
+  const list = document.getElementById("popover-topics-list");
+  if (!list) return;
+  const session = getLoginSession();
+  let items = [];
+  if (!session.loggedIn) {
+    items = [
+      { icon: "🛂", text: "Foreign Police 3-day registration rule", prompt: "What are the visa and 3-day Foreign Police registration rules for international students?" },
+      { icon: "🏢", text: "How to find accommodation & dorms (ISKaM)", prompt: "How do I find accommodation in VŠE dormitories or private flats in Prague?" },
+      { icon: "📝", text: "How does the E-application form work?", prompt: "How do admissions and the E-application work at VŠE?" },
+      { icon: "📚", text: "Where can I view the course catalogue?", prompt: "Where can I view the course catalogue and syllabi?" },
+      { icon: "📋", text: "Open Interactive Arrival Checklist", action: "showInteractiveChecklist" }
+    ];
+  } else {
+    items = [
+      { icon: "📊", text: "How many credit vouchers I have left", prompt: "how many credit vouchers i have left" },
+      { icon: "📗", text: "What do the 3 red Xs mean on Thesis page?", prompt: "What do the 3 red Xs mean on my Master's Thesis page and how do I submit errata?" },
+      { icon: "📄", text: "How to get Confirmation of Study in InSIS", prompt: "Where do I download electronic confirmation of study?" },
+      { icon: "🏢", text: "How to find accommodation & dormitory ISKaM", prompt: "How do I find accommodation in VŠE dormitories or private flats in Prague?" },
+      { icon: "🚽", text: "Find nearest washroom in Rajská Building", prompt: "Where is the nearest washroom in Rajská Building?" },
+      { icon: "📋", text: "Open Interactive Arrival Checklist", action: "showInteractiveChecklist" }
+    ];
+  }
+  list.innerHTML = items.map((item) => {
+    if (item.action === "showInteractiveChecklist") {
+      return `<div class="popover-item" onclick="toggleTopicsPopover(false); showInteractiveChecklist();"><span>${item.icon}</span> <span>${escapeHtml(item.text)}</span></div>`;
+    }
+    const escapedPrompt = escapeHtml(item.prompt).replace(/'/g, "\\'");
+    return `<div class="popover-item" onclick="toggleTopicsPopover(false); sendBotPrompt('${escapedPrompt}');"><span>${item.icon}</span> <span>${escapeHtml(item.text)}</span></div>`;
+  }).join("");
 }
 
 function toggleBotDrawer(forceOpen) {
@@ -1041,6 +1131,12 @@ async function submitBotMessage() {
   if (!query) return;
 
   inputEl.value = "";
+  toggleTopicsPopover(false);
+
+  // If initial hero container is present, clean it up for conversation flow
+  const heroEl = document.querySelector(".bot-hero-container");
+  if (heroEl) heroEl.remove();
+
   appendBotBubble("user", query);
   chatHistory.push({ role: "user", content: query });
 
@@ -1056,7 +1152,7 @@ async function submitBotMessage() {
 
   const loadingBubble = appendBotBubble(
     "assistant",
-    "Searching verified VŠE documentation..."
+    '<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'
   );
 
   try {
@@ -1084,6 +1180,8 @@ async function submitBotMessage() {
     chatHistory.push({ role: "assistant", content: fallback });
     handleContextualPageActions(query, session.loggedIn);
   }
+
+  updateBotContextUI();
 
   const container = document.getElementById("bot-messages-area");
   container.scrollTop = container.scrollHeight;
@@ -1202,7 +1300,34 @@ function appendContextLink(label, actionFn) {
 
 function formatBotMarkdown(text) {
   if (!text) return "";
-  return text
+
+  let formatted = text;
+  let sourcesHtml = "";
+
+  // Extract source citations and transform them into sleek badge pills
+  const sourcesMatch = formatted.match(/(?:\n|^)\*\*Sources:\*\*\s*([\s\S]*)$/i);
+  if (sourcesMatch) {
+    formatted = formatted.substring(0, sourcesMatch.index).trim();
+    const sourcesRaw = sourcesMatch[1].trim();
+    const sourceLinks = [];
+    const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    let m;
+    while ((m = linkRegex.exec(sourcesRaw)) !== null) {
+      const label = escapeHtml(m[1]);
+      const url = m[2];
+      const safeUrl = url.replace(/'/g, "\\'");
+      if (url.startsWith("https://insis.vse.cz")) {
+        sourceLinks.push(`<a class="source-pill-link" href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;">🔗 ${label}</a>`);
+      } else {
+        sourceLinks.push(`<a class="source-pill-link" href="${url}" target="_blank" rel="noopener noreferrer">🌐 ${label}</a>`);
+      }
+    }
+    if (sourceLinks.length > 0) {
+      sourcesHtml = `<div class="bot-sources-list"><span style="font-size:10.5px; font-weight:700; color:#64748b; width:100%;">Verified Sources:</span>${sourceLinks.join("")}</div>`;
+    }
+  }
+
+  formatted = formatted
     .replace(
       /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
       (match, label, url) => {
@@ -1220,11 +1345,20 @@ function formatBotMarkdown(text) {
     .replace(/\n- /g, "<br>• ")
     .replace(/\n\* /g, "<br>• ")
     .replace(/\n/g, "<br>");
+
+  return formatted + sourcesHtml;
 }
 
 function getContextualFallback(query, loggedIn) {
   const q = query.toLowerCase();
-  if (!loggedIn && (q.includes("apply") || q.includes("admission"))) {
+  if (q.includes("accomodation") || q.includes("accommodation") || q.includes("dorm") || q.includes("flat") || q.includes("housing")) {
+    return (
+      "Accommodation at VŠE Prague:\n" +
+      "- **VŠE Dormitories (SUZ)**: Applied via the ISKaM system (dorms at Jarov, Blanice, Vltava, Rooseveltova).\n" +
+      "- **Accommodation Voucher/Confirmation**: SUZ issues the required housing proof for visa applications.\n" +
+      "- **Foreign Police Rule**: Dormitory administration automatically reports your stay. If living in private accommodation, you must register within 3 working days."
+    );
+  } else if (!loggedIn && (q.includes("apply") || q.includes("admission"))) {
     return (
       "You can apply without an InSIS student account right from this Public InSIS page:\n" +
       "- Under **Admission procedure**, click **E-application form to study at VŠE** (`/prihlaska/?lang=en`).\n" +
@@ -1245,7 +1379,7 @@ function getContextualFallback(query, loggedIn) {
       "- You must earn at least **9 ECTS** in your first semester, or **20 ECTS** across two consecutive semesters."
     );
   }
-  return "I found information from verified VŠE documentation. Use the quick chips below or click any section on the Public InSIS page!";
+  return "I found information from verified VŠE documentation. Click 💡 for suggested topics or explore any section on the Public InSIS page!";
 }
 
 // -----------------------------------------------------------------------------

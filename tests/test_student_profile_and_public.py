@@ -175,3 +175,42 @@ def test_login_password_and_clean_logout_in_frontend():
     assert "resetBotConversationForSession()" in app_js
     assert "George Joseph" not in html
     assert "George Joseph" not in app_js
+
+
+def test_multiturn_accommodation_query_isolation():
+    from bot import BuddyBot
+    bot = BuddyBot()
+    history = [
+        {"role": "user", "content": "What are the visa and 3-day Foreign Police registration rules for international students?"},
+        {"role": "assistant", "content": "You must register with the Czech Foreign Police within 3 working days."}
+    ]
+    query = bot.build_retrieval_query("how to find accomodation", history)
+    assert query == "how to find accomodation"
+    assert "visa" not in query.lower()
+    assert "police" not in query.lower()
+
+    # Verify retrieval returns dormitory / accommodation information
+    chunks, top_score, mode = bot.retriever.retrieve(query)
+    found_accomodation = any("dorm" in (c.get("title", "") + c.get("text", "")).lower() or "housing" in (c.get("title", "") + c.get("text", "")).lower() for c in chunks)
+    assert found_accomodation, "Failed to retrieve dormitory or accommodation chunk!"
+
+
+def test_multiturn_credit_vouchers_query_isolation():
+    from bot import BuddyBot
+    bot = BuddyBot()
+    history = [
+        {"role": "user", "content": "Where do I submit errata for my Master thesis in InSIS?"},
+        {"role": "assistant", "content": "Under Master thesis editing page click Insert errata."}
+    ]
+    query = bot.build_retrieval_query("how many credit vouchers i have left", history)
+    assert query == "how many credit vouchers i have left"
+    assert "errata" not in query.lower()
+    assert "thesis" not in query.lower()
+
+    # Verify dynamic profile returns student voucher info
+    ctx = {"logged_in": True, "personalised": True, "user_name": "Alexander Kovac", "page_key": "student_portal"}
+    dyn_chunks = student_profile.build_dynamic_context_chunks(query, ctx)
+    assert len(dyn_chunks) == 1
+    assert "Alexander Kovac" in dyn_chunks[0]["title"]
+    assert "120" in dyn_chunks[0]["text"]
+    assert "144" in dyn_chunks[0]["text"]

@@ -6,6 +6,8 @@ index.npz vector store, hybrid title-keyword boosting, and fallback contacts inc
 
 import json
 import re
+import socket
+socket.setdefaulttimeout(2.0)
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -55,8 +57,8 @@ INTENT_EXPANSIONS = {
     "police": ["foreign", "police", "olšanská", "registration", "residence"],
     "nostrifikace": ["foreign", "education", "assessment", "recognition", "diploma"],
     "nostrification": ["foreign", "education", "assessment", "recognition", "diploma"],
-    "vouchers": ["credit", "voucher", "ects", "registration", "enrollment"],
-    "voucher": ["credit", "voucher", "ects", "registration", "enrollment"],
+    "vouchers": ["credit", "voucher", "ects", "registration", "enrollment", "balance", "regulations"],
+    "voucher": ["credit", "voucher", "ects", "registration", "enrollment", "balance", "regulations"],
     "scholarship": ["accommodation", "stipendium", "grant", "insis"],
     "scholarships": ["accommodation", "stipendium", "grant", "insis"],
     "stipendium": ["accommodation", "scholarship", "grant", "insis"],
@@ -64,7 +66,15 @@ INTENT_EXPANSIONS = {
     "eduroam": ["wifi", "network", "internet", "credentials"],
     "dorm": ["dormitories", "housing", "skm", "suz", "accommodation", "iskam"],
     "dorms": ["dormitories", "housing", "skm", "suz", "accommodation", "iskam"],
-    "housing": ["dormitories", "accommodation", "iskam", "suz", "flat"],
+    "housing": ["dormitories", "accommodation", "iskam", "suz", "flat", "rent"],
+    "accommodation": ["dormitories", "housing", "flat", "apartment", "iskam", "suz", "rent"],
+    "accomodation": ["accommodation", "dormitories", "housing", "flat", "apartment", "iskam", "suz"],
+    "flat": ["private", "accommodation", "rent", "housing", "apartment"],
+    "flats": ["private", "accommodation", "rent", "housing", "apartment"],
+    "apartment": ["private", "accommodation", "rent", "housing", "flat"],
+    "apartments": ["private", "accommodation", "rent", "housing", "flat"],
+    "rent": ["private", "accommodation", "flat", "housing", "lease"],
+    "renting": ["private", "accommodation", "flat", "housing", "lease"],
     "iskam": ["dormitories", "housing", "accommodation", "suz", "deposit", "kauce"],
     "deposit": ["dormitories", "housing", "accommodation", "iskam", "kauce"],
     "isic": ["student", "card", "identity"],
@@ -173,7 +183,10 @@ class Retriever:
                 raise ValueError(
                     "GEMINI_API_KEY is not configured. Please add it to your .env file or Streamlit secrets."
                 )
-            self.client = genai.Client(api_key=api_key)
+            self.client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(timeout=10000),
+            )
         return self.client
 
     def embed_query(self, query: str) -> np.ndarray:
@@ -184,7 +197,7 @@ class Retriever:
         import time
 
         client = self._get_client()
-        max_retries = 4
+        max_retries = 2
         for attempt in range(max_retries):
             try:
                 response = client.models.embed_content(
@@ -199,10 +212,9 @@ class Retriever:
                 return vec
             except Exception as e:
                 err_str = str(e).lower()
-                if attempt < max_retries - 1:
-                    wait_sec = 2.0 * (attempt + 1)
-                    if "429" in err_str or "quota" in err_str or "rate" in err_str:
-                        wait_sec = 4.0 * (2 ** attempt)
+                is_rate_limit = ("429" in err_str or "quota" in err_str or "rate" in err_str)
+                if is_rate_limit and attempt < max_retries - 1:
+                    wait_sec = 1.0 * (attempt + 1)
                     print(f"[Retriever retry {attempt+1}/{max_retries}] ({e}). Retrying in {wait_sec:.1f}s...")
                     time.sleep(wait_sec)
                 else:
@@ -234,6 +246,8 @@ class Retriever:
         Steps:
         1. Embed query with task_type='RETRIEVAL_QUERY', normalise.
         2. Cosine similarity = dot product against the matrix.
+           If embedding fails (e.g. offline, timeout, quota), gracefully falls back
+           to keyword relevance scoring over the verified knowledge corpus.
         3. Hybrid boost: +0.05 for each query keyword (len >= 4, no stopwords) in chunk's title. Max boost 0.15.
         4. Return top k chunks with score >= min_score.
         5. Always ALSO return the best-matching contacts.md chunk (if not already included).
@@ -244,19 +258,35 @@ class Retriever:
         if self.matrix is None or len(self.metadata) == 0:
             self._ensure_index_loaded()
 
-        query_vec = self.embed_query(query)
+        query_vec = None
+        try:
+            query_vec = self.embed_query(query)
+        except Exception as e:
+            query_vec = None
 
-        # Dot product against L2-normalized document matrix = cosine similarity
-        raw_similarities = np.dot(self.matrix, query_vec)
-
-        # Hybrid keyword boost
         keywords = self.extract_query_keywords(query)
+
+        if query_vec is not None:
+            raw_similarities = np.dot(self.matrix, query_vec)
+        else:
+            raw_similarities = np.zeros(len(self.metadata), dtype=np.float32)
 
         scored_chunks: List[Dict[str, Any]] = []
         for idx, (sim, meta) in enumerate(zip(raw_similarities, self.metadata)):
             chunk_copy = dict(meta)
             base_score = float(sim)
             title_lower = chunk_copy.get("title", "").lower()
+            text_lower = chunk_copy.get("text", "").lower()
+
+            if query_vec is None:
+                # High-fidelity keyword retrieval over verified knowledge corpus
+                title_matches = sum(1 for kw in keywords if kw in title_lower)
+                text_matches = sum(1 for kw in keywords if kw in text_lower)
+                if keywords:
+                    total_matches = title_matches * 3 + text_matches
+                    base_score = min(0.95, 0.45 + (total_matches / (len(keywords) * 4.0)) * 0.50) if total_matches > 0 else 0.20
+                else:
+                    base_score = 0.50
 
             # Calculate keyword boost
             boost = 0.0

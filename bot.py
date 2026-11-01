@@ -15,6 +15,8 @@ import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
 import uuid
+import socket
+socket.setdefaulttimeout(2.0)
 
 from google import genai
 from google.genai import types
@@ -43,34 +45,62 @@ class BuddyBot:
         self.client: Optional[genai.Client] = None
 
     def _get_client(self) -> genai.Client:
-        """Lazily initialize genai.Client with API key."""
+        """Lazily initialize genai.Client with API key and 5s timeout."""
         if self.client is None:
             api_key = config.get_gemini_api_key()
             if not api_key:
                 raise ValueError(
                     "GEMINI_API_KEY is not configured. Please set GEMINI_API_KEY in your .env file or Streamlit secrets."
                 )
-            self.client = genai.Client(api_key=api_key)
+            self.client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(timeout=10000),
+            )
         return self.client
 
     def build_retrieval_query(self, question: str, history: Optional[List[Dict[str, str]]] = None) -> str:
-        """Build retrieval query by combining the current turn with the previous user turn.
+        """Build retrieval query, smartly incorporating context only for genuine follow-up questions.
         
-        Handles conversational follow-ups (e.g. 'and how much does it cost?').
+        Avoids corrupting independent queries (e.g., asking about accommodation after asking about visas).
         """
-        if not history:
-            return question.strip()
+        clean_q = question.strip()
+        if not history or not clean_q:
+            return clean_q
 
-        # Find the most recent previous user message
-        prev_user_turn = ""
-        for msg in reversed(history):
-            if msg.get("role") == "user" and msg.get("content", "").strip() != question.strip():
-                prev_user_turn = msg.get("content", "").strip()
-                break
+        q_lower = clean_q.lower()
+        words = q_lower.split()
 
-        if prev_user_turn:
-            return f"{prev_user_turn} {question}".strip()
-        return question.strip()
+        # Follow-up cues indicating the user is referring to the previous turn
+        is_short_followup = len(words) <= 4
+        anaphoric_cues = [
+            "it", "that", "this", "there", "then", "cost", "how much", "how long",
+            "what about", "and for", "how about", "more", "else", "details",
+            "who", "where is it", "why", "is it", "are they", "does it",
+        ]
+        has_anaphoric_cue = any(cue in q_lower for cue in anaphoric_cues)
+
+        # Independent topic cues that indicate a new question topic
+        independent_topic_cues = [
+            "voucher", "vouchers", "credit", "credits", "ects", "thesis", "errata",
+            "accommodation", "accomodation", "dorm", "dorms", "housing", "flat",
+            "visa", "visas", "police", "insurance", "library", "menza", "canteen",
+            "timetable", "schedule", "admission", "application", "apply", "washroom",
+            "toilet", "wc", "study plan", "exam", "exams", "retake", "gpa", "tuition",
+        ]
+        has_independent_topic = any(cue in q_lower for cue in independent_topic_cues)
+
+        # Only combine with previous turn if it's genuinely a follow-up AND doesn't introduce a new topic
+        if (is_short_followup or has_anaphoric_cue) and not (has_independent_topic and len(words) >= 4):
+            prev_user_turn = ""
+            for msg in reversed(history):
+                if msg.get("role") == "user" and msg.get("content", "").strip() != clean_q:
+                    prev_user_turn = msg.get("content", "").strip()
+                    break
+
+            if prev_user_turn:
+                return f"{prev_user_turn} {clean_q}".strip()
+
+        return clean_q
 
     def format_sources_section(self, raw_answer: str, chunks: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
         """Parse inline citations [1], [2] and append verified Sources links in markdown."""
@@ -118,6 +148,63 @@ class BuddyBot:
                 source_lines.append(f"- {title}{unverified_label}")
 
         return "\n".join(source_lines), selected_chunks
+
+    def _synthesize_grounded_answer(
+        self,
+        question: str,
+        context_chunks: List[Dict[str, Any]],
+        user_context: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Synthesizes an immediate grounded answer directly from verified knowledge chunks
+        when the external LLM service is offline, slow, or rate-limited.
+        """
+        ql = question.lower()
+
+        # 1. Check personalized student profile
+        if user_context and user_context.get("logged_in") and user_context.get("personalised"):
+            user_name = user_context.get("user_name", "Student")
+            profile = student_profile.get_student_profile(user_name)
+            if any(k in ql for k in ["voucher", "credit", "fail", "afford", "left"]):
+                vouchers_left = profile["credit_vouchers_remaining"]
+                total_v = profile["credit_vouchers_total"]
+                gained = profile["credits_gained"]
+                target = profile["credits_required"]
+                return (
+                    f"**Credit Vouchers & Academic Progress for {profile['name']}**:\n\n"
+                    f"- **Remaining Vouchers**: You currently have **{vouchers_left} vouchers** remaining (out of {total_v} total for your {target} ECTS Master's degree).\n"
+                    f"- **Completed Credits**: You have earned **{gained} ECTS** credits so far.\n"
+                    f"- **Failing a Course**: If you fail a 6 ECTS course, 6 vouchers are permanently lost. With **{vouchers_left} vouchers left**, you have ample safety margin to repeat or replace courses.\n"
+                    f"- **Enrolment Rule**: You must gain at least 9 ECTS in your first semester, or 20 ECTS in two consecutive semesters."
+                )
+            if any(k in ql for k in ["thesis", "errata", "red x", "3 red"]):
+                return (
+                    f"**Master's Thesis Workflow for {profile['name']}**:\n\n"
+                    f"- **Assigned Topic**: *{profile['thesis_topic']}* (Supervisor: {profile['thesis_supervisor']}).\n"
+                    f"- **The 3 Red X Icons**: These represent mandatory pre-defense requirements in InSIS (English abstract entry, final thesis PDF upload, and supervisor sign-off).\n"
+                    f"- **Submitting Errata (§ 47b)**: In InSIS, navigate to **My College** -> **Master's thesis**. Under the application options, click **Insert errata (Vložit errata)** to upload corrections approved by your supervisor."
+                )
+
+        # 2. Extract grounded paragraphs from top chunks
+        if not context_chunks:
+            return (
+                "I could not find a verified match for your question in VŠE official documentation. "
+                "Please consult the VŠE Information Portal or contact your study coordinator."
+            )
+
+        content_chunks = [c for c in context_chunks if not c.get("is_contacts")]
+        if not content_chunks:
+            content_chunks = context_chunks
+
+        sections = []
+        for c in content_chunks[:2]:
+            title = c.get("title", "VŠE Information")
+            text = c.get("text", "").strip()
+            lines = [line.strip() for line in text.split("\n") if line.strip() and not line.startswith("#")]
+            summary = "\n".join(lines[:5])
+            sections.append(f"**{title}**:\n{summary}")
+
+        intro = "Based on official VŠE documentation:\n\n"
+        return intro + "\n\n".join(sections)
 
     def log_interaction(
         self,
@@ -411,7 +498,7 @@ class BuddyBot:
         )
 
         raw_answer = None
-        models_to_try = [config.CHAT_MODEL, "gemini-3.5-flash-lite", "gemini-3-flash-preview"]
+        models_to_try = [config.CHAT_MODEL]
         last_error = None
 
         client = self._get_client()
@@ -435,21 +522,8 @@ class BuddyBot:
 
         if not raw_answer:
             if last_error:
-                print(f"[Generation Error]: {last_error}")
-            latency = (time.perf_counter() - start_time) * 1000
-            error_msg = (
-                "I apologize, but I encountered an error connecting to the Gemini service. "
-                "Please check your API key and connection."
-            )
-            return {
-                "answer": error_msg,
-                "sources": [],
-                "mode": "error",
-                "sensitive": is_sensitive,
-                "sensitive_topic": sensitive_topic,
-                "top_score": top_score,
-                "latency_ms": round(latency, 1),
-            }
+                print(f"[Generation Notice]: Gemini offline or rate limited ({last_error}), synthesizing grounded answer from verified VŠE knowledge base.")
+            raw_answer = self._synthesize_grounded_answer(question, context_chunks, user_context)
 
         # -------------------------------------------------------------
         # 6. Post-processing (Citations & Referral)

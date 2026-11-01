@@ -834,8 +834,12 @@
        FLOATING CONTROLS: Scroll Arrows & VŠE Buddy Bot
        ========================================================================= -->
   <div class="floating-bot-pill" id="floating-bot-pill" onclick="toggleBotDrawer()">
-    <span>🎓</span>
-    <span id="floating-bot-label">VŠE Buddy Bot</span>
+    <div class="bot-pill-avatar">🎓</div>
+    <div class="bot-pill-text">
+      <span class="bot-pill-title">VŠE Buddy</span>
+      <span class="bot-pill-sub" id="bot-pill-status">AI Assistant</span>
+    </div>
+    <span class="bot-pill-badge-dot" id="bot-status-dot"></span>
   </div>
 
   <div class="floating-scroll-controls">
@@ -843,38 +847,77 @@
     <button class="scroll-circle-btn" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Scroll to bottom">⬇</button>
   </div>
 
+  <!-- Modern Clean VŠE Buddy Drawer -->
   <div id="bot-drawer" class="bot-drawer hidden">
+    <!-- Header -->
     <div class="bot-drawer-header">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span>🎓</span>
-        <span>VŠE Buddy &ndash; InSIS Assistant</span>
+      <div class="bot-header-left">
+        <div class="bot-avatar-circle">🎓</div>
+        <div class="bot-header-info">
+          <div class="bot-header-title">VŠE Buddy Assistant</div>
+          <div class="bot-header-sub" id="bot-status-text">Guest Access &bull; No Login Needed</div>
+        </div>
       </div>
-      <button class="bot-drawer-close" onclick="toggleBotDrawer()">✕</button>
+      <div class="bot-header-actions">
+        <button class="bot-header-btn" onclick="performBotReset()" title="Start New Conversation">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+        </button>
+        <button class="bot-header-btn" onclick="toggleBotDrawer()" title="Close Assistant">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Clean automatic context bar (shows No-Login Public Mode OR Logged-In Student + GDPR toggle) -->
+    <!-- Dynamic Context Strip -->
     <div id="bot-status-strip" class="bot-status-strip">
-      <span id="bot-status-text" class="bot-status-badge public">🌍 Public Access (No account needed)</span>
-      <span id="bot-status-right"></span>
-    </div>
-
-    <div id="bot-messages-area" class="bot-messages-area">
-      <div id="bot-welcome-bubble" class="bot-msg-bubble assistant">
-        Welcome to <strong>VŠE Prague</strong>! 👋 You can use me <strong>without an InSIS account</strong>.<br><br>
-        Ask me about <strong>visas, Foreign Police (3-day rule), dormitories (ISKaM), how to apply (E-application)</strong>, or public courses!
+      <div id="bot-status-badge" class="bot-status-badge public">
+        <span>🌍 Public Information Mode</span>
+      </div>
+      <div id="bot-status-right">
+        <!-- Rendered dynamically: [Log In ➔] or [GDPR Personalised Toggle] -->
       </div>
     </div>
 
-    <div id="bot-quick-chips" class="bot-quick-chips-strip">
-      <!-- Populated automatically based on No-Login vs. Logged-In Page Context -->
+    <!-- Messages Container -->
+    <div id="bot-messages-area" class="bot-messages-area">
+      <!-- Populated dynamically by app.js (Hero Welcome Card or Active Chat) -->
     </div>
 
+    <!-- Sleek Quick Topic Popover (Collapsible on demand) -->
+    <div id="bot-topics-popover" class="bot-topics-popover hidden">
+      <div class="popover-header">
+        <span>💡 Suggested Topics</span>
+        <button onclick="toggleTopicsPopover(false)">✕</button>
+      </div>
+      <div class="popover-body" id="popover-topics-list">
+        <!-- Populated dynamically based on session/page -->
+      </div>
+    </div>
+
+    <!-- Minimal Contextual Quick Chips Bar (At most 2-3 short chips) -->
+    <div id="bot-quick-chips" class="bot-quick-chips-strip">
+      <!-- Dynamic micro-suggestions -->
+    </div>
+
+    <!-- Input Bar -->
     <div class="bot-input-strip">
-      <input type="text" id="bot-input-field" placeholder="Ask about visas, dorms, admission, or InSIS..." onkeydown="handleBotKey(event)">
-      <button onclick="submitBotMessage()">Send</button>
+      <button class="btn-topics-trigger" onclick="toggleTopicsPopover()" title="Suggested Topics & Checklist">
+        💡
+      </button>
+      <input type="text" id="bot-input-field" placeholder="Ask about accommodation, vouchers, visas, InSIS..." onkeydown="handleBotKey(event)">
+      <button class="btn-send-message" onclick="submitBotMessage()" title="Send">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

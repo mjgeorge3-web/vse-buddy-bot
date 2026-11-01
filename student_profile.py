@@ -112,19 +112,23 @@ SCREEN_DEICTIC_CUES = [
 
 PERSONAL_STUDY_CUES = [
     "who am i", "my name", "my profile", "logged in", "my account",
-    "my credit", "my voucher", "my thesis", "my gpa", "my grade", "my course",
-    "my timetable", "my schedule", "my variable symbol", "my tuition", "my study",
-    "how many vouchers do i have", "can i afford to fail", "if i fail", "drop a course",
-    "do i have enough", "my supervisor", "am i eligible", "my balance", "left",
+    "my credit", "my credits", "my voucher", "my vouchers", "my thesis", "my gpa",
+    "my grade", "my grades", "my course", "my courses", "my timetable", "my schedule",
+    "my variable symbol", "my tuition", "my study", "credit vouchers",
+    "how many vouchers", "how many credit vouchers", "vouchers left", "vouchers remaining",
+    "can i afford to fail", "if i fail", "drop a course", "do i have enough",
+    "my supervisor", "am i eligible", "my balance", "left", "remaining",
 ]
 
 EXTERNAL_LIFE_STAY_VISA_CUES = [
-    "visa", "foreign police", "cizinecka", "embassy", "mvcr", "oamp", "biometric",
-    "dorm", "iskam", "koleje", "accommodation", "stay", "housing", "flat", "rent",
-    "guest", "quiet hours", "smoking", "insurance", "pvzp", "ehic", "doctor",
-    "hospital", "emergency", "mental", "psycholog", "stress", "anxiety",
-    "washroom", "toilet", "wc", "bathroom", "restroom", "menza", "canteen",
-    "library", "tram", "metro", "litacka", "pid", "transport", "arrive", "arrival",
+    "visa", "visas", "foreign police", "cizinecka", "embassy", "mvcr", "oamp", "biometric",
+    "dorm", "dorms", "dormitory", "dormitories", "iskam", "koleje",
+    "accommodation", "accomodation", "stay", "housing", "flat", "flats", "apartment",
+    "apartments", "rent", "living", "find a place", "room", "guest", "quiet hours",
+    "smoking", "insurance", "pvzp", "ehic", "doctor", "hospital", "emergency", "mental",
+    "psycholog", "stress", "anxiety", "washroom", "toilet", "wc", "bathroom", "restroom",
+    "menza", "canteen", "library", "tram", "metro", "litacka", "pid", "transport",
+    "arrive", "arrival",
 ]
 
 
@@ -157,13 +161,15 @@ def build_dynamic_context_chunks(
 
     # 1. NO-LOGIN / PUBLIC PORTAL USER
     if not logged_in:
-        # Inject Public InSIS Portal context whenever the user asks about the page,
-        # applying/admissions, public courses/plans, or InSIS features without an account.
-        # Skip ONLY when asking purely external life/stay/visa/washroom questions (unless they mention 'no account' / 'this page').
+        # Inject Public InSIS Portal context whenever the user specifically asks about the screen,
+        # navigation on this page, or public admission/courses.
+        # Do NOT hijack questions about vouchers, accommodation, visas, or rules.
         explicit_no_account = any(
-            kw in q_lower for kw in ("no account", "without login", "without account", "without insis", "before login")
+            kw in q_lower for kw in ("no account", "without login", "without account", "without insis", "before login", "this page", "this screen")
         )
-        if asks_screen or explicit_no_account or not asks_external_life:
+        is_academic_rule = any(kw in q_lower for kw in ("voucher", "vouchers", "credit", "credits", "ects", "grading", "exam"))
+
+        if asks_screen or explicit_no_account or (not asks_external_life and not is_academic_rule):
             pub_info = INSIS_PAGE_DESCRIPTIONS["public_home"]
             extra_chunks.append({
                 "id": "public_insis_context",
