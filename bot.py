@@ -248,17 +248,20 @@ class BuddyBot:
             lines = [l.strip() for l in nc.get("text", "").split("\n") if l.strip()]
             breadcrumbs = ""
             steps = []
+            note_str = ""
             for l in lines:
                 if l.startswith("Breadcrumb Trail:"):
                     breadcrumbs = l.replace("Breadcrumb Trail:", "").strip()
                 elif re.match(r"^\d+\.", l):
                     steps.append(l)
+                elif l.startswith("Important Note:") and not l.endswith(": None"):
+                    note_str = f"\n\n💡 *Note: {l.replace('Important Note:', '').strip()}*"
             steps_str = "\n".join(steps) if steps else "\n".join(lines[:6])
             task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
             return (
                 f"**How to Navigate to {task_title} in InSIS**:\n\n"
                 f"**Breadcrumb Trail:**\n{breadcrumbs}\n\n"
-                f"**Step-by-step instructions:**\n{steps_str}\n\n"
+                f"**Step-by-step instructions:**\n{steps_str}{note_str}\n\n"
                 f"[🏛️ Open {task_title}]({nc.get('source_url', 'https://insis.vse.cz')})"
             )
 
@@ -461,7 +464,9 @@ class BuddyBot:
             "where can i find", "whre to find", "where is the", "where is", "menu", "section",
             "query", "querry", "application", "form", "apply", "scholarship", "scholorship",
             "stipend", "benefit", "grant", "ubytov", "contact centre", "contact center",
-            "study plan", "catalogue", "catalog", "syllabus", "timetable", "schedule"
+            "study plan", "catalogue", "catalog", "syllabus", "timetable", "schedule",
+            "thesis", "errata", "odevzdani", "diplomk", "studium", "studijni", "zkousk",
+            "exam", "confirmation", "potvrzeni", "voucher", "bank account", "variable symbol"
         ]
         campus_cues = [
             "washroom", "toilet", "wc", "bathroom", "restroom", "menza", "canteen",
@@ -472,7 +477,7 @@ class BuddyBot:
         is_direct_nav = any(cue in ql for cue in insis_nav_cues)
         is_direct_campus = any(cue in ql for cue in campus_cues)
 
-        if not history and (is_direct_nav or is_direct_campus):
+        if is_direct_nav or is_direct_campus:
             try:
                 import insis_nav_db
                 fast_search = insis_nav_db.unified_search(question, limit=2)

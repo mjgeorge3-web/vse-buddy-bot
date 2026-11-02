@@ -1491,7 +1491,7 @@ function formatBotMarkdown(text) {
 
   // 3. Format bulleted/colon labeled URLs (e.g., "* InSIS Public Portal (English): https://insis.vse.cz/?lang=en [2]")
   formatted = formatted.replace(
-    /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[\(\)]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>]+)(\s*\[[\d\s,]+\])?/g,
+    /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>]+)(\s*\[[\d\s,]+\])?/g,
     (match, linePre, bullet, rawLabel, rawUrl, cite) => {
       const label = rawLabel.trim();
       const safeUrl = rawUrl.replace(/'/g, "\\'");
@@ -1651,12 +1651,64 @@ function getContextualFallback(query, loggedIn) {
         "💡 *To view your individual earned credits and remaining voucher balance, please log in with your student account.*"
       );
     }
+  } else if (
+    (q.includes("benefit") || q.includes("stipend") || q.includes("grant") || q.includes("scholarship")) &&
+    (q.includes("accomodation") || q.includes("accommodation") || q.includes("housing") || q.includes("living") || q.includes("ubytov"))
+  ) {
+    return (
+      "**How to Navigate to Scholarships & Accommodation Grant Application in InSIS**:\n\n" +
+      "**Breadcrumb Trail:**\n" +
+      "Personal administration > Financing of study and scholarships > Scholarships (Žádosti o stipendia)\n\n" +
+      "**Step-by-step instructions:**\n" +
+      "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n" +
+      "2. Under the 'Financing of study and scholarships' section, click 'Scholarships' (Žádosti o stipendia) (/auth/stipendia/).\n" +
+      "3. Select 'Accommodation scholarship' (Žádost o ubytovací stipendium).\n" +
+      "4. Fill in and submit your online application during the official intake period (typically October/November in Autumn, March/April in Spring).\n" +
+      "5. Ensure you have registered your active Czech bank account under 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl) so that quarterly payouts can be deposited directly.\n\n" +
+      "💡 *Note: The accommodation scholarship (Ubytovací stipendium) is a cash grant deposited into your Czech bank account for students with permanent residence outside Prague. It is completely separate from dormitory room bookings in ISKaM.*\n\n" +
+      "[🏛️ Open Scholarships & Accommodation Grant Application (Žádosti o stipendia)](https://insis.vse.cz/auth/stipendia/?lang=en)"
+    );
+  } else if (
+    q.includes("general quer") || q.includes("general appl") || q.includes("contact centre") ||
+    q.includes("contact center") || q.includes("kontaktn") || q.includes("searching for sol") ||
+    q.includes("search for sol") || q.includes("uradov") || q.includes("úřadov")
+  ) {
+    return (
+      "**How to Navigate to Contact Centre & Submit a General Query in InSIS**:\n\n" +
+      "**Breadcrumb Trail:**\n" +
+      "Personal administration > Contact centre > Searching for solution > General application/query\n\n" +
+      "**Step-by-step instructions:**\n" +
+      "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n" +
+      "2. In the eAgenda section, click 'Contact centre' (Kontaktní centrum).\n" +
+      "3. Click on the 'Searching for solution' tab.\n" +
+      "4. Browse the topic list on the left (Registration and Enrollment, Scholarships, Special Needs, Study Abroad, Study Issues) or click the prominent 'General application/query' button.\n" +
+      "5. Fill in the subject and message, attach any required documents, and submit.\n" +
+      "6. Track responses and status under the 'My queries' tab.\n\n" +
+      "[🏛️ Open Contact Centre: Searching for Solution & General Application / Query](https://insis.vse.cz/auth/eagenda/kontaktni_centrum.pl?lang=en)"
+    );
+  } else if (q.includes("errata") || (q.includes("thesis") && (q.includes("submit") || q.includes("upload") || q.includes("odevzd")))) {
+    return (
+      "**How to Navigate to Final Thesis Submission & Errata in InSIS**:\n\n" +
+      "**Breadcrumb Trail:**\n" +
+      "Personal administration > Student's portal > Final thesis > Editing application > Insert errata (Vložit errata)\n\n" +
+      "**Step-by-step instructions:**\n" +
+      "1. Open Student's portal > Final thesis (/auth/student/zp.pl).\n" +
+      "2. Under the 'Display and download files' section, check 'Instructions for submission process of final thesis' and 'Approval of assignment'.\n" +
+      "3. Under 'Editing application', you have 4 actions:\n" +
+      "   - 'Insert additional information' (purple plus): English & Czech abstracts/keywords.\n" +
+      "   - 'Insert the thesis and the appendices' (paperclip): PDF/A upload.\n" +
+      "   - 'Thesis submission' (green arrow): final irreversible submission.\n" +
+      "   - 'Insert errata (Vložit errata)' (dashed orange border): upload post-defense corrective PDF (§ 47b).\n" +
+      "4. Click 'Insert errata (Vložit errata)' to submit your errata protocol.\n\n" +
+      "[🏛️ Open Final Thesis Workspace](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
+    );
   } else if (q.includes("accomodation") || q.includes("accommodation") || q.includes("dorm") || q.includes("flat") || q.includes("housing")) {
     return (
       "Accommodation at VŠE Prague:\n" +
       "- **VŠE Dormitories (SUZ)**: Applied via the ISKaM system (dorms at Jarov, Blanice, Vltava, Rooseveltova).\n" +
       "- **Accommodation Voucher/Confirmation**: SUZ issues the required housing proof for visa applications.\n" +
-      "- **Foreign Police Rule**: Dormitory administration automatically reports your stay. If living in private accommodation, you must register within 3 working days."
+      "- **Foreign Police Rule**: Dormitory administration automatically reports your stay. If living in private accommodation, you must register within 3 working days.\n\n" +
+      "[🏛️ Open Dormitory Housing Portal (ISKaM Link)](https://insis.vse.cz/auth/student/ubytovani.pl?lang=en)"
     );
   } else if (!loggedIn && (q.includes("apply") || q.includes("admission"))) {
     return (
@@ -1665,12 +1717,18 @@ function getContextualFallback(query, loggedIn) {
       "- Create a new electronic application, select your English programme, and pay the EUR 50 admission fee.\n" +
       "- For questions, contact the Admission Office (`admissions@vse.cz`, RB 527)."
     );
-  } else if (q.includes("errata") || q.includes("thesis")) {
+  } else if (q.includes("thesis")) {
     return (
-      "To submit errata for your Master's thesis in InSIS:\n" +
-      "- Navigate to **My College** -> **Master's thesis**.\n" +
-      "- Under the editing application, click **Insert errata (Vložit errata)**.\n" +
-      "- Upload your corrections PDF under § 47b."
+      "**How to Navigate to Final Thesis in InSIS**:\n\n" +
+      "**Breadcrumb Trail:**\n" +
+      "Personal administration > Student's portal > Final thesis > Display and download files\n\n" +
+      "**Step-by-step instructions:**\n" +
+      "1. Log into InSIS (https://insis.vse.cz/auth/?lang=en).\n" +
+      "2. Click 'Student's portal' (Portál studenta).\n" +
+      "3. In the study table, locate the 'Final thesis' column (icon with a green book) and click it.\n" +
+      "4. View 'Basic information about a final thesis' to check assignment status.\n" +
+      "5. Review 'Display and download files' and 'Editing application' icons.\n\n" +
+      "[🏛️ Open Final Thesis Workspace](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
     );
   }
   return "I found information from verified VŠE documentation. Click 💡 for suggested topics or explore any section on the Public InSIS page!";

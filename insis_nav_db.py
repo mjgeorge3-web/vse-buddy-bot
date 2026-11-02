@@ -134,11 +134,11 @@ ROUTES_DATA = [
         "/auth/student/diplomka.pl",
         "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
         "http://localhost:8502/auth/student/diplomka.pl",
-        "Personal administration > My College > Student's portal > Final thesis (green book icon)",
-        "1. Log into InSIS (https://insis.vse.cz).\n2. Click 'My College' or 'Student's portal'.\n3. In the study table, locate the 'Final thesis' column (icon with a green book) and click it.\n4. View 'Basic information about a final thesis' to check assignment status.\n5. Click 'Instructions for submission process of final thesis' to verify deadlines and supervisor confirmation.",
+        "Personal administration > Student's portal > Final thesis > Display and download files",
+        "1. Log into InSIS (https://insis.vse.cz/auth/?lang=en).\n2. Click 'Student's portal'.\n3. In the study table, locate the 'Final thesis' column (icon with a green book) and click it.\n4. View 'Basic information about a final thesis' to check assignment status.\n5. Under 'Display and download files', click 'Instructions for submission process of final thesis' to verify deadlines and supervisor confirmation.",
         "Must be enrolled in degree programme; supervisor must confirm the assignment in InSIS before submission unlocks.",
         "Assignment completeness status must show 'changes in assignment made by student have been confirmed by supervisor'. If not confirmed, submission icons remain locked.",
-        "thesis registration, master thesis, bachelor thesis, assignment, diplomka, final thesis, supervisor approval, topic, zadani prace"
+        "thesis registration, master thesis, bachelor thesis, assignment, diplomka, final thesis, supervisor approval, topic, zadani prace, display and download files, instructions for submission process of final thesis"
     ),
     (
         "TASK_THESIS_SUBMISSION",
@@ -149,11 +149,11 @@ ROUTES_DATA = [
         "/auth/student/diplomka.pl",
         "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
         "http://localhost:8502/auth/student/diplomka.pl",
-        "Personal administration > My College > Student's portal > Final thesis > Editing application",
-        "1. Navigate to: Student's portal > Final thesis.\n2. Under 'Editing application', click 'Insert additional information' to enter English & Czech abstracts and keywords.\n3. Click 'Insert the thesis and the appendices' (icon with paperclip).\n4. Upload the main thesis in PDF/A format (ensure fonts are embedded).\n5. Upload ZIP archive of source code, data, or supplementary models under 'Appendices'.\n6. Click 'Thesis submission' (icon with green arrow) to perform final irreversible submission.",
+        "Personal administration > Student's portal > Final thesis > Editing application > Thesis submission",
+        "1. Navigate to: Student's portal > Final thesis (/auth/student/diplomka.pl).\n2. Under 'Editing application', click 'Insert additional information' (purple plus icon) to enter English & Czech abstracts and keywords.\n3. Click 'Insert the thesis and the appendices' (paperclip icon) to upload the main thesis in PDF/A format and supplementary models/data ZIP under Appendices.\n4. Click 'Thesis submission' (green right arrow icon) to perform final irreversible submission.\n5. Under 'Display and download files', check 'Situation check' to confirm submission.",
         "Both Czech and English abstracts and keywords must be filled. The file must comply with PDF/A standard. File size must not exceed 50 MB.",
         "Once you click 'Thesis submission', the submission is final and cannot be edited by the student. Any subsequent updates require official § 47b Errata approval.",
-        "submit thesis, upload thesis, thesis pdf, odevzdani diplomky, final thesis upload, pdf/a, abstract, keywords, submission deadline"
+        "submit thesis, thesis submission, upload thesis, thesis upload, submit master thesis, submit bachelor thesis, final thesis submission, odevzdani diplomky, final thesis upload, pdf/a, abstract, keywords, submission deadline, editing application, insert additional information, insert the thesis and the appendices"
     ),
     (
         "TASK_THESIS_ERRATA",
@@ -164,11 +164,11 @@ ROUTES_DATA = [
         "/auth/student/diplomka.pl",
         "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
         "http://localhost:8502/auth/student/diplomka.pl",
-        "Personal administration > My College > Student's portal > Final thesis > Post-defense errata",
-        "1. Open Student's portal > Final thesis.\n2. Locate the 'Post-defense errata (§ 47b Higher Education Act)' section.\n3. Prepare a standalone PDF file documenting errata (corrections, typographical fixes) without altering original core findings.\n4. Upload the Errata PDF and click 'Submit Errata for Archival Review'.\n5. Retain the generated Errata Tracking Protocol number for your records.",
+        "Personal administration > Student's portal > Final thesis > Editing application > Insert errata (Vložit errata)",
+        "1. Open Student's portal > Final thesis (/auth/student/diplomka.pl).\n2. Locate the 'Editing application' section at the bottom of the page.\n3. Click 'Insert errata (Vložit errata)' (icon with paperclip and pencil, highlighted with dashed orange border).\n4. Prepare a standalone PDF file documenting errata (corrections, typographical fixes) without altering original core findings.\n5. Upload the Errata PDF and click 'Submit Errata for Archival Review'.\n6. Retain the generated Errata Tracking Protocol number for your records.",
         "Allowed only after the formal thesis defense has taken place pursuant to Czech Act No. 111/1998 Sb. § 47b.",
         "Errata cannot rewrite the original thesis document; it is attached as an official separate corrective annex.",
-        "errata, post-defense corrections, 47b, thesis errata, opravy po obhajobe, thesis error fix"
+        "errata, insert errata, vlozit errata, vložit errata, thesis errata, post-defense corrections, 47b, opravy po obhajobe, thesis error fix, submit errata, post defense errata, where is errata"
     ),
     (
         "TASK_COURSE_REGISTRATION",
@@ -273,7 +273,7 @@ ROUTES_DATA = [
         "1. Log into InSIS Personal administration.\n2. In the eAgenda section, click 'Contact centre' (Kontaktní centrum).\n3. Click on the 'Searching for solution' tab.\n4. Browse the topic list on the left (Registration and Enrollment, Scholarships, Special Needs, Study Abroad, Study Issues) or click the prominent 'General application/query' button.\n5. Fill in the subject and message, attach any required documents, and submit.\n6. Track responses and status under the 'My queries' tab.",
         "Available to all registered students and applicants.",
         "Use the Contact Centre for all official administrative applications and inquiries rather than emailing random departments.",
-        "general query, general querry, general application, general application/query, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, ask coordinator in insis, study issues, study abroad query, scholarship query, submit request, find query in insis"
+        "general query, general querry, general application, general application/query, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, ask coordinator in insis, study issues, study abroad query, scholarship query, submit request, find query in insis, where to find general query, where to find general querry, where is general query, where is general querry, how to find general query, how to find general querry, general query in insis, general querry in insis"
     ),
     (
         "TASK_DORM_ISKAM",
@@ -438,7 +438,7 @@ ROUTES_DATA = [
         "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n2. Under the 'Financing of study and scholarships' section, click 'Scholarships' (Žádosti o stipendia) (/auth/stipendia/).\n3. Select 'Accommodation scholarship' (Žádost o ubytovací stipendium).\n4. Fill in and submit your online application during the official intake period (typically October/November in the Autumn semester, and March/April in the Spring semester).\n5. Ensure you have registered your active Czech bank account in InSIS under 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl) so that quarterly payouts can be deposited directly into your account.",
         "Eligible for full-time degree students who do not have permanent residence in the Capital City of Prague and have not exceeded the standard period of study by more than one year.",
         "Accommodation Scholarship (Ubytovací stipendium) is a cash grant deposited directly into your Czech bank account. It is completely separate from dormitory room bookings in ISKaM. You MUST register a Czech bank account in InSIS to receive payouts.",
-        "accommodation scholarship, ubytovaci stipendium, scholarship, apply for scholarship, stipendia, zadost o ubytovaci stipendium, zadosti o stipendia, housing grant, living allowance, housing benefit, money for accommodation, how to apply for scholarship, student scholarship, accommodation grant"
+        "accommodation scholarship, accomodation scholarship, accommodation benefit, accomodation benefit, ubytovaci stipendium, ubytovací stipendium, scholarship, apply for scholarship, stipendia, zadost o ubytovaci stipendium, zadosti o stipendia, housing grant, living allowance, housing benefit, money for accommodation, how to apply for scholarship, how do i apply for accommodation benefit, how do i apply for accomodation benefit, apply for accommodation benefit, apply for accomodation benefit, student scholarship, accommodation grant, where to find accommodation benefit, where to find accomodation benefit"
     ),
     (
         "TASK_BANK_ACCOUNT_FINANCING",

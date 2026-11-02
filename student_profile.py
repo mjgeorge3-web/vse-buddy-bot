@@ -237,7 +237,16 @@ def build_dynamic_context_chunks(
         )
         is_academic_rule = any(kw in q_lower for kw in ("voucher", "vouchers", "credit", "credits", "ects", "grading", "exam"))
 
-        if asks_screen or explicit_no_account or (not asks_external_life and not is_academic_rule):
+        is_authenticated_insis_task = any(
+            kw in q_lower for kw in (
+                "general query", "general querry", "contact centre", "contact center",
+                "kontaktní", "kontaktni", "ubytovací", "ubytovaci", "benefit", "stipend",
+                "scholarship", "errata", "final thesis", "master thesis", "bachelor thesis",
+                "odevzdani", "potvrzeni o studiu", "confirmation of study"
+            )
+        )
+
+        if asks_screen or explicit_no_account or (not asks_external_life and not is_academic_rule and not is_authenticated_insis_task):
             pub_info = INSIS_PAGE_DESCRIPTIONS["public_home"]
             extra_chunks.append({
                 "id": "public_insis_context",
