@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integrated Study Information System | VŠE Prague</title>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 
@@ -876,6 +876,68 @@
 
 
   <!-- =========================================================================
+       VIEW 3C: CONTACT CENTRE & GENERAL APPLICATION/QUERY (Screenshot Match)
+       URL: https://insis.vse.cz/auth/eagenda/kontaktni_centrum.pl?lang=en
+       ========================================================================= -->
+  <main id="view-contact-centre" class="insis-view" style="display:none;">
+    <div class="portal-page-container">
+      <div class="portal-title-block">
+        <h2 class="portal-main-heading">Contact centre &bull; Searching for solution</h2>
+        <div class="portal-subheading">Personal administration &raquo; eAgenda &raquo; Contact centre</div>
+      </div>
+
+      <!-- Contact Centre Subnav Tabs -->
+      <div class="insis-subnav-strip">
+        <a href="#" onclick="alert('My queries: You have 0 active inquiries pending.'); return false;" style="font-weight:600; color:#475569;">My queries</a>
+        <a href="#" onclick="return false;" style="font-weight:700; color:#004b87; border-bottom:2px solid #004b87; background:#e0f2fe;">Searching for solution</a>
+      </div>
+
+      <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:18px 20px; margin-top:14px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <p style="font-size:12.5px; color:#475569; margin-bottom:14px; line-height:1.6;">
+          Use this part of application to search for solution of your issue using a knowledge database, eventually, submit a query to some contact centre using prepared forms.
+        </p>
+
+        <div style="margin-bottom:20px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px 16px;">
+          <h4 style="font-size:13px; color:#1e293b; margin-bottom:8px; font-weight:700;">Search in a knowledge database</h4>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:12px; color:#475569;">Submit a sample for search:</label>
+            <input type="text" id="contact-centre-search-box" placeholder="Enter keyword of issue..." style="padding:5px 8px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; width:220px;">
+            <button onclick="alert('Searching knowledge database: FAQ and solutions matching query.');" style="background:#004b87; color:#ffffff; border:none; padding:5px 12px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;">Search</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 240px 1fr; gap:24px;">
+          <!-- Left Forms Tree -->
+          <div>
+            <div style="font-size:12px; font-weight:700; color:#334155; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+              <span>📁</span> <strong>Forms</strong>
+            </div>
+            <ul style="list-style:none; padding-left:14px; font-size:12px; line-height:2.2; color:#1e293b;">
+              <li><a href="#" onclick="alert('Category: Registration and Enrollment form'); return false;" style="color:#005596; text-decoration:none;">📁 Registration and Enrollment</a></li>
+              <li><a href="#" onclick="alert('Category: Scholarships and Bursaries form'); return false;" style="color:#005596; text-decoration:none;">📁 Scholarships</a></li>
+              <li><a href="#" onclick="alert('Category: Special Needs & Disability Support'); return false;" style="color:#005596; text-decoration:none;">📁 Special Needs</a></li>
+              <li><a href="#" onclick="alert('Category: Study Abroad & Erasmus+ Inquiries'); return false;" style="color:#005596; text-decoration:none;">📁 Study Abroad</a></li>
+              <li><a href="#" onclick="alert('Category: Study Fees (Czech degree programs)'); return false;" style="color:#005596; text-decoration:none;">📁 Study Fees (programs in Czech only)</a></li>
+              <li><a href="#" onclick="alert('Category: Study Issues & Administrative Exceptions'); return false;" style="color:#005596; text-decoration:none;">📁 Study Issues</a></li>
+            </ul>
+          </div>
+
+          <!-- Right: General application/query Button -->
+          <div style="border-left:1px solid #e2e8f0; padding-left:24px;">
+            <button id="btn-general-query" onclick="alert('General application/query form opened.\n\nHere students can type their subject, request text, attach documents, and submit to the faculty coordinator.');" style="display:inline-flex; align-items:center; gap:10px; background:#ffffff; border:2px solid #005596; color:#005596; padding:12px 18px; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 2px 4px rgba(0,85,150,0.1); transition:all 0.15s ease;">
+              <span style="font-size:16px;">📄</span>
+              <span>General application/query</span>
+            </button>
+            <p style="font-size:11.5px; color:#64748b; margin-top:10px; line-height:1.5;">
+              Click to submit an official non-standard request or inquiry directly to your faculty coordinator and study department.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
        VIEW 4: GENERIC AUTHENTIC InSIS DYNAMIC PAGE VIEW
        (Renders the remaining paths: SZZ, Kontrola plánu, Rozvrh, Úřadovna, etc.)
        ========================================================================= -->
@@ -1112,6 +1174,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

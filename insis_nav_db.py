@@ -263,17 +263,17 @@ ROUTES_DATA = [
     (
         "TASK_CONTACT_CENTRE",
         "portal_eagenda",
-        "InSIS Contact Centre & Official Helpdesk Requests",
-        "Kontaktní centrum InSIS",
-        "Helpdesk",
+        "Contact Centre: Searching for Solution & General Application / Query",
+        "Kontaktní centrum – Hledání řešení a Obecná žádost / dotaz",
+        "Contact Centre & Official Queries",
         "/auth/eagenda/kontaktni_centrum.pl",
         "https://insis.vse.cz/auth/eagenda/kontaktni_centrum.pl?lang=en",
         "http://localhost:8502/auth/eagenda/kontaktni_centrum.pl",
-        "Personal administration > eAgenda > Contact centre",
-        "1. Open InSIS > Personal administration.\n2. Scroll down to the 'eAgenda' tile box.\n3. Click 'Contact centre'.\n4. Select 'Submit new inquiry' and choose the category (e.g. Study Department, Course Registration Issue, InSIS IT Bug, Tuition Matters).\n5. Type your request with relevant course codes or screenshot attachments and submit.\n6. You will receive email tracking and official replies logged directly into InSIS.",
-        "Available to all registered students.",
-        "Use the Contact Centre for official administrative matters rather than sending informal emails to random professors. Responses have administrative tracking.",
-        "contact centre, helpdesk, support ticket, kontaktni centrum, message study department, insis support, report bug"
+        "Personal administration > Contact centre > Searching for solution > General application/query",
+        "1. Log into InSIS Personal administration.\n2. In the eAgenda section, click 'Contact centre' (Kontaktní centrum).\n3. Click on the 'Searching for solution' tab.\n4. Browse the topic list on the left (Registration and Enrollment, Scholarships, Special Needs, Study Abroad, Study Issues) or click the prominent 'General application/query' button.\n5. Fill in the subject and message, attach any required documents, and submit.\n6. Track responses and status under the 'My queries' tab.",
+        "Available to all registered students and applicants.",
+        "Use the Contact Centre for all official administrative applications and inquiries rather than emailing random departments.",
+        "general query, general querry, general application, general application/query, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, ask coordinator in insis, study issues, study abroad query, scholarship query, submit request, find query in insis"
     ),
     (
         "TASK_DORM_ISKAM",
@@ -543,11 +543,23 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
     clean_q = query_str.strip()
     conn = get_connection()
     cur = conn.cursor()
-    tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", clean_q)
-    if not tokens:
+    raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", clean_q)
+    if not raw_tokens:
         return []
+
+    # Normalize common typos and filter boilerplate words for precise navigation matching
+    typo_map = {
+        "whre": "where",
+        "querry": "query",
+        "accomodation": "accommodation",
+        "documnt": "document",
+    }
+    stopwords_nav = {"to", "the", "in", "on", "at", "where", "whre", "how", "can", "i", "find", "get", "is", "do", "of", "a", "an", "for"}
+    normalized = [typo_map.get(t.lower(), t) for t in raw_tokens if len(t) > 1]
+    substantive = [t for t in normalized if t.lower() not in stopwords_nav]
+    active_tokens = substantive if substantive else normalized
         
-    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
+    fts_match_expr = " OR ".join(f'"{t}"*' for t in active_tokens)
     results = []
     if fts_match_expr:
         try:
@@ -567,9 +579,9 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
             
     if len(results) < limit:
         existing_ids = {r["task_id"] for r in results}
-        placeholders = " OR ".join(["r.keywords LIKE ? OR r.title_en LIKE ? OR r.breadcrumbs LIKE ?"] * len(tokens[:4]))
+        placeholders = " OR ".join(["r.keywords LIKE ? OR r.title_en LIKE ? OR r.breadcrumbs LIKE ?"] * len(active_tokens[:4]))
         params = []
-        for t in tokens[:4]:
+        for t in active_tokens[:4]:
             p = f"%{t}%"
             params.extend([p, p, p])
             

@@ -231,6 +231,27 @@ class BuddyBot:
                 "Please consult the VŠE Information Portal or contact your study coordinator."
             )
 
+        # Check if the primary chunk is an InSIS navigation guide
+        nav_chunks = [c for c in context_chunks if c.get("is_insis_nav")]
+        if nav_chunks:
+            nc = nav_chunks[0]
+            lines = [l.strip() for l in nc.get("text", "").split("\n") if l.strip()]
+            breadcrumbs = ""
+            steps = []
+            for l in lines:
+                if l.startswith("Breadcrumb Trail:"):
+                    breadcrumbs = l.replace("Breadcrumb Trail:", "").strip()
+                elif re.match(r"^\d+\.", l):
+                    steps.append(l)
+            steps_str = "\n".join(steps) if steps else "\n".join(lines[:6])
+            task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
+            return (
+                f"**How to Navigate to {task_title} in InSIS**:\n\n"
+                f"📍 **InSIS Breadcrumb Path**: `{breadcrumbs}`\n\n"
+                f"**Step-by-step instructions**:\n{steps_str}\n\n"
+                f"[🏛️ Open {task_title}]({nc.get('source_url', 'https://insis.vse.cz')})"
+            )
+
         content_chunks = [c for c in context_chunks if not c.get("is_contacts")]
         if not content_chunks:
             content_chunks = context_chunks
@@ -428,13 +449,21 @@ class BuddyBot:
             search_res = insis_nav_db.unified_search(question, limit=2)
             candidates = []
 
+            # Prioritize InSIS routes when question is explicitly about InSIS or finding features in the system
+            insis_cues = ["insis", "navigate", "portal", "where to find", "how to find", "where can i find", "whre to find", "where is the", "menu", "section", "query", "querry", "application", "form"]
+            is_insis_query = any(c in question.lower() for c in insis_cues)
+
+            if is_insis_query and search_res.get("insis_routes"):
+                for r in search_res["insis_routes"][:2]:
+                    candidates.append(("insis", r.get("rank", -5.0) - 20.0, r))
+
             if search_res.get("policies"):
                 for p in search_res["policies"][:1]:
                     candidates.append(("policy", p.get("rank", -5.0), p))
             if search_res.get("campus_locations"):
                 for loc in search_res["campus_locations"][:1]:
                     candidates.append(("campus", loc.get("rank", -5.0), loc))
-            if search_res.get("insis_routes"):
+            if not is_insis_query and search_res.get("insis_routes"):
                 for r in search_res["insis_routes"][:1]:
                     candidates.append(("insis", r.get("rank", -5.0), r))
 

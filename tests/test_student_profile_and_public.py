@@ -390,3 +390,30 @@ def test_polished_chat_links_and_citation_ui():
     # System prompt explicitly instructs model not to output bare raw URLs
     assert "Never output bare raw URLs" in prompts.SYSTEM_PROMPT
     assert "markdown links" in prompts.SYSTEM_PROMPT
+
+
+def test_contact_centre_general_query_route_and_view():
+    import insis_nav_db
+    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+
+    # 1. Test search_routes matches general query / querry with Contact Centre
+    routes = insis_nav_db.search_routes("whre to find the general querry in insis")
+    assert len(routes) > 0
+    top = routes[0]
+    assert top["task_id"] == "TASK_CONTACT_CENTRE"
+    assert "Contact centre" in top["breadcrumbs"]
+    assert "General application/query" in top["breadcrumbs"]
+    assert "kontaktni_centrum.pl" in top["official_url"]
+
+    # 2. Authentic Contact Centre view exists in HTML
+    assert 'id="view-contact-centre"' in html
+    assert "Searching for solution" in html
+    assert "General application/query" in html
+
+    # 3. JS router handles contact centre path
+    assert "view-contact-centre" in app_js
+    assert "kontaktni_centrum" in app_js
+
+    # 4. Token-based sanitizer prevents double-nested mangling
+    assert "%%BOT_TOKEN_" in app_js

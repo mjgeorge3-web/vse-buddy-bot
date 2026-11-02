@@ -492,6 +492,14 @@ function navigateToUrl(fullUrl) {
         }
       }, 100);
     }
+  } else if (cleanPath === "/auth/eagenda/kontaktni_centrum.pl" || cleanPath.includes("kontaktni_centrum") || cleanPath.includes("uradovna")) {
+    currentPageKey = "contact_centre";
+    currentPageTitle = "Contact Centre & General Application";
+    currentPageUrl = fullUrl;
+    const viewEl = document.getElementById("view-contact-centre");
+    if (viewEl) viewEl.style.display = "block";
+    document.getElementById("breadcrumb-dynamic").innerHTML =
+      '&raquo; <a href="#" onclick="navigateToUrl(\'https://insis.vse.cz/auth/?lang=en\'); return false;">Personal administration</a> &raquo; <strong>Contact centre</strong>';
   } else {
     currentPageKey = cleanPath;
     currentPageTitle = matched.title;
@@ -1415,8 +1423,35 @@ function formatBotMarkdown(text) {
     }
   }
 
-  // 2. Format bulleted/colon labeled URLs (e.g., "* InSIS Public Portal (English): https://insis.vse.cz/?lang=en [2]")
-  // Matches: [optional bullet] [optional **] Label [optional **]: URL [optional cite]
+  // Token store to isolate HTML and prevent any nested/double regex mangling
+  const tokens = [];
+  function saveToken(htmlSnippet) {
+    const id = tokens.length;
+    tokens.push(htmlSnippet);
+    return `%%BOT_TOKEN_${id}%%`;
+  }
+
+  // 2. Format standard markdown links: [Label](url) FIRST
+  formatted = formatted.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    (match, label, url) => {
+      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission") || label.includes("Open");
+      const safeUrl = url.replace(/'/g, "\\'");
+      const isInsis = url.startsWith("https://insis.vse.cz");
+      const clickAttr = isInsis
+        ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
+        : `target="_blank" rel="noopener noreferrer"`;
+
+      if (isAction) {
+        return saveToken(`<a class="bot-action-button" href="${url}" ${clickAttr}>${label}</a>`);
+      }
+      const icon = isInsis ? "🏛️" : (url.includes("o365") || url.includes("microsoft") ? "💼" : (url.includes("mvcr") || url.includes("frs") ? "🛂" : (url.includes("map") ? "📍" : "🌐")));
+      const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
+      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${label}</span><span class="link-arrow">↗</span></a>`);
+    }
+  );
+
+  // 3. Format bulleted/colon labeled URLs (e.g., "* InSIS Public Portal (English): https://insis.vse.cz/?lang=en [2]")
   formatted = formatted.replace(
     /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[\(\)]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>]+)(\s*\[[\d\s,]+\])?/g,
     (match, linePre, bullet, rawLabel, rawUrl, cite) => {
@@ -1431,33 +1466,14 @@ function formatBotMarkdown(text) {
       const citeHtml = cite ? ` <span class="bot-cite-ref">${cite.trim()}</span>` : "";
 
       const bulletPrefix = bullet.trim() ? `${bullet}` : "• ";
-      return `${linePre}${bulletPrefix}<a class="${pillClass}" href="${rawUrl}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>${citeHtml}`;
+      const linkSnippet = `<a class="${pillClass}" href="${rawUrl}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>`;
+      return `${linePre}${bulletPrefix}${saveToken(linkSnippet)}${citeHtml}`;
     }
   );
 
-  // 3. Format standard markdown links [Label](url)
+  // 4. Format any remaining bare URLs (never touches tokens since tokens don't contain 'https://')
   formatted = formatted.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    (match, label, url) => {
-      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission");
-      const safeUrl = url.replace(/'/g, "\\'");
-      const isInsis = url.startsWith("https://insis.vse.cz");
-      const clickAttr = isInsis
-        ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
-        : `target="_blank" rel="noopener noreferrer"`;
-
-      if (isAction) {
-        return `<a class="bot-action-button" href="${url}" ${clickAttr}>${label}</a>`;
-      }
-      const icon = isInsis ? "🏛️" : (url.includes("o365") || url.includes("microsoft") ? "💼" : (url.includes("mvcr") || url.includes("frs") ? "🛂" : (url.includes("map") ? "📍" : "🌐")));
-      const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
-      return `<a class="${pillClass}" href="${url}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${label}</span><span class="link-arrow">↗</span></a>`;
-    }
-  );
-
-  // 4. Format any remaining bare URLs (not inside an href attribute)
-  formatted = formatted.replace(
-    /(?<!href=["'])(https?:\/\/[^\s<\]\)\<\>]+)/g,
+    /(https?:\/\/[^\s<\]\)\<\>]+)/g,
     (match, url) => {
       const safeUrl = url.replace(/'/g, "\\'");
       const isInsis = url.startsWith("https://insis.vse.cz");
@@ -1471,7 +1487,7 @@ function formatBotMarkdown(text) {
       if (displayLabel.length > 30) {
         displayLabel = displayLabel.substring(0, 28) + "…";
       }
-      return `<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`;
+      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`);
     }
   );
 
@@ -1490,6 +1506,11 @@ function formatBotMarkdown(text) {
     .replace(/\n- /g, "<br>• ")
     .replace(/\n\* /g, "<br>• ")
     .replace(/\n/g, "<br>");
+
+  // 7. Safely restore all link tokens without risk of re-processing
+  formatted = formatted.replace(/%%BOT_TOKEN_(\d+)%%/g, (match, id) => {
+    return tokens[parseInt(id, 10)] || "";
+  });
 
   return formatted + sourcesHtml;
 }
