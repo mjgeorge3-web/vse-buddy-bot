@@ -681,6 +681,28 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         <button onclick="showLoginView()" style="background:#005596; color:white; border:none; padding:7px 14px; border-radius:4px; font-weight:700; cursor:pointer;">🔒 Log in to view your personal Variable Symbol</button>
       `;
     }
+  } else if (path.includes("stipendia")) {
+    html = `
+      <h3 style="font-size:16px; color:#004b87; margin-bottom:6px;">Scholarships &amp; Accommodation Grant (Žádosti o stipendia)</h3>
+      <div style="font-size:12px; color:#475569; margin-bottom:14px;">
+        <strong>Breadcrumb Trail:</strong> Personal administration &gt; Financing of study and scholarships &gt; Scholarships (Žádosti o stipendia)
+      </div>
+      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:14px; margin-bottom:16px;">
+        <h4 style="font-size:14px; color:#005596; margin-bottom:8px;">Accommodation Scholarship (Ubytovací stipendium)</h4>
+        <p style="font-size:12px; color:#334155; line-height:1.6; margin-bottom:10px;">
+          Available to full-time enrolled students whose permanent residence is outside Prague. Payouts are transferred quarterly into your registered Czech bank account.
+        </p>
+        <div style="font-size:12px; color:#1e293b; margin-bottom:10px;">
+          <strong>Application Window:</strong> <span style="color:#16a34a; font-weight:700;">OPEN (Autumn 2026 / Spring 2027)</span><br>
+          <strong>Eligibility Check:</strong> Permanent residence outside Prague (Eligible)<br>
+          <strong>Disbursement Target:</strong> Registered Czech Bank Account
+        </div>
+        <button onclick="alert('Your accommodation scholarship application has been registered successfully! Payouts will be deposited to your registered Czech bank account.')" style="background:#005596; color:white; border:none; padding:8px 16px; border-radius:4px; font-weight:700; cursor:pointer;">📝 Submit Accommodation Scholarship Application</button>
+      </div>
+      <div style="font-size:12px; color:#64748b;">
+        <em>Note: To receive payments, verify that your active Czech bank account is saved under <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/financovani/index.pl?lang=en'); return false;" style="color:#005596; font-weight:600;">Student Study Financing, Bank Accounts &amp; Variable Symbol</a>.</em>
+      </div>
+    `;
   } else if (path.includes("potvrzeni.pl")) {
     html = `
       <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">Electronic Confirmation of Study (Potvrzení o studiu)</h3>

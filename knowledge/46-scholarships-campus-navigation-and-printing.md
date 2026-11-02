@@ -12,9 +12,10 @@ DATE SAVED: 2026-10-25
 ## Scholarships available to international students
 - **Accommodation scholarship (Ubytovací stipendium):**
   - Financial support provided to full-time Bachelor and Master students whose permanent residence is outside Prague.
-  - Applications are submitted online in InSIS under **Student Portal → My Studies → Scholarships**.
+  - Applications are submitted online in InSIS under **Personal administration → Financing of study and scholarships → Scholarships (Žádosti o stipendia)** (https://insis.vse.cz/auth/stipendia/?lang=en).
   - Must be applied for twice a year during the designated application windows (typically October and April).
-  - Paid retrospectively in three quarterly installments (December, March, June) into a Czech bank account entered in InSIS.
+  - Paid retrospectively in quarterly installments into a Czech bank account entered in InSIS under Student Study Financing & Bank Accounts.
+  - Accommodation scholarship is a state housing cash benefit, completely separate from booking dormitory rooms on ISKaM.
 - **Merit scholarship (Prospěchové stipendium):**
   - Awarded by faculties for outstanding academic performance based on study average in the previous academic year.
 

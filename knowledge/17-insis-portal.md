@@ -17,7 +17,7 @@ DATE SAVED: 2026-10-25
 - **Forgotten password:** If you cannot log in, use the password reset link on the initial admissions application portal, or visit the IT Helpdesk in person with your student ID / passport (Žižkov Old Building SB or New Building NB).
 
 ## 2. Personal data, Prague address and Czech bank account
-- **Where to add Czech bank account:** InSIS → **Student's Portal** → **Bank Accounts (Bankovní účty)**. Mandatory for receiving accommodation scholarships, merit scholarships, and study fee refunds.
+- **Where to add Czech bank account:** InSIS → **Personal administration** → **Financing of study and scholarships** → **Student Study Financing, Bank Accounts & Variable Symbol (Financování studia a bankovní spojení)** (https://insis.vse.cz/auth/financovani/index.pl?lang=en). Mandatory for receiving accommodation scholarships, merit scholarships, and study fee refunds.
 - **Update Prague address and phone:** InSIS → **Personal Management (Osobní management)** → **Personal Data (Osobní údaje)**. You must keep your current Czech residence address and emergency contact phone number updated for official university notifications.
 
 ## 3. Weekly timetable and Google/Apple Calendar export
@@ -53,16 +53,17 @@ DATE SAVED: 2026-10-25
 - **Certified paper copy:** If a physical paper stamp is required, bring the digital PDF on a flash drive to any CzechPOINT post office for official authorized conversion (*konverze dokumentů*).
 
 ## 8. Study financing, Variable Symbol (VS) and fee payments
-- **Check tuition and payment details:** InSIS → **Student's Portal** → **Study Financing (Financování studia)**.
+- **Check tuition and payment details:** InSIS → **Personal administration** → **Financing of study and scholarships** → **Student Study Financing, Bank Accounts & Variable Symbol (Financování studia)** (https://insis.vse.cz/auth/financovani/index.pl?lang=en).
 - Find your unique, personalized **Variable Symbol (VS)** needed to pair bank payments.
 - Access the online payment gateway to pay tuition or fee balances directly by debit/credit card, or scan the Czech QR code with your mobile banking app.
 - Check payment history and verify whether your payment has been marked as received by the bursar.
 
 ## 9. Accommodation scholarship application (Ubytovací stipendium)
-- **Where to apply:** InSIS → **Student's Portal** → **My Studies** → **Scholarships (Žádost o ubytovací stipendium)**.
+- **Where to apply:** InSIS → **Personal administration** → **Financing of study and scholarships** → **Scholarships (Žádosti o stipendia)** (https://insis.vse.cz/auth/stipendia/?lang=en).
 - Available to full-time students whose permanent residence is outside Prague.
-- Must be submitted online twice a year (autumn and spring windows).
-- Payout is processed quarterly directly into the Czech bank account specified in InSIS.
+- Must be submitted online twice a year (autumn and spring intake windows).
+- Payout is processed quarterly directly into the Czech bank account specified in InSIS under Student Study Financing & Bank Accounts.
+- **Important Note:** Accommodation scholarship is monetary assistance paid to your bank account; it is separate from dormitory room booking in ISKaM.
 
 ## 10. Study plan audit, completed credits and credit vouchers
 - **Audit degree progress:** InSIS → **Student's Portal** → **Check of Study Plan (Kontrola studijního plánu)**.

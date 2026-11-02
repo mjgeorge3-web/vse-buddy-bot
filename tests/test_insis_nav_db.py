@@ -78,3 +78,29 @@ def test_empty_and_unknown_queries():
     assert insis_nav_db.search_routes("   ") == []
     hits = insis_nav_db.search_routes("xyz123nonexistentterm999")
     assert isinstance(hits, list)
+
+
+def test_search_accommodation_scholarship_authentic_route():
+    """Verify that searching for accommodation scholarship benefit returns authentic InSIS route."""
+    hits = insis_nav_db.search_routes("how do i apply for Accomodation scholorship benefit", limit=1)
+    assert len(hits) == 1
+    hit = hits[0]
+    assert hit["task_id"] == "TASK_SCHOLARSHIP_ACCOMMODATION"
+    assert hit["official_url"] == "https://insis.vse.cz/auth/stipendia/?lang=en"
+    assert "Financing of study and scholarships" in hit["breadcrumbs"]
+    assert "Žádosti o stipendia" in hit["breadcrumbs"] or "Scholarships" in hit["breadcrumbs"]
+    assert "Czech bank account" in hit["step_by_step_instructions"]
+
+
+def test_public_catalog_routes_have_no_auth():
+    """Verify that public InSIS catalog and study plans endpoints do NOT contain /auth/ prefix."""
+    plans = insis_nav_db.get_route_by_task_id("TASK_STUDY_PLANS")
+    assert plans is not None
+    assert "/auth/" not in plans["official_url"]
+    assert plans["official_url"] == "https://insis.vse.cz/katalog/plany.pl?lang=en"
+
+    catalogue = insis_nav_db.get_route_by_task_id("TASK_COURSE_CATALOGUE")
+    assert catalogue is not None
+    assert "/auth/" not in catalogue["official_url"]
+    assert catalogue["official_url"] == "https://insis.vse.cz/katalog/?lang=en"
+

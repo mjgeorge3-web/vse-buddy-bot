@@ -449,8 +449,8 @@ class BuddyBot:
             search_res = insis_nav_db.unified_search(question, limit=2)
             candidates = []
 
-            # Prioritize InSIS routes when question is explicitly about InSIS or finding features in the system
-            insis_cues = ["insis", "navigate", "portal", "where to find", "how to find", "where can i find", "whre to find", "where is the", "menu", "section", "query", "querry", "application", "form"]
+            # Prioritize InSIS routes when question is explicitly about InSIS, finding features, or applying for academic/grant procedures
+            insis_cues = ["insis", "navigate", "portal", "where to find", "how to find", "where can i find", "whre to find", "where is the", "menu", "section", "query", "querry", "application", "form", "apply", "scholarship", "scholorship", "stipend", "benefit", "grant", "ubytov"]
             is_insis_query = any(c in question.lower() for c in insis_cues)
 
             if is_insis_query and search_res.get("insis_routes"):
