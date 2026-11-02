@@ -632,6 +632,15 @@ class BuddyBot:
         # -------------------------------------------------------------
         # 6. Post-processing (Citations & Referral)
         # -------------------------------------------------------------
+        # Ensure InSIS navigation questions always have a clean direct one-click action button
+        insis_navs = [c for c in context_chunks if c.get("is_insis_nav")]
+        if insis_navs:
+            top_nav_chunk = insis_navs[0]
+            nav_url = top_nav_chunk.get("source_url", "")
+            nav_title = top_nav_chunk.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
+            if nav_url and nav_url not in raw_answer:
+                raw_answer += f"\n\n[🏛️ Open {nav_title}]({nav_url})"
+
         sources_text, cited_chunks = self.format_sources_section(raw_answer, context_chunks)
         final_answer = raw_answer
 
