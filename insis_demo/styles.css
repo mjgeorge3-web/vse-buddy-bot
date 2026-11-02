@@ -2080,6 +2080,57 @@ body {
   border-color: #94a3b8;
 }
 
+/* ==========================================================================
+   VŠE InSIS Navigator Signature UI Elements
+   ========================================================================== */
+.bot-bubble h3 {
+  color: #004b87;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin: 2px 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1.5px solid #e2e8f0;
+  padding-bottom: 5px;
+}
+
+.bot-bubble code {
+  background: #f1f5f9;
+  color: #0369a1;
+  border: 1px solid #e2e8f0;
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.vse-insider-callout {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-left: 3.5px solid #0284c7;
+  border-radius: 6px;
+  padding: 8px 11px;
+  margin: 8px 0;
+}
+
+.vse-callout-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0284c7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.vse-callout-text {
+  font-size: 11.5px;
+  color: #1e3a8a;
+  line-height: 1.45;
+}
+
 /* Coursework Submissions Vault Styling */
 .odevzdavarna-card {
   transition: box-shadow 0.2s ease, border-color 0.2s ease;

@@ -246,24 +246,42 @@ class BuddyBot:
         if nav_chunks:
             nc = nav_chunks[0]
             lines = [l.strip() for l in nc.get("text", "").split("\n") if l.strip()]
+            category = ""
+            cz_title = ""
             breadcrumbs = ""
             steps = []
-            note_str = ""
+            note = ""
+
             for l in lines:
-                if l.startswith("Breadcrumb Trail:"):
+                if l.startswith("Category:"):
+                    parts = l.split("|")
+                    category = parts[0].replace("Category:", "").strip()
+                elif l.startswith("InSIS Navigation Task:") and "(" in l and l.endswith(")"):
+                    cz_title = l[l.rfind("(") + 1 : -1].strip()
+                elif l.startswith("Breadcrumb Trail:"):
                     breadcrumbs = l.replace("Breadcrumb Trail:", "").strip()
                 elif re.match(r"^\d+\.", l):
                     steps.append(l)
                 elif l.startswith("Important Note:") and not l.endswith(": None"):
-                    note_str = f"\n\n💡 *Note: {l.replace('Important Note:', '').strip()}*"
-            steps_str = "\n".join(steps) if steps else "\n".join(lines[:6])
-            clean_bc = breadcrumbs.replace(" > ", " → ")
+                    note = l.replace("Important Note:", "").strip()
+
             task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
+            steps_str = "\n".join(steps) if steps else "\n".join(lines[:5])
+
+            bc_steps = [s.strip() for s in breadcrumbs.replace(" > ", " → ").split(" → ") if s.strip()]
+            stepper_str = " ➔ ".join(f"`{s}`" for s in bc_steps)
+
+            header_badge = f"### 🧭 VŠE InSIS Navigator • {category}" if category else "### 🧭 VŠE InSIS Navigator"
+            cz_badge = f"\n\n🇨🇿 **Official InSIS Term:** `{cz_title}`" if cz_title else ""
+            note_box = f"\n\n💡 **VŠE Insider Tip:**\n{note}" if note else ""
+
             return (
-                f"**How to apply / navigate in InSIS**:\n\n"
-                f"**Path:** {clean_bc}\n\n"
-                f"{steps_str}{note_str}\n\n"
-                f"[🏛️ Open {task_title} in InSIS]({nc.get('source_url', 'https://insis.vse.cz')})"
+                f"{header_badge}\n\n"
+                f"📍 **Route Stepper:**\n{stepper_str}\n\n"
+                f"📋 **Action Guide:**\n{steps_str}"
+                f"{note_box}"
+                f"{cz_badge}\n\n"
+                f"[🚀 Open {task_title} in InSIS]({nc.get('source_url', 'https://insis.vse.cz')})"
             )
 
         # Check if the primary chunk is campus location navigation

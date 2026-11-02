@@ -1473,7 +1473,7 @@ function formatBotMarkdown(text) {
   formatted = formatted.replace(
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     (match, label, url) => {
-      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission") || label.includes("Open");
+      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission") || label.includes("Open") || label.includes("🚀");
       const safeUrl = url.replace(/'/g, "\\'");
       const isInsis = url.startsWith("https://insis.vse.cz");
       const clickAttr = isInsis
@@ -1535,8 +1535,17 @@ function formatBotMarkdown(text) {
     '<span class="bot-cite-ref">[$1]</span>'
   );
 
+  // 5b. Format VŠE Insider Tip into a signature callout card
+  formatted = formatted.replace(
+    /💡 \*\*VŠE Insider Tip:\*\*\s*([\s\S]*?)(?=(?:\n\n[🇨🇿🚀\[]|$))/gi,
+    (match, tip) => {
+      return `<div class="vse-insider-callout tip-blue"><span class="vse-callout-badge">💡 VŠE Insider Tip</span><div class="vse-callout-text">${tip.trim()}</div></div>\n\n`;
+    }
+  );
+
   // 6. Markdown typography formatting
   formatted = formatted
+    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
