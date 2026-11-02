@@ -257,12 +257,13 @@ class BuddyBot:
                 elif l.startswith("Important Note:") and not l.endswith(": None"):
                     note_str = f"\n\n💡 *Note: {l.replace('Important Note:', '').strip()}*"
             steps_str = "\n".join(steps) if steps else "\n".join(lines[:6])
+            clean_bc = breadcrumbs.replace(" > ", " → ")
             task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
             return (
-                f"**How to Navigate to {task_title} in InSIS**:\n\n"
-                f"**Breadcrumb Trail:**\n{breadcrumbs}\n\n"
-                f"**Step-by-step instructions:**\n{steps_str}{note_str}\n\n"
-                f"[🏛️ Open {task_title}]({nc.get('source_url', 'https://insis.vse.cz')})"
+                f"**How to apply / navigate in InSIS**:\n\n"
+                f"**Path:** {clean_bc}\n\n"
+                f"{steps_str}{note_str}\n\n"
+                f"[🏛️ Open {task_title} in InSIS]({nc.get('source_url', 'https://insis.vse.cz')})"
             )
 
         # Check if the primary chunk is campus location navigation

@@ -1656,17 +1656,13 @@ function getContextualFallback(query, loggedIn) {
     (q.includes("accomodation") || q.includes("accommodation") || q.includes("housing") || q.includes("living") || q.includes("ubytov"))
   ) {
     return (
-      "**How to Navigate to Scholarships & Accommodation Grant Application in InSIS**:\n\n" +
-      "**Breadcrumb Trail:**\n" +
-      "Personal administration > Financing of study and scholarships > Scholarships (Žádosti o stipendia)\n\n" +
-      "**Step-by-step instructions:**\n" +
-      "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n" +
-      "2. Under the 'Financing of study and scholarships' section, click 'Scholarships' (Žádosti o stipendia) (/auth/stipendia/).\n" +
-      "3. Select 'Accommodation scholarship' (Žádost o ubytovací stipendium).\n" +
-      "4. Fill in and submit your online application during the official intake period (typically October/November in Autumn, March/April in Spring).\n" +
-      "5. Ensure you have registered your active Czech bank account under 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl) so that quarterly payouts can be deposited directly.\n\n" +
-      "💡 *Note: The accommodation scholarship (Ubytovací stipendium) is a cash grant deposited into your Czech bank account for students with permanent residence outside Prague. It is completely separate from dormitory room bookings in ISKaM.*\n\n" +
-      "[🏛️ Open Scholarships & Accommodation Grant Application (Žádosti o stipendia)](https://insis.vse.cz/auth/stipendia/?lang=en)"
+      "**How to apply:**\n\n" +
+      "1. Open [VŠE InSIS](https://insis.vse.cz/auth/?lang=en) and log in using your student credentials.\n" +
+      "2. Go to **My College (Moje studium)** → **Student's Portal** → **Study Financing and Scholarships** (or Personal administration → Financing of study and scholarships).\n" +
+      "3. Select **Accommodation Benefit Application Form (Žádost o ubytovací stipendium)**.\n" +
+      "4. Enter your Czech bank account details and save/submit the application.\n\n" +
+      "💡 *Note: The accommodation scholarship (Ubytovací stipendium) is a cash grant deposited into your Czech bank account for students residing outside Prague. It is completely separate from dormitory room bookings in ISKaM.*\n\n" +
+      "[🏛️ Open Scholarships Application in InSIS](https://insis.vse.cz/auth/stipendia/?lang=en)"
     );
   } else if (
     q.includes("general quer") || q.includes("general appl") || q.includes("contact centre") ||
