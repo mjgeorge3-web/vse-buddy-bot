@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integrated Study Information System | VŠE Prague</title>
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 
@@ -716,12 +716,30 @@
       <div class="thesis-section-sub">The following group of icons represents an application which helps to display the information about the final thesis.</div>
 
       <div class="icons-action-grid">
-        <a class="icon-action-item" onclick="openInstructionsModal()"><div class="icon-img-box" style="color:#d35400;">🔄📋</div><span class="icon-item-label">Instructions for submission process of final thesis</span></a>
-        <a class="icon-action-item" onclick="alert('Approval of assignment confirmed.')"><div class="icon-img-box" style="color:#27ae60;">📑✅</div><span class="icon-item-label">Approval of assignment</span></a>
-        <a class="icon-action-item" onclick="alert('Situation check complete.')"><div class="icon-img-box" style="color:#f39c12;">📁2️⃣</div><span class="icon-item-label">Situation check</span></a>
-        <a class="icon-action-item" onclick="alert('Displaying assignment form protocol...')"><div class="icon-img-box" style="color:#2980b9;">📄🔍</div><span class="icon-item-label">Display the assignment form</span></a>
-        <a class="icon-action-item" onclick="alert('Displaying additional info...')"><div class="icon-img-box" style="color:#007bb6;">📁ℹ️</div><span class="icon-item-label">Display additional information</span></a>
-        <a class="icon-action-item" onclick="alert('Postponement of release')"><div class="icon-img-box" style="color:#16a085;">📁🔒</div><span class="icon-item-label">Postponement of release</span></a>
+        <a class="icon-action-item" onclick="openInstructionsModal()">
+          <div class="icon-img-box">📋</div>
+          <span class="icon-item-label">Instructions for submission process of final thesis</span>
+        </a>
+        <a class="icon-action-item" onclick="alert('Approval of assignment confirmed.')">
+          <div class="icon-img-box">✅</div>
+          <span class="icon-item-label">Approval of assignment</span>
+        </a>
+        <a class="icon-action-item" onclick="alert('Situation check complete.')">
+          <div class="icon-img-box">📊</div>
+          <span class="icon-item-label">Situation check</span>
+        </a>
+        <a class="icon-action-item" onclick="alert('Displaying assignment form protocol...')">
+          <div class="icon-img-box">📄</div>
+          <span class="icon-item-label">Display the assignment form</span>
+        </a>
+        <a class="icon-action-item" onclick="alert('Displaying additional info...')">
+          <div class="icon-img-box">ℹ️</div>
+          <span class="icon-item-label">Display additional information</span>
+        </a>
+        <a class="icon-action-item" onclick="alert('Postponement of release')">
+          <div class="icon-img-box">🔒</div>
+          <span class="icon-item-label">Postponement of release</span>
+        </a>
       </div>
 
       <div class="thesis-section-title">Editing application</div>
@@ -730,22 +748,22 @@
       <div class="icons-action-grid">
         <div id="action-add-info" class="icon-action-item" onclick="openAddInfoModal()">
           <div id="badge-add-info" class="status-badge-above badge-red-x">✕</div>
-          <div class="icon-img-box" style="color:#007bb6;">📁➕</div>
+          <div class="icon-img-box">📝</div>
           <span class="icon-item-label">Insert additional information</span>
         </div>
         <div id="action-upload-thesis" class="icon-action-item" onclick="openUploadThesisModal()">
           <div id="badge-upload" class="status-badge-above badge-red-x">✕</div>
-          <div class="icon-img-box" style="color:#007bb6;">📁📎</div>
+          <div class="icon-img-box">📤</div>
           <span class="icon-item-label">Insert the thesis and the appendices</span>
         </div>
         <div id="action-submit-thesis" class="icon-action-item" onclick="confirmThesisSubmission()">
           <div id="badge-submit" class="status-badge-above badge-red-x">✕</div>
-          <div class="icon-img-box" style="color:#27ae60;">📗➔</div>
+          <div class="icon-img-box">🎓</div>
           <span class="icon-item-label">Thesis submission</span>
         </div>
         <div id="action-errata" class="icon-action-item" onclick="openErrataModal()" style="border: 2px dashed #f39c12; border-radius:8px; padding:4px;">
           <div id="badge-errata" class="status-badge-above badge-amber-warn">!</div>
-          <div class="icon-img-box" style="color:#d35400;">📝📎</div>
+          <div class="icon-img-box">📎</div>
           <span class="icon-item-label" style="font-weight:700; color:#b45309;">Insert errata (Vložit errata)</span>
         </div>
       </div>
@@ -1174,6 +1192,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
