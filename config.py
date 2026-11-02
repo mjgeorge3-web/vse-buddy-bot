@@ -75,22 +75,25 @@ CZECH_CRISIS_LINE = "116 123"
 VSE_COUNSELLING_EMAIL = "ac@vse.cz"
 
 
+_CACHED_GEMINI_API_KEY = None
+
 def get_gemini_api_key() -> str:
-    """Retrieve Gemini API key from Streamlit secrets or local .env file.
-    
-    Priority:
-    1. Streamlit secrets (`st.secrets["GEMINI_API_KEY"]`)
-    2. Environment variable (`GEMINI_API_KEY` from .env or OS)
-    """
-    key = None
-    try:
-        import streamlit as st
-        if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
-            key = st.secrets["GEMINI_API_KEY"]
-    except Exception:
-        pass
+    """Retrieve Gemini API key from environment variable or Streamlit secrets with memory caching."""
+    global _CACHED_GEMINI_API_KEY
+    if _CACHED_GEMINI_API_KEY is not None:
+        return _CACHED_GEMINI_API_KEY
 
+    # Priority 1: Environment variable (.env or system)
+    key = os.getenv("GEMINI_API_KEY", "")
+
+    # Priority 2: Streamlit secrets fallback
     if not key:
-        key = os.getenv("GEMINI_API_KEY", "")
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
+                key = st.secrets["GEMINI_API_KEY"]
+        except Exception:
+            pass
 
-    return key.strip()
+    _CACHED_GEMINI_API_KEY = (key or "").strip()
+    return _CACHED_GEMINI_API_KEY

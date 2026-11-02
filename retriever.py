@@ -6,8 +6,7 @@ index.npz vector store, hybrid title-keyword boosting, and fallback contacts inc
 
 import json
 import re
-import socket
-socket.setdefaulttimeout(2.0)
+import concurrent.futures
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -16,6 +15,9 @@ from google.genai import types
 
 import config
 import ingest
+
+# Shared worker pool for timeout-isolated API calls (never blocks on shutdown)
+_EMBED_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="embed_pool")
 
 # English and Czech common stopwords for hybrid keyword boosting
 STOPWORDS = {
@@ -185,40 +187,29 @@ class Retriever:
                 )
             self.client = genai.Client(
                 api_key=api_key,
-                http_options=types.HttpOptions(timeout=10000),
+                http_options=types.HttpOptions(timeout=5.0),
             )
         return self.client
 
     def embed_query(self, query: str) -> np.ndarray:
         """Embed user query with task_type='RETRIEVAL_QUERY' and L2-normalize.
         
-        Includes exponential backoff retry in case of free-tier rate limits.
+        Uses a 2.0s timeout; falls back gracefully to keyword search if offline or throttled.
         """
-        import time
-
         client = self._get_client()
-        max_retries = 2
-        for attempt in range(max_retries):
-            try:
-                response = client.models.embed_content(
-                    model=config.EMBEDDING_MODEL,
-                    contents=query,
-                    config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY"),
-                )
-                vec = np.array(response.embeddings[0].values, dtype=np.float32)
-                norm = np.linalg.norm(vec)
-                if norm > 0:
-                    vec = vec / norm
-                return vec
-            except Exception as e:
-                err_str = str(e).lower()
-                is_rate_limit = ("429" in err_str or "quota" in err_str or "rate" in err_str)
-                if is_rate_limit and attempt < max_retries - 1:
-                    wait_sec = 1.0 * (attempt + 1)
-                    print(f"[Retriever retry {attempt+1}/{max_retries}] ({e}). Retrying in {wait_sec:.1f}s...")
-                    time.sleep(wait_sec)
-                else:
-                    raise
+
+        def _do_embed():
+            response = client.models.embed_content(
+                model=config.EMBEDDING_MODEL,
+                contents=query,
+                config=types.EmbedContentConfig(task_type="RETRIEVAL_QUERY"),
+            )
+            vec = np.array(response.embeddings[0].values, dtype=np.float32)
+            norm = np.linalg.norm(vec)
+            return vec / norm if norm > 0 else vec
+
+        future = _EMBED_EXECUTOR.submit(_do_embed)
+        return future.result(timeout=2.0)
 
     def extract_query_keywords(self, query: str) -> List[str]:
         """Extract lowercased keywords with length >= config.MIN_KEYWORD_LENGTH excluding stopwords,

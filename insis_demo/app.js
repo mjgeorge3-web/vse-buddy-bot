@@ -1243,6 +1243,9 @@ async function showInteractiveChecklist(
   container.scrollTop = container.scrollHeight;
 }
 
+// Client-side instant query cache
+const botClientCache = new Map();
+
 async function submitBotMessage() {
   const inputEl = document.getElementById("bot-input-field");
   const query = inputEl.value.trim();
@@ -1268,9 +1271,21 @@ async function submitBotMessage() {
     page_url: currentPageUrl,
   };
 
+  const cacheKey = `${query.toLowerCase().trim()}:${session.loggedIn}:${isPersonalisedEnabled}`;
+  if (botClientCache.has(cacheKey)) {
+    const cachedData = botClientCache.get(cacheKey);
+    appendBotBubble("assistant", formatBotMarkdown(cachedData.answer));
+    chatHistory.push({ role: "assistant", content: cachedData.answer });
+    handleContextualPageActions(query, session.loggedIn);
+    updateBotContextUI();
+    const container = document.getElementById("bot-messages-area");
+    container.scrollTop = container.scrollHeight;
+    return;
+  }
+
   const loadingBubble = appendBotBubble(
     "assistant",
-    '<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'
+    '<div style="display:flex; align-items:center; gap:8px;"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div><span style="font-size:11px; color:#64748b; font-style:italic;">Searching verified InSIS knowledge base...</span></div>'
   );
 
   try {
@@ -1286,6 +1301,7 @@ async function submitBotMessage() {
 
     if (response.ok) {
       const data = await response.json();
+      botClientCache.set(cacheKey, data);
       loadingBubble.innerHTML = formatBotMarkdown(data.answer);
       chatHistory.push({ role: "assistant", content: data.answer });
       handleContextualPageActions(query, session.loggedIn);

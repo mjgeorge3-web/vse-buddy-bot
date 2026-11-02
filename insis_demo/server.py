@@ -284,12 +284,15 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                 }
 
             resp_bytes = json.dumps(resp_data, ensure_ascii=False).encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(resp_bytes)))
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(resp_bytes)
+            try:
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+            except (ConnectionAbortedError, ConnectionResetError, BrokenPipeError):
+                pass
         else:
             self.send_error(404, "Endpoint not found")
 

@@ -15,6 +15,7 @@ import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
 import uuid
+import concurrent.futures
 
 from google import genai
 from google.genai import types
@@ -24,6 +25,9 @@ import prompts
 from retriever import Retriever
 import safety
 import student_profile
+
+# Shared worker pool for timeout-isolated LLM calls (never blocks on thread shutdown)
+_LLM_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm_pool")
 
 REFERRAL_TARGETS = {
     "visa_residence": "the VŠE International Office and the Czech Ministry of the Interior (mvcr.cz)",
@@ -42,6 +46,12 @@ class BuddyBot:
     def __init__(self):
         self.retriever = Retriever()
         self.client: Optional[genai.Client] = None
+        self._query_cache: Dict[str, Dict[str, Any]] = {}
+
+    def _normalize_query(self, text: str) -> str:
+        """Strip punctuation and lowercase for in-memory response cache keys."""
+        t = re.sub(r"[^\w\s]", " ", text.lower())
+        return " ".join(t.split())
 
     def _get_client(self) -> genai.Client:
         """Lazily initialize genai.Client with API key and 5s timeout."""
@@ -53,7 +63,7 @@ class BuddyBot:
                 )
             self.client = genai.Client(
                 api_key=api_key,
-                http_options=types.HttpOptions(timeout=10000),
+                http_options=types.HttpOptions(timeout=5.0),
             )
         return self.client
 
@@ -247,9 +257,33 @@ class BuddyBot:
             task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
             return (
                 f"**How to Navigate to {task_title} in InSIS**:\n\n"
-                f"📍 **InSIS Breadcrumb Path**: `{breadcrumbs}`\n\n"
-                f"**Step-by-step instructions**:\n{steps_str}\n\n"
+                f"**Breadcrumb Trail:**\n{breadcrumbs}\n\n"
+                f"**Step-by-step instructions:**\n{steps_str}\n\n"
                 f"[🏛️ Open {task_title}]({nc.get('source_url', 'https://insis.vse.cz')})"
+            )
+
+        # Check if the primary chunk is campus location navigation
+        campus_chunks = [c for c in context_chunks if c.get("is_campus_loc")]
+        if campus_chunks:
+            cc = campus_chunks[0]
+            lines = [l.strip() for l in cc.get("text", "").split("\n") if l.strip()]
+            loc_name = cc.get("title", "Campus Location").replace("VŠE Campus Navigation: ", "")
+            return (
+                f"**Campus Directions: {loc_name}**:\n\n"
+                f"{chr(10).join(lines)}\n\n"
+                f"[🗺️ Open VŠE Campus Map & Buildings Guide]({cc.get('source_url', 'https://www.vse.cz/english/campus-map-and-buildings/')})"
+            )
+
+        # Check if the primary chunk is a VŠE Policy / Regulation
+        policy_chunks = [c for c in context_chunks if c.get("is_policy")]
+        if policy_chunks:
+            pc = policy_chunks[0]
+            lines = [l.strip() for l in pc.get("text", "").split("\n") if l.strip()]
+            pol_title = pc.get("title", "VŠE Policy")
+            return (
+                f"**{pol_title}**:\n\n"
+                f"{chr(10).join(lines)}\n\n"
+                f"[📜 Official VŠE Rules and Regulations]({pc.get('source_url', 'https://www.vse.cz/english/university-rules-and-regulations/')})"
             )
 
         content_chunks = [c for c in context_chunks if not c.get("is_contacts")]
@@ -340,6 +374,16 @@ class BuddyBot:
         session_uuid = session_id or str(uuid.uuid4())
 
         # -------------------------------------------------------------
+        # 0. High-Speed In-Memory Cache Lookup (< 1ms)
+        # -------------------------------------------------------------
+        norm_q = self._normalize_query(question)
+        cache_key = f"{norm_q}:{bool(user_context and user_context.get('logged_in'))}:{bool(user_context and user_context.get('personalised'))}"
+        if not history and cache_key in self._query_cache:
+            cached_res = dict(self._query_cache[cache_key])
+            cached_res["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 1)
+            return cached_res
+
+        # -------------------------------------------------------------
         # 1. Deterministic crisis check (runs BEFORE retrieval & Gemini)
         # -------------------------------------------------------------
         if safety.check_crisis(question):
@@ -386,14 +430,7 @@ class BuddyBot:
                 sources_text, cited_chunks = self.format_sources_section(fast_answer, dyn_chunks)
                 final_answer = fast_answer + sources_text
                 latency = (time.perf_counter() - start_time) * 1000
-                self.log_interaction(
-                    session_id=session_uuid,
-                    question=question,
-                    mode="normal",
-                    top_score=0.995,
-                    latency_ms=latency,
-                )
-                return {
+                res_payload = {
                     "answer": final_answer,
                     "sources": dyn_chunks,
                     "mode": "normal",
@@ -402,6 +439,112 @@ class BuddyBot:
                     "top_score": 0.995,
                     "latency_ms": round(latency, 1),
                 }
+                self._query_cache[cache_key] = res_payload
+                self.log_interaction(
+                    session_id=session_uuid,
+                    question=question,
+                    mode="normal",
+                    top_score=0.995,
+                    latency_ms=latency,
+                )
+                return res_payload
+
+        # -------------------------------------------------------------
+        # 2c. Fast Deterministic InSIS Navigation & Campus Location Path (<30ms)
+        # -------------------------------------------------------------
+        # Direct navigation queries and campus room/facility searches have verified
+        # structured ground-truth in SQLite FTS. If exact route or location matches,
+        # return immediate grounded answer with exact breadcrumbs and single action link
+        # without waiting for remote WAN LLM roundtrips.
+        insis_nav_cues = [
+            "insis", "navigate", "navigation", "portal", "where to find", "how to find",
+            "where can i find", "whre to find", "where is the", "where is", "menu", "section",
+            "query", "querry", "application", "form", "apply", "scholarship", "scholorship",
+            "stipend", "benefit", "grant", "ubytov", "contact centre", "contact center",
+            "study plan", "catalogue", "catalog", "syllabus", "timetable", "schedule"
+        ]
+        campus_cues = [
+            "washroom", "toilet", "wc", "bathroom", "restroom", "menza", "canteen",
+            "cafeteria", "ciks", "helpdesk", "library", "bibliobox", "study room",
+            "sb 22", "rb 101", "rb 201", "rb 209", "nb 403"
+        ]
+
+        is_direct_nav = any(cue in ql for cue in insis_nav_cues)
+        is_direct_campus = any(cue in ql for cue in campus_cues)
+
+        if not history and (is_direct_nav or is_direct_campus):
+            try:
+                import insis_nav_db
+                fast_search = insis_nav_db.unified_search(question, limit=2)
+                fast_chunk = None
+
+                if is_direct_nav and fast_search.get("insis_routes"):
+                    top_nav = fast_search["insis_routes"][0]
+                    fast_chunk = {
+                        "id": f"insis_nav_{top_nav['task_id']}",
+                        "doc_id": "insis_nav_db",
+                        "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
+                        "source_url": top_nav["official_url"],
+                        "date_saved": "2026-10-31",
+                        "unverified": False,
+                        "score": 0.99,
+                        "text": (
+                            f"InSIS Navigation Task: {top_nav['title_en']} ({top_nav['title_cs']})\n"
+                            f"Category: {top_nav['category']} | InSIS Path: {top_nav['portal_path']}\n"
+                            f"Breadcrumb Trail: {top_nav['breadcrumbs']}\n"
+                            f"Step-by-Step Instructions:\n{top_nav['step_by_step_instructions']}\n"
+                            f"Prerequisites: {top_nav.get('prerequisites', 'None')}\n"
+                            f"Important Note: {top_nav.get('common_pitfalls', 'None')}\n"
+                            f"Interactive Demo: {top_nav['demo_url']}\n"
+                        ),
+                        "is_insis_nav": True,
+                    }
+                elif is_direct_campus and fast_search.get("campus_locations"):
+                    loc = fast_search["campus_locations"][0]
+                    fast_chunk = {
+                        "id": f"campus_{loc['location_id']}",
+                        "doc_id": "vse_campus_db",
+                        "title": f"VŠE Campus Navigation: {loc['name']} ({loc['room_number']})",
+                        "source_url": "https://www.vse.cz/english/campus-map-and-buildings/",
+                        "date_saved": "2026-10-31",
+                        "unverified": False,
+                        "score": 0.99,
+                        "text": (
+                            f"Location Name: {loc['name']}\n"
+                            f"Building: {loc['building']} | Floor: {loc['floor']} | Room Number: {loc['room_number']}\n"
+                            f"Facility Type: {loc['facility_type']}\n"
+                            f"Walking Directions from Main Entrance:\n{loc['directions_from_entrance']}\n"
+                            f"Amenities & Accessibility: {loc.get('amenities_accessibility', 'Standard')}\n"
+                            f"Hours / Availability: {loc.get('hours_or_availability', 'Standard building hours')}\n"
+                        ),
+                        "is_campus_loc": True,
+                    }
+
+                if fast_chunk:
+                    fast_answer = self._synthesize_grounded_answer(question, [fast_chunk], user_context)
+                    sources_text, cited_chunks = self.format_sources_section(fast_answer, [fast_chunk])
+                    final_answer = fast_answer + sources_text
+                    latency = (time.perf_counter() - start_time) * 1000
+                    res_payload = {
+                        "answer": final_answer,
+                        "sources": [fast_chunk],
+                        "mode": "normal",
+                        "sensitive": is_sensitive,
+                        "sensitive_topic": sensitive_topic,
+                        "top_score": 0.99,
+                        "latency_ms": round(latency, 1),
+                    }
+                    self._query_cache[cache_key] = res_payload
+                    self.log_interaction(
+                        session_id=session_uuid,
+                        question=question,
+                        mode="normal",
+                        top_score=0.99,
+                        latency_ms=latency,
+                    )
+                    return res_payload
+            except Exception as e:
+                print(f"[Fast-Path Warning]: {e}")
 
         # -------------------------------------------------------------
         # 3. Retrieval query construction
@@ -606,27 +749,35 @@ class BuddyBot:
         last_error = None
 
         client = self._get_client()
+
+        def _generate_with_gemini(m_name: str):
+            return client.models.generate_content(
+                model=m_name,
+                contents=gemini_contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=prompts.SYSTEM_PROMPT,
+                    temperature=config.TEMPERATURE,
+                    max_output_tokens=config.MAX_OUTPUT_TOKENS,
+                ),
+            )
+
         for candidate_model in models_to_try:
             try:
-                response = client.models.generate_content(
-                    model=candidate_model,
-                    contents=gemini_contents,
-                    config=types.GenerateContentConfig(
-                        system_instruction=prompts.SYSTEM_PROMPT,
-                        temperature=config.TEMPERATURE,
-                        max_output_tokens=config.MAX_OUTPUT_TOKENS,
-                    ),
-                )
+                future = _LLM_EXECUTOR.submit(_generate_with_gemini, candidate_model)
+                response = future.result(timeout=2.5)
                 if response.text:
                     raw_answer = response.text.strip()
                     break
+            except concurrent.futures.TimeoutError:
+                last_error = "Gemini generation timed out after 2.5s"
+                break
             except Exception as e:
                 last_error = e
                 continue
 
         if not raw_answer:
             if last_error:
-                print(f"[Generation Notice]: Gemini offline or rate limited ({last_error}), synthesizing grounded answer from verified VŠE knowledge base.")
+                print(f"[Generation Notice]: Fast grounded fallback ({last_error}) from verified VŠE knowledge base.")
             raw_answer = self._synthesize_grounded_answer(question, context_chunks, user_context)
 
         # -------------------------------------------------------------
@@ -670,7 +821,7 @@ class BuddyBot:
             latency_ms=latency,
         )
 
-        return {
+        res_payload = {
             "answer": final_answer,
             "sources": cited_chunks,
             "mode": mode,
@@ -679,3 +830,10 @@ class BuddyBot:
             "top_score": round(top_score, 4),
             "latency_ms": round(latency, 1),
         }
+
+        # Cache response for identical queries
+        if len(self._query_cache) > 500:
+            self._query_cache.clear()
+        self._query_cache[cache_key] = res_payload
+
+        return res_payload
