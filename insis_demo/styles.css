@@ -1762,14 +1762,172 @@ body {
   white-space: nowrap;
 }
 
+/* Modern Polished Links in Assistant Bubbles */
 .bot-msg-bubble a {
   color: #005596;
   font-weight: 600;
+  text-decoration: none;
+}
+
+.bot-msg-bubble a:hover {
   text-decoration: underline;
 }
 
 .bot-msg-bubble.user a {
   color: #ffffff;
+}
+
+/* ==========================================================================
+   Polished Link Pills & Cards for In-Chat Assistant Navigation
+   ========================================================================== */
+.bot-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 4px 10px;
+  margin: 3px 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #0f172a !important;
+  text-decoration: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  vertical-align: middle;
+  line-height: 1.35;
+  max-width: 100%;
+}
+
+.bot-link-pill:hover {
+  transform: translateY(-1px);
+  text-decoration: none !important;
+}
+
+/* InSIS Internal SPA Portal Link Pill */
+.bot-link-pill.insis-link {
+  background: linear-gradient(180deg, #f0f7ff 0%, #e0f2fe 100%);
+  border-color: #93c5fd;
+  color: #004b87 !important;
+}
+
+.bot-link-pill.insis-link:hover {
+  background: linear-gradient(180deg, #0284c7 0%, #004b87 100%);
+  border-color: #004b87;
+  color: #ffffff !important;
+  box-shadow: 0 3px 6px rgba(0, 75, 135, 0.25);
+}
+
+.bot-link-pill.insis-link:hover .link-arrow {
+  color: #ffffff;
+  transform: translate(2px, -1px);
+}
+
+/* External Link Pill */
+.bot-link-pill.ext-link {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155 !important;
+}
+
+.bot-link-pill.ext-link:hover {
+  background: #f1f5f9;
+  border-color: #64748b;
+  color: #0f172a !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bot-link-pill.ext-link:hover .link-arrow {
+  transform: translate(2px, -1px);
+}
+
+.bot-link-pill .link-icon {
+  font-size: 12px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.bot-link-pill .link-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.bot-link-pill .link-arrow {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.65;
+  margin-left: 2px;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+/* Modern Inline Citation Reference Badge */
+.bot-cite-ref {
+  display: inline-block;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #0284c7;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin: 0 2px;
+  vertical-align: baseline;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+/* Polished Sources List Container */
+.bot-sources-list {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.bot-sources-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.source-pill-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #004b87 !important;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-decoration: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.12s ease;
+}
+
+.source-pill-link:hover {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0284c7 !important;
+  transform: translateY(-1px);
+  text-decoration: none !important;
+}
+
+.source-pill-link .src-icon {
+  font-size: 11px;
 }
 
 /* Interactive Pre-Arrival / Onboarding Checklist Card inside Bot Chat */

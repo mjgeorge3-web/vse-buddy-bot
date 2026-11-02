@@ -366,3 +366,27 @@ def test_public_secondary_links_scope_interceptor():
     assert "setupPublicLinkInterceptors" in app_js
     assert "handlePublicOutOfScope" in app_js
     assert "!session.loggedIn" in app_js
+
+
+def test_polished_chat_links_and_citation_ui():
+    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
+    import prompts
+
+    # CSS contains polished link pill and modern citation badge styles
+    assert ".bot-link-pill" in css
+    assert ".bot-link-pill.insis-link" in css
+    assert ".bot-link-pill.ext-link" in css
+    assert ".bot-cite-ref" in css
+    assert ".bot-sources-list" in css
+    assert ".bot-sources-header" in css
+
+    # app.js formats labeled bullet URLs, markdown links, and citations into pills
+    assert "bot-link-pill" in app_js
+    assert "bot-cite-ref" in app_js
+    assert "navigateToUrl" in app_js
+    assert "Verified Sources & References:" in app_js
+
+    # System prompt explicitly instructs model not to output bare raw URLs
+    assert "Never output bare raw URLs" in prompts.SYSTEM_PROMPT
+    assert "markdown links" in prompts.SYSTEM_PROMPT

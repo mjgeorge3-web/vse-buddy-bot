@@ -1392,7 +1392,7 @@ function formatBotMarkdown(text) {
   let formatted = text;
   let sourcesHtml = "";
 
-  // Extract source citations and transform them into sleek badge pills
+  // 1. Extract source citations and transform them into sleek badge pills
   const sourcesMatch = formatted.match(/(?:\n|^)\*\*Sources:\*\*\s*([\s\S]*)$/i);
   if (sourcesMatch) {
     formatted = formatted.substring(0, sourcesMatch.index).trim();
@@ -1405,29 +1405,84 @@ function formatBotMarkdown(text) {
       const url = m[2];
       const safeUrl = url.replace(/'/g, "\\'");
       if (url.startsWith("https://insis.vse.cz")) {
-        sourceLinks.push(`<a class="source-pill-link" href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;">🔗 ${label}</a>`);
+        sourceLinks.push(`<a class="source-pill-link insis-src" href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;"><span class="src-icon">🏛️</span><span>${label}</span></a>`);
       } else {
-        sourceLinks.push(`<a class="source-pill-link" href="${url}" target="_blank" rel="noopener noreferrer">🌐 ${label}</a>`);
+        sourceLinks.push(`<a class="source-pill-link ext-src" href="${url}" target="_blank" rel="noopener noreferrer"><span class="src-icon">🌐</span><span>${label}</span></a>`);
       }
     }
     if (sourceLinks.length > 0) {
-      sourcesHtml = `<div class="bot-sources-list"><span style="font-size:10.5px; font-weight:700; color:#64748b; width:100%;">Verified Sources:</span>${sourceLinks.join("")}</div>`;
+      sourcesHtml = `<div class="bot-sources-list"><span class="bot-sources-header">Verified Sources & References:</span>${sourceLinks.join("")}</div>`;
     }
   }
 
-  formatted = formatted
-    .replace(
-      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      (match, label, url) => {
-        const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission");
-        const btnClass = isAction ? 'class="bot-action-button"' : '';
-        if (url.startsWith("https://insis.vse.cz")) {
-          const safeUrl = url.replace(/'/g, "\\'");
-          return `<a ${btnClass} href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;">${label}</a>`;
-        }
-        return `<a ${btnClass} href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  // 2. Format bulleted/colon labeled URLs (e.g., "* InSIS Public Portal (English): https://insis.vse.cz/?lang=en [2]")
+  // Matches: [optional bullet] [optional **] Label [optional **]: URL [optional cite]
+  formatted = formatted.replace(
+    /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[\(\)]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>]+)(\s*\[[\d\s,]+\])?/g,
+    (match, linePre, bullet, rawLabel, rawUrl, cite) => {
+      const label = rawLabel.trim();
+      const safeUrl = rawUrl.replace(/'/g, "\\'");
+      const isInsis = rawUrl.startsWith("https://insis.vse.cz");
+      const icon = isInsis ? "🏛️" : (rawUrl.includes("o365") || rawUrl.includes("microsoft") ? "💼" : (rawUrl.includes("mvcr") || rawUrl.includes("frs") ? "🛂" : (rawUrl.includes("map") ? "📍" : "🌐")));
+      const clickAttr = isInsis
+        ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
+        : `target="_blank" rel="noopener noreferrer"`;
+      const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
+      const citeHtml = cite ? ` <span class="bot-cite-ref">${cite.trim()}</span>` : "";
+
+      const bulletPrefix = bullet.trim() ? `${bullet}` : "• ";
+      return `${linePre}${bulletPrefix}<a class="${pillClass}" href="${rawUrl}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>${citeHtml}`;
+    }
+  );
+
+  // 3. Format standard markdown links [Label](url)
+  formatted = formatted.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    (match, label, url) => {
+      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission");
+      const safeUrl = url.replace(/'/g, "\\'");
+      const isInsis = url.startsWith("https://insis.vse.cz");
+      const clickAttr = isInsis
+        ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
+        : `target="_blank" rel="noopener noreferrer"`;
+
+      if (isAction) {
+        return `<a class="bot-action-button" href="${url}" ${clickAttr}>${label}</a>`;
       }
-    )
+      const icon = isInsis ? "🏛️" : (url.includes("o365") || url.includes("microsoft") ? "💼" : (url.includes("mvcr") || url.includes("frs") ? "🛂" : (url.includes("map") ? "📍" : "🌐")));
+      const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
+      return `<a class="${pillClass}" href="${url}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${label}</span><span class="link-arrow">↗</span></a>`;
+    }
+  );
+
+  // 4. Format any remaining bare URLs (not inside an href attribute)
+  formatted = formatted.replace(
+    /(?<!href=["'])(https?:\/\/[^\s<\]\)\<\>]+)/g,
+    (match, url) => {
+      const safeUrl = url.replace(/'/g, "\\'");
+      const isInsis = url.startsWith("https://insis.vse.cz");
+      const icon = isInsis ? "🏛️" : "🌐";
+      const clickAttr = isInsis
+        ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
+        : `target="_blank" rel="noopener noreferrer"`;
+      const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
+      
+      let displayLabel = url.replace(/^https?:\/\/(?:www\.)?/, "");
+      if (displayLabel.length > 30) {
+        displayLabel = displayLabel.substring(0, 28) + "…";
+      }
+      return `<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`;
+    }
+  );
+
+  // 5. Format inline citation brackets [1], [2], [1, 2] as neat citation tags
+  formatted = formatted.replace(
+    /(?<=\s|^)\[(\d+(?:\s*,\s*\d+)*)\](?=[,\.\s]|$)/g,
+    '<span class="bot-cite-ref">[$1]</span>'
+  );
+
+  // 6. Markdown typography formatting
+  formatted = formatted
     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")

@@ -10,7 +10,8 @@ SYSTEM_PROMPT = """You are VŠE Buddy Bot, a helpful assistant for international
 6. Cite sources inline as [1], [2] matching the numbered context chunks.
 7. Reply in the same language the student writes in.
 8. You are not an official VŠE service.
-9. Understand the student's underlying intent even if they use brief keywords, typos, or fragmented phrasing. Guide them proactively to the relevant procedure, actionable steps, and responsible contact persons found in the CONTEXT."""
+9. Understand the student's underlying intent even if they use brief keywords, typos, or fragmented phrasing. Guide them proactively to the relevant procedure, actionable steps, and responsible contact persons found in the CONTEXT.
+10. When mentioning portals, guides, or links, format them as concise markdown links: [Descriptive Title](URL). Never output bare raw URLs."""
 
 
 def format_context_chunk(index: int, chunk: dict) -> str:
