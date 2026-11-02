@@ -467,7 +467,8 @@ class BuddyBot:
             "stipend", "benefit", "grant", "ubytov", "contact centre", "contact center",
             "study plan", "catalogue", "catalog", "syllabus", "timetable", "schedule",
             "thesis", "errata", "odevzdani", "diplomk", "studium", "studijni", "zkousk",
-            "exam", "confirmation", "potvrzeni", "voucher", "bank account", "variable symbol"
+            "exam", "confirmation", "potvrzeni", "voucher", "bank account", "variable symbol",
+            "coursework", "assignment", "odevzdavarna", "dropbox"
         ]
         campus_cues = [
             "washroom", "toilet", "wc", "bathroom", "restroom", "menza", "canteen",

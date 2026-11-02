@@ -239,11 +239,26 @@ ROUTES_DATA = [
         "/auth/student/potvrzeni.pl",
         "https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en",
         "http://localhost:8502/auth/student/potvrzeni.pl",
-        "Personal administration > My College > Student's portal > Confirmation of study",
-        "1. Open InSIS > Student's portal > 'Study details' tab or click 'Confirmation of study' (/auth/student/potvrzeni.pl).\n2. Select academic year and language (Czech or English).\n3. Click 'Generate digitally signed PDF'.\n4. The document contains an official VŠE qualified electronic seal and verification hash recognized by Czech immigration (MVČR) and transport offices (PID/Lítačka).",
+        "Personal administration (or My College / Moje studium) > Student's portal > Confirmation of study",
+        "1. Open VŠE InSIS (https://insis.vse.cz/auth/?lang=en) and log in using your student credentials.\n2. Navigate to My College (Moje studium) → Student's Portal.\n3. Click 'Confirmation of study' (/auth/student/potvrzeni.pl) or check the 'Study details' tab.\n4. Select academic year and language (Czech or English).\n5. Click 'Generate digitally signed PDF' to download your official confirmation with VŠE qualified electronic seal.",
         "Student must be actively enrolled for the requested semester.",
         "For Czech immigration (MVČR / OAMP), official authorities accept the qualified electronic PDF directly. Do NOT print a scanned color copy if electronic submission is required.",
-        "confirmation of study, potvrzeni o studiu, proof of enrollment, study certificate, mvcr visa letter, digital seal"
+        "confirmation of study, download confirmation of study, get confirmation of study, potvrzeni o studiu, proof of enrollment, study certificate, mvcr visa letter, digital seal, study confirmation, confirmation pdf"
+    ),
+    (
+        "TASK_COURSEWORK_DROPBOX",
+        "portal_student",
+        "Coursework Submissions / Drop-in Box (Odevzdávárna)",
+        "Odevzdávárna seminárních prací a projektů",
+        "Assignments",
+        "/auth/student/odevzdavarna.pl",
+        "https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en",
+        "http://localhost:8502/auth/student/odevzdavarna.pl",
+        "Personal administration (or My College / Moje studium) > Student's portal > Coursework submissions (Odevzdávárna)",
+        "1. Open VŠE InSIS (https://insis.vse.cz/auth/?lang=en) and log in using your student credentials.\n2. Navigate to My College (Moje studium) → Student's Portal.\n3. Click the 'Coursework submissions' tab (Odevzdávárna) at the top of the portal table (/auth/student/odevzdavarna.pl).\n4. Select your enrolled course and the target assignment dropbox.\n5. Upload your solution (.pdf, .zip) and confirm submission to receive your timestamped protocol.",
+        "Must be enrolled in the course for the current semester.",
+        "Check deadline and file size limits specified by the teacher. After the deadline, the drop-box locks automatically.",
+        "coursework submissions, coursework assignment, submit coursework, submit assignment, odevzdavarna, homework dropbox, upload seminar work, project submission, seminar paper submission, odevzdani prace, how to submit assignment"
     ),
     (
         "TASK_TUITION_PAYMENT",
