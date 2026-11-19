@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integrated Study Information System | VŠE Prague</title>
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=30">
 </head>
 <body>
 
@@ -148,7 +148,7 @@
             <span class="pub-bullet">&bull;</span>
             <a id="pub-link-preenroll" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/navratka/?lang=en'); return false;">Pre-enrollment confirmation for application to study at VŠE</a>
             <span class="pub-bullet">&bull;</span>
-            <a id="pub-link-courses-offer" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/kurzy/?lang=en'); return false;">Courses on offer</a>
+            <a id="pub-link-courses-offer" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/kurzy/nabidka_kurzu.pl?lang=en'); return false;">Courses on offer</a>
           </div>
           <div class="public-cat-links">
             <span class="pub-bullet">&bull;</span>
@@ -203,7 +203,7 @@
           <div class="public-cat-title">Study information</div>
           <div class="public-cat-links">
             <span class="pub-bullet">&bull;</span>
-            <a id="pub-link-schedule" href="#" onclick="navigateToUrl('https://insis.vse.cz/harmonogram/harmonogram.pl?lang=en'); return false;">Academic year schedule</a>
+            <a id="pub-link-schedule" href="#" onclick="navigateToUrl('https://insis.vse.cz/student/harmonogram.pl?lang=en'); return false;">Academic year schedule</a>
             <span class="pub-bullet">&bull;</span>
             <a id="pub-link-plans" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/plany.pl?lang=en'); return false;">Study plans</a>
             <span class="pub-bullet">&bull;</span>
@@ -213,7 +213,7 @@
             <span class="pub-bullet">&bull;</span>
             <a id="pub-link-theses" class="pub-bold-link" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/temata_zp.pl?lang=en'); return false;">Final theses at VŠE</a>
             <span class="pub-bullet">&bull;</span>
-            <a id="pub-link-timetables" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/rozvrhy.pl?lang=en'); return false;">Timetables</a>
+            <a id="pub-link-timetables" href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/rozvrhy_view.pl?lang=en'); return false;">Timetables</a>
           </div>
           <div class="public-cat-links">
             <span class="pub-bullet">&bull;</span>
@@ -467,7 +467,7 @@
         <div class="pa-card-body">
           <div class="pa-card-icon" style="color:#f39c12;">📋</div>
           <ul class="pa-links-list">
-            <li><a href="#" onclick="alert('Contact centre')">Contact centre</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/uradovna/?lang=en'); return false;">Contact centre</a></li>
             <li><a href="#" onclick="alert('eSurveys')">eSurveys</a></li>
             <li><a href="#" onclick="alert('My Elections')">My Elections</a></li>
             <li><a href="#" onclick="alert('Register of printouts')">Register of printouts</a></li>
@@ -527,7 +527,7 @@
           <ul class="pa-links-list">
             <li><a href="#" onclick="alert('Change photo')">Change photo</a></li>
             <li><a href="#" onclick="alert('Favourites menu')">Administration of My favourites menu</a></li>
-            <li><a href="#" onclick="alert('Portlets in InSIS')">Portlets in InSIS</a></li>
+            <li><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/system/portlety.pl?lang=en'); return false;" style="font-weight:700; color:#004b87;">Portlets in InSIS</a></li>
             <li><a href="#" onclick="alert('User settings')">User settings</a></li>
             <li><a href="#" onclick="alert('Configure transfer of events to Office 365')">Configure transfer of events to Office 365</a></li>
           </ul>
@@ -656,7 +656,7 @@
         <span>|</span>
         <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📜 Master's thesis submission &amp; Errata</a>
         <span>|</span>
-        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📄 Electronic Confirmation of Study (PDF)</a>
+        <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">📄 Electronic Confirmation of Study (PDF)</a> | <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/stipendia/?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">💰 Scholarships (Žádosti o stipendia)</a> | <a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/financovani/index.pl?lang=en')" style="color:var(--insis-link-blue); text-decoration:underline;">🏦 Study Financing &amp; Bank Accounts</a>
       </div>
     </div>
   </main>
@@ -1192,6 +1192,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=30"></script>
 </body>
 </html>

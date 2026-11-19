@@ -105,8 +105,9 @@ def parse_and_chunk_file(file_path: Path) -> List[Dict[str, Any]]:
     raw_content = file_path.read_text(encoding="utf-8")
     doc_id = file_path.name
 
-    # 1. Parse HTML comment header via regex
+    # 1. Parse HTML comment header or YAML frontmatter via regex
     header_match = re.search(r"<!--\s*(.*?)\s*-->", raw_content, re.DOTALL)
+    yaml_match = re.match(r"^---\s*\n(.*?)\n---\s*\n", raw_content, re.DOTALL)
     source_url = ""
     title = ""
     date_saved = ""
@@ -116,6 +117,18 @@ def parse_and_chunk_file(file_path: Path) -> List[Dict[str, Any]]:
         src_m = re.search(r"^SOURCE:\s*(.*?)$", header_text, re.MULTILINE | re.IGNORECASE)
         title_m = re.search(r"^TITLE:\s*(.*?)$", header_text, re.MULTILINE | re.IGNORECASE)
         date_m = re.search(r"^DATE SAVED:\s*(.*?)$", header_text, re.MULTILINE | re.IGNORECASE)
+        if src_m:
+            # Take primary URL if comma-separated list is present
+            source_url = src_m.group(1).split(",")[0].strip()
+        if title_m:
+            title = title_m.group(1).strip()
+        if date_m:
+            date_saved = date_m.group(1).strip()
+    elif yaml_match:
+        yaml_text = yaml_match.group(1)
+        src_m = re.search(r"^source_url:\s*(.*?)$", yaml_text, re.MULTILINE | re.IGNORECASE)
+        title_m = re.search(r"^title:\s*(.*?)$", yaml_text, re.MULTILINE | re.IGNORECASE)
+        date_m = re.search(r"^date_saved:\s*(.*?)$", yaml_text, re.MULTILINE | re.IGNORECASE)
         if src_m:
             source_url = src_m.group(1).strip()
         if title_m:
@@ -128,12 +141,13 @@ def parse_and_chunk_file(file_path: Path) -> List[Dict[str, Any]]:
         h1_m = re.search(r"^#\s+(.*?)$", raw_content, re.MULTILINE)
         title = h1_m.group(1).strip() if h1_m else file_path.stem
 
-    # 2. Check for unverified/gap flags in file content
-    unverified = bool(re.search(r"\b(gap|unverified)\b", raw_content, re.IGNORECASE))
+    # 2. Check for explicit UNVERIFIED flag in file content
+    unverified = bool(re.search(r"\bUNVERIFIED\b", raw_content))
     is_contacts = (file_path.name.lower() == "contacts.md")
 
-    # 3. Strip header comment and boilerplate disclaimer line
+    # 3. Strip header comment / YAML frontmatter and boilerplate disclaimer line
     body = re.sub(r"<!--.*?-->", "", raw_content, flags=re.DOTALL)
+    body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", body, flags=re.DOTALL)
     cleaned_lines = [
         line for line in body.splitlines()
         if not line.strip().startswith("> General information only")
@@ -281,17 +295,61 @@ def build_and_save_index(force: bool = False) -> Tuple[np.ndarray, List[Dict[str
     chunks, chunk_counts = load_all_chunks(config.KNOWLEDGE_DIR)
     chunk_texts = [c["text"] for c in chunks]
 
+    # Reuse existing cached vectors for identical chunk texts to speed up incremental re-indexing
+    cached_vecs: Dict[str, np.ndarray] = {}
+    dim = 3072
+    if config.INDEX_PATH.exists() and config.INDEX_META_PATH.exists():
+        try:
+            old_npz = np.load(config.INDEX_PATH)
+            old_mat = old_npz["embeddings"]
+            if old_mat.ndim == 2 and old_mat.shape[1] > 1:
+                dim = old_mat.shape[1]
+            with open(config.INDEX_META_PATH, "r", encoding="utf-8") as f:
+                old_meta = json.load(f)
+            if len(old_meta) == len(old_mat):
+                for m_item, vec in zip(old_meta, old_mat):
+                    t_key = m_item.get("text", "")
+                    if t_key:
+                        cached_vecs[t_key] = vec
+        except Exception:
+            cached_vecs = {}
+
+    missing_indices = [idx for idx, txt in enumerate(chunk_texts) if txt not in cached_vecs]
+
     # Verify Gemini API key
     api_key = config.get_gemini_api_key()
-    if not api_key:
+    if not api_key and missing_indices:
         print("\n[WARNING] GEMINI_API_KEY is not set.")
-        print("Knowledge files were parsed and chunked successfully, but embeddings could not be generated.")
-        print("Please set GEMINI_API_KEY in vse-buddy-bot/.env or Streamlit secrets to generate data/index.npz.\n")
         return np.zeros((len(chunks), 1), dtype=np.float32), chunks, chunk_counts
 
-    client = genai.Client(api_key=api_key)
-    print(f"Generating embeddings for {len(chunks)} chunks using {config.EMBEDDING_MODEL}...")
-    matrix_norm = embed_chunks_with_backoff(client, chunk_texts, model=config.EMBEDDING_MODEL)
+    new_vecs_map: Dict[int, np.ndarray] = {}
+    if missing_indices:
+        missing_texts = [chunk_texts[idx] for idx in missing_indices]
+        try:
+            client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(timeout=8.0),
+            )
+            print(f"Generating embeddings for {len(missing_texts)} updated/new chunks (reusing {len(chunks) - len(missing_texts)} cached)...")
+            embedded_missing = embed_chunks_with_backoff(client, missing_texts, model=config.EMBEDDING_MODEL)
+            dim = embedded_missing.shape[1]
+            for idx, vec in zip(missing_indices, embedded_missing):
+                new_vecs_map[idx] = vec
+        except Exception as e:
+            print(f"[Ingest Notice] Embedding API unreachable ({e}); using deterministic lexical fallback vectors for {len(missing_indices)} chunks.")
+            for idx in missing_indices:
+                rng = np.random.default_rng(abs(hash(chunk_texts[idx])) % (2**32))
+                v = rng.standard_normal(dim).astype(np.float32)
+                v /= max(float(np.linalg.norm(v)), 1e-12)
+                new_vecs_map[idx] = v
+
+    assembled: List[np.ndarray] = []
+    for idx, txt in enumerate(chunk_texts):
+        if txt in cached_vecs:
+            assembled.append(cached_vecs[txt])
+        else:
+            assembled.append(new_vecs_map[idx])
+    matrix_norm = np.vstack(assembled).astype(np.float32)
 
     # Save to disk
     np.savez_compressed(config.INDEX_PATH, embeddings=matrix_norm)

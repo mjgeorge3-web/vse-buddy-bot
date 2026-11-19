@@ -32,7 +32,7 @@ def test_search_thesis_submission():
     assert len(hits) > 0
     task_ids = [h["task_id"] for h in hits]
     assert "TASK_THESIS_SUBMISSION" in task_ids or "TASK_THESIS_REGISTRATION" in task_ids
-    assert "/auth/student/diplomka.pl" in hits[0]["portal_path"]
+    assert "/auth/student/zp.pl" in hits[0]["portal_path"]
 
 
 def test_search_credit_vouchers():
@@ -49,7 +49,7 @@ def test_search_course_registration():
     hits = insis_nav_db.search_routes("course registration zapis", limit=1)
     assert len(hits) == 1
     assert hits[0]["task_id"] == "TASK_COURSE_REGISTRATION"
-    assert "prihlasovani.pl" in hits[0]["portal_path"]
+    assert "registrace.pl" in hits[0]["portal_path"]
 
 
 def test_search_tuition_variable_symbol():
@@ -57,7 +57,7 @@ def test_search_tuition_variable_symbol():
     hits = insis_nav_db.search_routes("how to pay tuition fees variable symbol", limit=1)
     assert len(hits) == 1
     assert hits[0]["task_id"] == "TASK_TUITION_PAYMENT"
-    assert "poplatky.pl" in hits[0]["portal_path"]
+    assert "financovani/index.pl" in hits[0]["portal_path"]
 
 
 def test_format_navigation_card():
@@ -68,7 +68,7 @@ def test_format_navigation_card():
     assert "🧭 InSIS Navigation:" in card_md
     assert "Breadcrumb Trail:" in card_md
     assert "Step-by-Step Instructions:" in card_md
-    assert "http://localhost:8502/auth/student/diplomka.pl" in card_md
+    assert "http://localhost:8502/auth/student/zp.pl" in card_md
     assert "https://insis.vse.cz" in card_md
 
 
@@ -103,4 +103,84 @@ def test_public_catalog_routes_have_no_auth():
     assert catalogue is not None
     assert "/auth/" not in catalogue["official_url"]
     assert catalogue["official_url"] == "https://insis.vse.cz/katalog/?lang=en"
+
+
+def test_all_routes_use_verified_official_urls():
+    """Verify zero broken/legacy fabricated .pl URLs remain in ROUTES_DATA."""
+    banned_legacy_paths = [
+        "diplomka.pl",
+        "prihlasovani.pl",
+        "poplatky.pl",
+        "kontaktni_centrum.pl",
+        "ubytovani.pl",
+        "heslo.pl",
+        "studijni_vysledky.pl",
+        "hodnoceni.pl",
+        "volby.pl",
+        "dokumenty.pl",
+        "/auth/lide/karty.pl",
+    ]
+    for route in insis_nav_db.ROUTES_DATA:
+        task_id = route[0]
+        url = route[6]
+        assert url.startswith("https://insis.vse.cz/") or url == "https://iskam-web.vse.cz/"
+        for banned in banned_legacy_paths:
+            assert banned not in url, f"Legacy broken path {banned} found in {task_id}: {url}"
+
+
+def test_search_insis_portlets_student_navigation_bar():
+    """Verify the new Portlets in InSIS / Navigation bar for students route."""
+    hits = insis_nav_db.search_routes("how to enable Navigation bar for students portlet in insis", limit=2)
+    assert len(hits) > 0
+    assert hits[0]["task_id"] == "TASK_INSIS_PORTLETS"
+    assert "portlety.pl" in hits[0]["official_url"]
+    assert "Navigation bar for students" in hits[0]["step_by_step_instructions"]
+    assert "insis.vse.cz/quick" in hits[0]["common_pitfalls"]
+
+
+def test_bot_clean_output_workflows_and_policy_routing(monkeypatch):
+    """Verify clean answers (zero Route Stepper), Thesis Workflow, Visa & Accommodation, and Policy routing."""
+    from bot import BuddyBot
+    import insis_nav_db
+    bot = BuddyBot()
+    monkeypatch.setattr(bot.retriever, "embed_query", lambda q: None)
+
+    # 1. Navigation search returns verified route without robotic stepper formatting
+    routes = insis_nav_db.search_routes("How do I apply for the accommodation scholarship in InSIS?")
+    assert len(routes) > 0
+    assert routes[0]["official_url"] == "https://insis.vse.cz/auth/stipendia/?lang=en"
+
+    # 2. Master's Thesis Workflow retrieval returns thesis documentation
+    wf_chunks, wf_score, wf_mode = bot.retriever.retrieve(
+        "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata."
+    )
+    assert wf_mode == "normal"
+    assert any("48-final-thesis" in c.get("doc_id", "") for c in wf_chunks)
+
+    # 3. Visa & Accommodation retrieval returns immigration / housing documentation
+    va_chunks, va_score, va_mode = bot.retriever.retrieve(
+        "What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?"
+    )
+    assert va_mode == "normal"
+    assert any("12-visa" in c.get("doc_id", "") or "45-foreign-police" in c.get("doc_id", "") for c in va_chunks)
+
+    # 4. Policy consequence question matches the Three-Attempt Exam Rule in SQLite policies DB
+    policies = insis_nav_db.search_policies("What happens if I fail an exam 3 times at VŠE?")
+    assert len(policies) > 0
+    assert "Three-Attempt Exam Rule" in policies[0]["title"]
+
+    # 5. Dynamic context chunks do not leak into public/citations section
+    dyn_chunks = [
+        {
+            "id": "live_page_master_thesis",
+            "doc_id": "dynamic_context",
+            "title": "Current Open InSIS Screen",
+            "source_url": "https://insis.vse.cz/auth/student/zp.pl?lang=en",
+            "text": "Insert additional information, Insert the thesis and the appendices, Thesis submission",
+            "is_dynamic_context": True,
+        }
+    ]
+    sources_str, _ = bot.format_sources_section("Step 1: Insert additional information [1]", dyn_chunks)
+    assert "Current Open InSIS Screen" not in sources_str
+
 

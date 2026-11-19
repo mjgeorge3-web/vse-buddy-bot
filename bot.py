@@ -1,16 +1,15 @@
 """Main orchestration bot for VŠE Buddy Bot.
 
 Executes the pipeline:
-1. Safety checks (crisis and sensitive topic)
-2. Query formulation & semantic retrieval with hybrid ranking
-3. Prompt assembly & Google Gemini generation
+1. Safety checks (deterministic crisis filter and sensitive topic detection)
+2. Query formulation & semantic retrieval with hybrid ranking + SQLite knowledge enrichment
+3. Prompt assembly & live Google Gemini generation (15s timeout with rate-limit retry)
 4. Python post-processing (inline citations, official referral append)
 5. Privacy-preserving event logging
 """
 
 import csv
 from datetime import datetime, timezone
-import os
 import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
@@ -26,7 +25,7 @@ from retriever import Retriever
 import safety
 import student_profile
 
-# Shared worker pool for timeout-isolated LLM calls (never blocks on thread shutdown)
+# Shared worker pool for timeout-isolated LLM calls
 _LLM_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm_pool")
 
 REFERRAL_TARGETS = {
@@ -37,24 +36,19 @@ REFERRAL_TARGETS = {
     "legal": "the VŠE Legal Department or an authorized legal advisor",
     "tuition_payment": "your faculty Study Department or the VŠE Admission Office",
     "academic_failure_expulsion": "your faculty Study Department and official VŠE Study Regulations",
+    "mental_wellbeing": "VŠE Academic Psychological Counselling (ac@vse.cz)",
 }
 
 
 class BuddyBot:
-    """Orchestrates safety, retrieval, generation, and citation formatting."""
+    """Orchestrates safety, retrieval, live Gemini generation, and citation formatting."""
 
     def __init__(self):
         self.retriever = Retriever()
         self.client: Optional[genai.Client] = None
-        self._query_cache: Dict[str, Dict[str, Any]] = {}
-
-    def _normalize_query(self, text: str) -> str:
-        """Strip punctuation and lowercase for in-memory response cache keys."""
-        t = re.sub(r"[^\w\s]", " ", text.lower())
-        return " ".join(t.split())
 
     def _get_client(self) -> genai.Client:
-        """Lazily initialize genai.Client with API key and 5s timeout."""
+        """Lazily initialize genai.Client with API key and 15s (15000ms) timeout."""
         if self.client is None:
             api_key = config.get_gemini_api_key()
             if not api_key:
@@ -63,7 +57,7 @@ class BuddyBot:
                 )
             self.client = genai.Client(
                 api_key=api_key,
-                http_options=types.HttpOptions(timeout=5.0),
+                http_options=types.HttpOptions(timeout=15000),
             )
         return self.client
 
@@ -112,7 +106,10 @@ class BuddyBot:
         return clean_q
 
     def format_sources_section(self, raw_answer: str, chunks: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
-        """Parse inline citations [1], [2] and append verified Sources links in markdown."""
+        """Parse inline citations [1], [2] and append verified Sources links in markdown.
+
+        Avoids duplicating links whose URLs are already rendered as inline markdown buttons.
+        """
         if not chunks:
             return "", []
 
@@ -139,189 +136,41 @@ class BuddyBot:
             # If none cited, list unique top chunks as background context
             seen_docs = set()
             selected_chunks = []
-            for chunk in chunks[:3]:
+            for chunk in chunks:
                 doc_key = chunk.get("source_url") or chunk.get("doc_id") or chunk.get("title")
                 if doc_key not in seen_docs:
                     seen_docs.add(doc_key)
                     selected_chunks.append(chunk)
+                    if len(selected_chunks) >= 3:
+                        break
 
-        # Format markdown sources block
-        source_lines = ["\n\n**Sources:**"]
+        # Suppress source bullets whose exact URL is already linked inline in raw_answer
+        inline_urls = {
+            u.rstrip("/")
+            for u in re.findall(r"\]\((https?://[^\s\)]+)\)", raw_answer)
+        }
+
+        if not valid_indices and inline_urls:
+            return "", selected_chunks
+
+        bullet_lines = []
         for c in selected_chunks:
+            if c.get("is_dynamic_context"):
+                continue
             title = c.get("title", "VŠE Information")
             url = c.get("source_url", "")
+            if url and url.rstrip("/") in inline_urls:
+                continue
             unverified_label = " *(unverified - please confirm)*" if c.get("unverified") else ""
             if url:
-                source_lines.append(f"- [{title}]({url}){unverified_label}")
+                bullet_lines.append(f"- [{title}]({url}){unverified_label}")
             else:
-                source_lines.append(f"- {title}{unverified_label}")
+                bullet_lines.append(f"- {title}{unverified_label}")
 
-        return "\n".join(source_lines), selected_chunks
+        if not bullet_lines:
+            return "", selected_chunks
 
-    def _synthesize_grounded_answer(
-        self,
-        question: str,
-        context_chunks: List[Dict[str, Any]],
-        user_context: Optional[Dict[str, Any]] = None,
-    ) -> str:
-        """Synthesizes an immediate grounded answer directly from verified knowledge chunks
-        when the external LLM service is offline, slow, or rate-limited.
-        """
-        ql = question.lower()
-
-        # 1. Check personalized student profile
-        if user_context and user_context.get("logged_in") and user_context.get("personalised"):
-            user_name = user_context.get("user_name", "Student")
-            profile = student_profile.get_student_profile(user_name)
-
-            if any(k in ql for k in ["assignment", "homework", "task", "submission", "due", "deadline", "pending", "odevzdavarna"]):
-                assignments = profile.get("pending_assignments", [])
-                lines = [f"**Upcoming Coursework Assignments for {profile['name']} (WS 2026/2027)**:"]
-                for a in assignments[:2]:
-                    lines.append(
-                        f"- 🔴 **{a['course_code']} ({a['course_name']})**: *{a['task_title']}*\n"
-                        f"  **Due**: {a['due_date']} ({a['days_left']}) • Weight: {a['weight']}\n"
-                        f"  [{a['button_label']}]({a['submission_url']})"
-                    )
-                if len(assignments) > 2:
-                    lines.append(
-                        f"- 🎓 **Master's Thesis Project**: *Final Abstracts & Full-Text PDF Upload*\n"
-                        f"  **Due**: Nov 30, 2026 (23:59) • Thesis Requirement (§ 47b)\n"
-                        f"  [🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
-                    )
-                    lines.append(
-                        f"\n*You have {len(assignments)-2} more upcoming assignments later in the semester.*"
-                    )
-                return "\n\n".join(lines)
-
-            if any(k in ql for k in ["voucher", "credit", "fail", "afford", "left", "remaining", "progress"]):
-                vouchers_left = profile.get("remaining_vouchers", 120)
-                initial_v = profile.get("initial_vouchers", 144)
-                gained = profile.get("earned_ects", 90)
-                target = profile.get("degree_target_ects", 120)
-                in_progress = profile.get("current_enrolled_ects", 24)
-                net_left = profile.get("remaining_ects_after_current_term", 6)
-                return (
-                    f"**Degree Progress & Credit Breakdown for {profile['name']}**:\n\n"
-                    f"- **Degree Target**: **{target} ECTS** ({profile.get('programme', 'Master in ISM')})\n"
-                    f"- **Credits Earned**: **{gained} ECTS** (75% completed)\n"
-                    f"- **Enrolled This Semester (WS 2026/2027)**: **{in_progress} ECTS** (across 4 courses in progress)\n"
-                    f"- **Remaining to Graduate After Current Term**: **Only {net_left} ECTS** (Master's Thesis & State Final Exam)\n"
-                    f"- **Credit Vouchers Safety**: You have **{vouchers_left} spare vouchers left** (out of {initial_v} initial Master's vouchers). Even if you were to retake a course, your voucher safety buffer is completely safe.\n\n"
-                    f"[📑 View Full E-Study Record in InSIS](https://insis.vse.cz/auth/student/studium.pl?lang=en)"
-                )
-
-            if any(k in ql for k in ["thesis", "errata", "red x", "3 red"]):
-                thesis_topic = profile.get("thesis_title", "Improving International Student Experience with GenAI based tool at VŠE")
-                supervisor = profile.get("thesis_supervisor", "Ing. Pavel Sládek, Ph.D.")
-                return (
-                    f"**Master's Thesis Workflow for {profile['name']}**:\n\n"
-                    f"- **Assigned Topic**: *{thesis_topic}* (Supervisor: {supervisor}).\n"
-                    f"- **The 3 Red X Icons**: These represent mandatory pre-defense requirements in InSIS (English abstract entry, final thesis PDF upload, and supervisor sign-off).\n"
-                    f"- **Submitting Errata (§ 47b)**: In InSIS, navigate to **My College** -> **Master's thesis**. Under the application options, click **Insert errata (Vložit errata)** to upload corrections approved by your supervisor.\n\n"
-                    f"[🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
-                )
-
-        # Handle unauthenticated / guest inquiries about assignments
-        if not user_context or not user_context.get("logged_in"):
-            if any(k in ql for k in ["assignment", "homework", "task", "submission", "due", "deadline", "odevzdavarna"]):
-                return (
-                    "**InSIS Coursework Submissions (Odevzdávárna)**:\n\n"
-                    "At VŠE, student assignments and seminar papers are submitted electronically in InSIS under:\n"
-                    "**Student's Portal ➔ Coursework submissions (Odevzdávárna)** (`/auth/student/odevzdavarna.pl`).\n\n"
-                    "- Each enrolled course provides dedicated submission drop-boxes with instructions, accepted formats (.pdf, .zip), and file size limits.\n"
-                    "- Once uploaded, InSIS generates a submission timestamp and protocol.\n\n"
-                    "💡 *To view your personal active assignments and direct submission links, please log in with your student credentials using the button above.*"
-                )
-
-        # 2. Extract grounded paragraphs from top chunks
-        if not context_chunks:
-            return (
-                "I could not find a verified match for your question in VŠE official documentation. "
-                "Please consult the VŠE Information Portal or contact your study coordinator."
-            )
-
-        # Check if the primary chunk is an InSIS navigation guide
-        nav_chunks = [c for c in context_chunks if c.get("is_insis_nav")]
-        if nav_chunks:
-            nc = nav_chunks[0]
-            lines = [l.strip() for l in nc.get("text", "").split("\n") if l.strip()]
-            category = ""
-            cz_title = ""
-            breadcrumbs = ""
-            steps = []
-            note = ""
-
-            for l in lines:
-                if l.startswith("Category:"):
-                    parts = l.split("|")
-                    category = parts[0].replace("Category:", "").strip()
-                elif l.startswith("InSIS Navigation Task:") and "(" in l and l.endswith(")"):
-                    cz_title = l[l.rfind("(") + 1 : -1].strip()
-                elif l.startswith("Breadcrumb Trail:"):
-                    breadcrumbs = l.replace("Breadcrumb Trail:", "").strip()
-                elif re.match(r"^\d+\.", l):
-                    steps.append(l)
-                elif l.startswith("Important Note:") and not l.endswith(": None"):
-                    note = l.replace("Important Note:", "").strip()
-
-            task_title = nc.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
-            steps_str = "\n".join(steps) if steps else "\n".join(lines[:5])
-
-            bc_steps = [s.strip() for s in breadcrumbs.replace(" > ", " → ").split(" → ") if s.strip()]
-            stepper_str = " ➔ ".join(f"`{s}`" for s in bc_steps)
-
-            header_badge = f"### 🧭 VŠE InSIS Navigator • {category}" if category else "### 🧭 VŠE InSIS Navigator"
-            cz_badge = f"\n\n🇨🇿 **Official InSIS Term:** `{cz_title}`" if cz_title else ""
-            note_box = f"\n\n💡 **VŠE Insider Tip:**\n{note}" if note else ""
-
-            return (
-                f"{header_badge}\n\n"
-                f"📍 **Route Stepper:**\n{stepper_str}\n\n"
-                f"📋 **Action Guide:**\n{steps_str}"
-                f"{note_box}"
-                f"{cz_badge}\n\n"
-                f"[🚀 Open {task_title} in InSIS]({nc.get('source_url', 'https://insis.vse.cz')})"
-            )
-
-        # Check if the primary chunk is campus location navigation
-        campus_chunks = [c for c in context_chunks if c.get("is_campus_loc")]
-        if campus_chunks:
-            cc = campus_chunks[0]
-            lines = [l.strip() for l in cc.get("text", "").split("\n") if l.strip()]
-            loc_name = cc.get("title", "Campus Location").replace("VŠE Campus Navigation: ", "")
-            return (
-                f"**Campus Directions: {loc_name}**:\n\n"
-                f"{chr(10).join(lines)}\n\n"
-                f"[🗺️ Open VŠE Campus Map & Buildings Guide]({cc.get('source_url', 'https://www.vse.cz/english/campus-map-and-buildings/')})"
-            )
-
-        # Check if the primary chunk is a VŠE Policy / Regulation
-        policy_chunks = [c for c in context_chunks if c.get("is_policy")]
-        if policy_chunks:
-            pc = policy_chunks[0]
-            lines = [l.strip() for l in pc.get("text", "").split("\n") if l.strip()]
-            pol_title = pc.get("title", "VŠE Policy")
-            return (
-                f"**{pol_title}**:\n\n"
-                f"{chr(10).join(lines)}\n\n"
-                f"[📜 Official VŠE Rules and Regulations]({pc.get('source_url', 'https://www.vse.cz/english/university-rules-and-regulations/')})"
-            )
-
-        content_chunks = [c for c in context_chunks if not c.get("is_contacts")]
-        if not content_chunks:
-            content_chunks = context_chunks
-
-        sections = []
-        for c in content_chunks[:2]:
-            title = c.get("title", "VŠE Information")
-            text = c.get("text", "").strip()
-            lines = [line.strip() for line in text.split("\n") if line.strip() and not line.startswith("#")]
-            summary = "\n".join(lines[:5])
-            sections.append(f"**{title}**:\n{summary}")
-
-        intro = "Based on official VŠE documentation:\n\n"
-        return intro + "\n\n".join(sections)
+        return "\n\n**Sources:**\n" + "\n".join(bullet_lines), selected_chunks
 
     def log_interaction(
         self,
@@ -332,11 +181,7 @@ class BuddyBot:
         latency_ms: float,
         feedback: str = "",
     ):
-        """Privacy-preserving logging.
-        
-        Stores timestamp, anonymous session UUID, question, mode, score, latency, and feedback.
-        Never logs message text for crisis events.
-        """
+        """Log interaction to logs/chat_log.csv while redacting crisis text."""
         if not config.ENABLE_LOGGING:
             return
 
@@ -357,7 +202,6 @@ class BuddyBot:
                         "feedback",
                     ])
 
-                # Log only event type for crisis, never the user's message
                 logged_question = "[CRISIS REDACTED]" if mode == "crisis" else question
                 now_iso = datetime.now(timezone.utc).isoformat()
                 writer.writerow([
@@ -385,7 +229,7 @@ class BuddyBot:
         {
             'answer': str,
             'sources': list[dict],
-            'mode': 'normal' | 'no_context' | 'crisis',
+            'mode': 'normal' | 'no_context' | 'crisis' | 'error',
             'sensitive': bool,
             'sensitive_topic': str | None,
             'top_score': float,
@@ -394,16 +238,6 @@ class BuddyBot:
         """
         start_time = time.perf_counter()
         session_uuid = session_id or str(uuid.uuid4())
-
-        # -------------------------------------------------------------
-        # 0. High-Speed In-Memory Cache Lookup (< 1ms)
-        # -------------------------------------------------------------
-        norm_q = self._normalize_query(question)
-        cache_key = f"{norm_q}:{bool(user_context and user_context.get('logged_in'))}:{bool(user_context and user_context.get('personalised'))}"
-        if not history and cache_key in self._query_cache:
-            cached_res = dict(self._query_cache[cache_key])
-            cached_res["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 1)
-            return cached_res
 
         # -------------------------------------------------------------
         # 1. Deterministic crisis check (runs BEFORE retrieval & Gemini)
@@ -432,144 +266,7 @@ class BuddyBot:
         # 2. Sensitive topic check
         # -------------------------------------------------------------
         is_sensitive, sensitive_topic = safety.check_sensitive(question)
-
-        # -------------------------------------------------------------
-        # 2b. Fast Deterministic Personalised Study Path (<50ms)
-        # -------------------------------------------------------------
-        # For authenticated students querying assignments, credits, or thesis,
-        # return immediate grounded profile data without network latency or timeouts.
         ql = question.lower()
-        if user_context and user_context.get("logged_in") and user_context.get("personalised"):
-            is_personal_assignment = any(k in ql for k in ["assignment", "homework", "task", "submission", "due", "deadline", "pending", "odevzdavarna"])
-            is_personal_credit = any(k in ql for k in ["voucher", "vouchers"]) or (
-                any(k in ql for k in ["credit", "credits"]) and any(k in ql for k in ["how many", "left", "remaining", "my", "progress"])
-            )
-            is_personal_thesis = any(k in ql for k in ["thesis", "errata", "red x", "3 red"])
-
-            if is_personal_assignment or is_personal_credit or is_personal_thesis:
-                dyn_chunks = student_profile.build_dynamic_context_chunks(question, user_context)
-                fast_answer = self._synthesize_grounded_answer(question, dyn_chunks, user_context)
-                sources_text, cited_chunks = self.format_sources_section(fast_answer, dyn_chunks)
-                final_answer = fast_answer + sources_text
-                latency = (time.perf_counter() - start_time) * 1000
-                res_payload = {
-                    "answer": final_answer,
-                    "sources": dyn_chunks,
-                    "mode": "normal",
-                    "sensitive": is_sensitive,
-                    "sensitive_topic": sensitive_topic,
-                    "top_score": 0.995,
-                    "latency_ms": round(latency, 1),
-                }
-                self._query_cache[cache_key] = res_payload
-                self.log_interaction(
-                    session_id=session_uuid,
-                    question=question,
-                    mode="normal",
-                    top_score=0.995,
-                    latency_ms=latency,
-                )
-                return res_payload
-
-        # -------------------------------------------------------------
-        # 2c. Fast Deterministic InSIS Navigation & Campus Location Path (<30ms)
-        # -------------------------------------------------------------
-        # Direct navigation queries and campus room/facility searches have verified
-        # structured ground-truth in SQLite FTS. If exact route or location matches,
-        # return immediate grounded answer with exact breadcrumbs and single action link
-        # without waiting for remote WAN LLM roundtrips.
-        insis_nav_cues = [
-            "insis", "navigate", "navigation", "portal", "where to find", "how to find",
-            "where can i find", "whre to find", "where is the", "where is", "menu", "section",
-            "query", "querry", "application", "form", "apply", "scholarship", "scholorship",
-            "stipend", "benefit", "grant", "ubytov", "contact centre", "contact center",
-            "study plan", "catalogue", "catalog", "syllabus", "timetable", "schedule",
-            "thesis", "errata", "odevzdani", "diplomk", "studium", "studijni", "zkousk",
-            "exam", "confirmation", "potvrzeni", "voucher", "bank account", "variable symbol",
-            "coursework", "assignment", "odevzdavarna", "dropbox"
-        ]
-        campus_cues = [
-            "washroom", "toilet", "wc", "bathroom", "restroom", "menza", "canteen",
-            "cafeteria", "ciks", "helpdesk", "library", "bibliobox", "study room",
-            "sb 22", "rb 101", "rb 201", "rb 209", "nb 403"
-        ]
-
-        is_direct_nav = any(cue in ql for cue in insis_nav_cues)
-        is_direct_campus = any(cue in ql for cue in campus_cues)
-
-        if is_direct_nav or is_direct_campus:
-            try:
-                import insis_nav_db
-                fast_search = insis_nav_db.unified_search(question, limit=2)
-                fast_chunk = None
-
-                if is_direct_nav and fast_search.get("insis_routes"):
-                    top_nav = fast_search["insis_routes"][0]
-                    fast_chunk = {
-                        "id": f"insis_nav_{top_nav['task_id']}",
-                        "doc_id": "insis_nav_db",
-                        "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
-                        "source_url": top_nav["official_url"],
-                        "date_saved": "2026-10-31",
-                        "unverified": False,
-                        "score": 0.99,
-                        "text": (
-                            f"InSIS Navigation Task: {top_nav['title_en']} ({top_nav['title_cs']})\n"
-                            f"Category: {top_nav['category']} | InSIS Path: {top_nav['portal_path']}\n"
-                            f"Breadcrumb Trail: {top_nav['breadcrumbs']}\n"
-                            f"Step-by-Step Instructions:\n{top_nav['step_by_step_instructions']}\n"
-                            f"Prerequisites: {top_nav.get('prerequisites', 'None')}\n"
-                            f"Important Note: {top_nav.get('common_pitfalls', 'None')}\n"
-                            f"Interactive Demo: {top_nav['demo_url']}\n"
-                        ),
-                        "is_insis_nav": True,
-                    }
-                elif is_direct_campus and fast_search.get("campus_locations"):
-                    loc = fast_search["campus_locations"][0]
-                    fast_chunk = {
-                        "id": f"campus_{loc['location_id']}",
-                        "doc_id": "vse_campus_db",
-                        "title": f"VŠE Campus Navigation: {loc['name']} ({loc['room_number']})",
-                        "source_url": "https://www.vse.cz/english/campus-map-and-buildings/",
-                        "date_saved": "2026-10-31",
-                        "unverified": False,
-                        "score": 0.99,
-                        "text": (
-                            f"Location Name: {loc['name']}\n"
-                            f"Building: {loc['building']} | Floor: {loc['floor']} | Room Number: {loc['room_number']}\n"
-                            f"Facility Type: {loc['facility_type']}\n"
-                            f"Walking Directions from Main Entrance:\n{loc['directions_from_entrance']}\n"
-                            f"Amenities & Accessibility: {loc.get('amenities_accessibility', 'Standard')}\n"
-                            f"Hours / Availability: {loc.get('hours_or_availability', 'Standard building hours')}\n"
-                        ),
-                        "is_campus_loc": True,
-                    }
-
-                if fast_chunk:
-                    fast_answer = self._synthesize_grounded_answer(question, [fast_chunk], user_context)
-                    sources_text, cited_chunks = self.format_sources_section(fast_answer, [fast_chunk])
-                    final_answer = fast_answer + sources_text
-                    latency = (time.perf_counter() - start_time) * 1000
-                    res_payload = {
-                        "answer": final_answer,
-                        "sources": [fast_chunk],
-                        "mode": "normal",
-                        "sensitive": is_sensitive,
-                        "sensitive_topic": sensitive_topic,
-                        "top_score": 0.99,
-                        "latency_ms": round(latency, 1),
-                    }
-                    self._query_cache[cache_key] = res_payload
-                    self.log_interaction(
-                        session_id=session_uuid,
-                        question=question,
-                        mode="normal",
-                        top_score=0.99,
-                        latency_ms=latency,
-                    )
-                    return res_payload
-            except Exception as e:
-                print(f"[Fast-Path Warning]: {e}")
 
         # -------------------------------------------------------------
         # 3. Retrieval query construction
@@ -603,39 +300,94 @@ class BuddyBot:
             contacts_chunks = [c for c in chunks if c.get("is_contacts")]
             context_chunks = contacts_chunks if contacts_chunks else []
         else:
-            context_chunks = chunks
+            context_chunks = list(chunks)
 
         # -------------------------------------------------------------
-        # 4b. InSIS & Campus Knowledge Database Integration
+        # 4b. InSIS & Campus Knowledge Database Enrichment
         # -------------------------------------------------------------
-        # Queries the relational database for:
-        # 1. Campus floor navigation (washrooms, classrooms, study coordinators)
-        # 2. 50 VŠE Policies, Rules and Regulations
-        # 3. InSIS Navigation Routes
+        nav_policy_exclusions = [
+            "what happens", "if i fail", "fail an exam", "3 times", "three times",
+            "penalty", "sanction", "expelled", "expulsion", "plagiarism", "turnitin",
+            "chatgpt", "ai tool", "minimum ects", "9 ects", "20 ects",
+            "quiet hours", "smoking", "overnight guest", "visa", "residence permit",
+            "foreign police", "health insurance", "pvzp", "nostrification",
+            "e-application", "prihlaska", "apply to study", "admission procedure",
+            "counselling", "counseling", "psychological", "litacka", "lítačka",
+            "public transport", "without an account", "without login", "without logging",
+            "university email", "course materials", "academic calendar", "library",
+            "opening hours", "apply for a vse dormitory", "apply for a vše dormitory",
+            "what is insis used for", "forgot my insis password", "how many credits should",
+        ]
+        has_nav_exclusion = any(exc in ql for exc in nav_policy_exclusions)
+
+        explicit_insis_phrases = [
+            "in insis", "navigate", "navigation bar", "portlet", "portlets",
+            "whre to find", "contact centre", "contact center", "general query", "general querry",
+            "variable symbol", "bank account", "financing of study", "study financing",
+            "accommodation scholarship", "accomodation scholarship", "housing grant",
+            "confirmation of study", "odevzdavarna", "coursework submission",
+            "submit errata", "insert errata", "iskam", "book a dorm",
+            "find accomodation", "find accommodation", "two-factor", "authenticator",
+            "totp", "course evaluation", "anketa", "document server",
+        ]
+        action_nav_verbs = [
+            "where", "whre", "how to", "how do i", "how can i", "find",
+            "open", "apply for", "register for", "upload", "submit", "download", "enable", "add",
+        ]
+        insis_task_nouns = [
+            "scholarship", "scholorship", "stipend", "tuition", "exam",
+            "timetable", "schedule", "study plan", "catalogue", "catalog", "thesis",
+            "errata", "isic", "grade", "transcript", "portlet", "sidebar",
+        ]
+
+        is_direct_nav = (not has_nav_exclusion) and (
+            any(p in ql for p in explicit_insis_phrases)
+            or (any(v in ql for v in action_nav_verbs) and any(n in ql for n in insis_task_nouns))
+        )
+
+        campus_cues = [
+            "washroom", "toilet", "wc", "bathroom", "restroom", "ciks", "bibliobox",
+            "study room", "sb 22", "rb 101", "rb 201", "rb 209", "nb 403",
+            "old building", "new building", "rajska", "rajská", "itzikov",
+            "which floor", "what floor", "room number", "coordinator office",
+        ]
+        is_direct_campus = any(cue in ql for cue in campus_cues) and not has_nav_exclusion
+
         try:
             import insis_nav_db
             search_res = insis_nav_db.unified_search(question, limit=2)
             candidates = []
 
-            # Prioritize InSIS routes when question is explicitly about InSIS, finding features, or applying for academic/grant procedures
-            insis_cues = ["insis", "navigate", "portal", "where to find", "how to find", "where can i find", "whre to find", "where is the", "menu", "section", "query", "querry", "application", "form", "apply", "scholarship", "scholorship", "stipend", "benefit", "grant", "ubytov"]
-            is_insis_query = any(c in question.lower() for c in insis_cues)
+            policy_cues = [
+                "fail", "failed", "retake", "3 times", "three times", "twice",
+                "minimum ects", "9 ects", "20 ects", "voucher", "vouchers",
+                "penalty", "sanction", "expelled", "expulsion", "terminate",
+                "interruption", "interrupt", "grading scale", "grade 4",
+                "quiet hours", "smoking", "overnight guest", "plagiarism",
+            ]
+            is_policy_query = any(pc in ql for pc in policy_cues)
+            broad_doc_topics = [
+                "e-application", "prihlaska", "apply to study", "admission procedure",
+                "litacka", "lítačka", "public transport", "embassy", "embassies",
+                "nostrification", "without an account", "without login", "chatgpt",
+                "visa", "foreign police", "health insurance", "work part-time",
+                "how many credits should",
+            ]
+            skip_db_override = any(t in ql for t in broad_doc_topics)
 
-            if is_insis_query and search_res.get("insis_routes"):
-                for r in search_res["insis_routes"][:2]:
-                    candidates.append(("insis", r.get("rank", -5.0) - 20.0, r))
+            if not skip_db_override:
+                if is_direct_nav and search_res.get("insis_routes"):
+                    for r in search_res["insis_routes"][:2]:
+                        candidates.append(("insis", r.get("rank", -5.0) - 20.0, r))
 
-            if search_res.get("policies"):
-                for p in search_res["policies"][:1]:
-                    candidates.append(("policy", p.get("rank", -5.0), p))
-            if search_res.get("campus_locations"):
-                for loc in search_res["campus_locations"][:1]:
-                    candidates.append(("campus", loc.get("rank", -5.0), loc))
-            if not is_insis_query and search_res.get("insis_routes"):
-                for r in search_res["insis_routes"][:1]:
-                    candidates.append(("insis", r.get("rank", -5.0), r))
+                if is_policy_query and search_res.get("policies"):
+                    for p in search_res["policies"][:1]:
+                        pol_boost = -15.0 if has_nav_exclusion else 0.0
+                        candidates.append(("policy", p.get("rank", -5.0) + pol_boost, p))
+                if is_direct_campus and search_res.get("campus_locations"):
+                    for loc in search_res["campus_locations"][:1]:
+                        candidates.append(("campus", loc.get("rank", -5.0), loc))
 
-            # Sort by rank (in SQLite FTS5, more negative rank means higher relevance)
             candidates.sort(key=lambda c: c[1])
 
             db_chunk = None
@@ -646,10 +398,10 @@ class BuddyBot:
                     pol = best_item
                     db_chunk = {
                         "id": f"policy_{pol['rule_id']}",
-                        "doc_id": "vse_policies_db",
+                        "doc_id": "50-vse-policies-rules-and-regulations.md",
                         "title": f"VŠE Policy [{pol['rule_id']}]: {pol['title']}",
                         "source_url": "https://www.vse.cz/english/university-rules-and-regulations/",
-                        "date_saved": "2026-10-31",
+                        "date_saved": "2026-11-04",
                         "unverified": False,
                         "score": 0.99,
                         "text": (
@@ -665,10 +417,10 @@ class BuddyBot:
                     loc = best_item
                     db_chunk = {
                         "id": f"campus_{loc['location_id']}",
-                        "doc_id": "vse_campus_db",
+                        "doc_id": "51-vse-campus-navigation-classrooms-washrooms-offices.md",
                         "title": f"VŠE Campus Navigation: {loc['name']} ({loc['room_number']})",
                         "source_url": "https://www.vse.cz/english/campus-map-and-buildings/",
-                        "date_saved": "2026-10-31",
+                        "date_saved": "2026-11-04",
                         "unverified": False,
                         "score": 0.99,
                         "text": (
@@ -683,12 +435,24 @@ class BuddyBot:
                     }
                 elif best_kind == "insis":
                     top_nav = best_item
+                    tid = top_nav["task_id"]
+                    if tid in ("TASK_THESIS_SUBMISSION", "TASK_THESIS_ERRATA"):
+                        backing_doc_id = "48-final-thesis-submission-defense-and-errata.md"
+                    elif tid in ("TASK_SCHOLARSHIP_ACCOMMODATION", "TASK_ACCOMMODATION_SCHOLARSHIP"):
+                        backing_doc_id = "46-scholarships-campus-navigation-and-printing.md"
+                    elif tid in ("TASK_DORM_ISKAM", "TASK_ISKAM_HOUSING"):
+                        backing_doc_id = "15-dormitories-and-student-housing.md"
+                    elif tid in ("TASK_COURSE_REGISTRATION", "TASK_CREDIT_VOUCHERS", "TASK_EXAM_REGISTRATION"):
+                        backing_doc_id = "44-insis-course-registration-and-credit-system.md"
+                    else:
+                        backing_doc_id = "17-insis-portal.md"
+
                     db_chunk = {
                         "id": f"insis_nav_{top_nav['task_id']}",
-                        "doc_id": "insis_nav_db",
+                        "doc_id": backing_doc_id,
                         "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
                         "source_url": top_nav["official_url"],
-                        "date_saved": "2026-10-31",
+                        "date_saved": "2026-11-04",
                         "unverified": False,
                         "score": 0.98,
                         "text": (
@@ -698,20 +462,22 @@ class BuddyBot:
                             f"Step-by-Step Instructions:\n{top_nav['step_by_step_instructions']}\n"
                             f"Prerequisites: {top_nav.get('prerequisites', 'None')}\n"
                             f"Important Note: {top_nav.get('common_pitfalls', 'None')}\n"
-                            f"Interactive Demo: {top_nav['demo_url']}\n"
+                            f"Official URL: {top_nav['official_url']}\n"
                         ),
                         "is_insis_nav": True,
                     }
 
             if db_chunk:
-                context_chunks = [db_chunk] + [c for c in context_chunks if not (c.get("is_insis_nav") or c.get("is_policy") or c.get("is_campus_loc"))]
+                context_chunks = [db_chunk] + context_chunks
+                if top_score < db_chunk["score"]:
+                    top_score = db_chunk["score"]
                 if mode == "no_context":
                     mode = "normal"
         except Exception as e:
             print(f"[Knowledge DB Query Warning]: {e}")
 
         # -------------------------------------------------------------
-        # 4c. Public No-Login Context / Live Screen & Personalised Study Context
+        # 4c. Opt-In Personalised Student Study Profile Context
         # -------------------------------------------------------------
         if user_context:
             try:
@@ -724,98 +490,113 @@ class BuddyBot:
                 print(f"[Dynamic Context Warning]: {e}")
 
         # -------------------------------------------------------------
-        # 5. Gemini Generation
+        # 5. Live Google Gemini Generation (15s timeout + rate-limit retry)
         # -------------------------------------------------------------
-        prompt_content = prompts.build_prompt_with_context(question, context_chunks)
-
-        # Format conversation history for Gemini (excluding the current turn)
-        # If the caller already added the current question to history, exclude it to avoid duplication
-        past_history = []
-        if history:
-            if history[-1].get("role") == "user" and history[-1].get("content", "").strip() == question.strip():
-                past_history = history[:-1]
-            else:
-                past_history = history
-
-        recent_history = past_history[-config.MAX_HISTORY_MESSAGES:] if past_history else []
-        gemini_contents: List[types.Content] = []
-
-        # Enforce strict alternating turns (user -> model -> user -> model)
-        last_role = None
-        for msg in recent_history:
-            role = "user" if msg.get("role") == "user" else "model"
-            content = msg.get("content", "").strip()
-            if not content:
-                continue
-            if role == last_role:
-                continue
-            gemini_contents.append(
-                types.Content(
-                    role=role,
-                    parts=[types.Part.from_text(text=content)],
-                )
-            )
-            last_role = role
-
-        # If previous history ended with user, pop it to guarantee our prompt_content is the single user turn
-        if gemini_contents and gemini_contents[-1].role == "user":
-            gemini_contents.pop()
-
-        # Append current user prompt with grounded RAG context
-        gemini_contents.append(
-            types.Content(
-                role="user",
-                parts=[types.Part.from_text(text=prompt_content)],
-            )
-        )
-
         raw_answer = None
-        models_to_try = [config.CHAT_MODEL]
         last_error = None
 
-        client = self._get_client()
+        try:
+            prompt_content = prompts.build_prompt_with_context(question, context_chunks)
 
-        def _generate_with_gemini(m_name: str):
-            return client.models.generate_content(
-                model=m_name,
-                contents=gemini_contents,
-                config=types.GenerateContentConfig(
-                    system_instruction=prompts.SYSTEM_PROMPT,
-                    temperature=config.TEMPERATURE,
-                    max_output_tokens=config.MAX_OUTPUT_TOKENS,
-                ),
+            past_history = []
+            if history:
+                if history[-1].get("role") == "user" and history[-1].get("content", "").strip() == question.strip():
+                    past_history = history[:-1]
+                else:
+                    past_history = history
+
+            recent_history = past_history[-config.MAX_HISTORY_MESSAGES:] if past_history else []
+            gemini_contents: List[types.Content] = []
+
+            last_role = None
+            for msg in recent_history:
+                role = "user" if msg.get("role") == "user" else "model"
+                content = msg.get("content", "").strip()
+                if not content or role == last_role:
+                    continue
+                gemini_contents.append(
+                    types.Content(
+                        role=role,
+                        parts=[types.Part.from_text(text=content)],
+                    )
+                )
+                last_role = role
+
+            if gemini_contents and gemini_contents[-1].role == "user":
+                gemini_contents.pop()
+
+            gemini_contents.append(
+                types.Content(
+                    role="user",
+                    parts=[types.Part.from_text(text=prompt_content)],
+                )
             )
 
-        for candidate_model in models_to_try:
-            try:
-                future = _LLM_EXECUTOR.submit(_generate_with_gemini, candidate_model)
-                response = future.result(timeout=2.5)
-                if response.text:
-                    raw_answer = response.text.strip()
-                    break
-            except concurrent.futures.TimeoutError:
-                last_error = "Gemini generation timed out after 2.5s"
-                break
-            except Exception as e:
-                last_error = e
-                continue
+            client = self._get_client()
+
+            def _generate_with_gemini(m_name: str):
+                return client.models.generate_content(
+                    model=m_name,
+                    contents=gemini_contents,
+                    config=types.GenerateContentConfig(
+                        system_instruction=prompts.SYSTEM_PROMPT,
+                        temperature=config.TEMPERATURE,
+                        max_output_tokens=config.MAX_OUTPUT_TOKENS,
+                    ),
+                )
+
+            models_to_try = [config.CHAT_MODEL, config.CHAT_MODEL, getattr(config, "CHAT_FALLBACK_MODEL", config.CHAT_MODEL)]
+            for attempt_idx, candidate_model in enumerate(models_to_try):
+                try:
+                    future = _LLM_EXECUTOR.submit(_generate_with_gemini, candidate_model)
+                    response = future.result(timeout=15.0)
+                    if response and response.text:
+                        raw_answer = response.text.strip()
+                        break
+                except Exception as e:
+                    last_error = e
+                    err_str = str(e)
+                    if attempt_idx < len(models_to_try) - 1:
+                        wait_s = 5.0 if ("429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower()) else 2.0
+                        time.sleep(wait_s)
+                        continue
+        except Exception as e:
+            last_error = e
 
         if not raw_answer:
-            if last_error:
-                print(f"[Generation Notice]: Fast grounded fallback ({last_error}) from verified VŠE knowledge base.")
-            raw_answer = self._synthesize_grounded_answer(question, context_chunks, user_context)
+            print(f"[Gemini API Error]: {last_error}")
+            latency = (time.perf_counter() - start_time) * 1000
+            err_text = str(last_error or "")
+            if "429" in err_text or "RESOURCE_EXHAUSTED" in err_text or "quota" in err_text.lower():
+                honest_msg = (
+                    "⚠️ **API Rate Limit Reached:** The Google Gemini free-tier rate limit (15 requests/minute) "
+                    "was temporarily reached. Please wait a few seconds and try your question again."
+                )
+            else:
+                honest_msg = (
+                    "⚠️ **AI Service Temporarily Unavailable:** The live Google Gemini model did not respond "
+                    "within 15 seconds. Please wait a moment and try again."
+                )
+            return {
+                "answer": honest_msg,
+                "sources": [],
+                "mode": "error",
+                "sensitive": is_sensitive,
+                "sensitive_topic": sensitive_topic,
+                "top_score": round(top_score, 4),
+                "latency_ms": round(latency, 1),
+            }
 
         # -------------------------------------------------------------
         # 6. Post-processing (Citations & Referral)
         # -------------------------------------------------------------
-        # Ensure InSIS navigation questions always have a clean direct one-click action button
         insis_navs = [c for c in context_chunks if c.get("is_insis_nav")]
         if insis_navs:
             top_nav_chunk = insis_navs[0]
             nav_url = top_nav_chunk.get("source_url", "")
             nav_title = top_nav_chunk.get("title", "InSIS Page").replace("InSIS Navigation Guide: ", "")
             if nav_url and nav_url not in raw_answer:
-                raw_answer += f"\n\n[🏛️ Open {nav_title}]({nav_url})"
+                raw_answer += f"\n\n[Open {nav_title} in InSIS]({nav_url})"
 
         sources_text, cited_chunks = self.format_sources_section(raw_answer, context_chunks)
         final_answer = raw_answer
@@ -846,7 +627,7 @@ class BuddyBot:
             latency_ms=latency,
         )
 
-        res_payload = {
+        return {
             "answer": final_answer,
             "sources": cited_chunks,
             "mode": mode,
@@ -855,10 +636,3 @@ class BuddyBot:
             "top_score": round(top_score, 4),
             "latency_ms": round(latency, 1),
         }
-
-        # Cache response for identical queries
-        if len(self._query_cache) > 500:
-            self._query_cache.clear()
-        self._query_cache[cache_key] = res_payload
-
-        return res_payload

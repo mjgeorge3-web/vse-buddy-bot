@@ -289,11 +289,12 @@ with st.sidebar:
             ("InSIS Password Reset & Helpdesk", "I forgot my InSIS password. How do I reset it?"),
         ],
         "📚 Studying, InSIS & Credits": [
+            ("Student Navigation Sidebar (Portlets)", "How do I enable the Navigation bar for students portlet in InSIS?"),
             ("Course Enrollment in InSIS", "How do I enroll in courses and build my timetable in InSIS?"),
             ("Semester Credits & Vouchers", "How many credits do I need per semester and how do vouchers work?"),
-            ("Exam Retakes & Grading Scale", "How does the grading scale work and how many exam retakes do I get?"),
-            ("Final Thesis & Errata", "How do I submit my final thesis and how do I submit errata in InSIS?"),
-            ("Library & Campus Printing (SafeQ)", "How do I use the university library and print on campus using SafeQ?"),
+            ("Exam Retakes & Grading Scale", "What happens if I fail an exam 3 times at VŠE?"),
+            ("Master's Thesis Workflow", "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata."),
+            ("Accommodation Scholarship", "How do I apply for the accommodation scholarship in InSIS?"),
         ],
         "🧘 Health, Stress & Prague Life": [
             ("Psychological Counselling & Support", "Where can I find free psychological counselling and mental health support at VŠE?"),
@@ -325,15 +326,19 @@ with st.sidebar:
         
         # Calculate dynamic knowledge base stats
         metadata = getattr(st.session_state.bot.retriever, "metadata", []) or []
-        chunk_count = len(metadata) if metadata else 148
-        doc_count = len(set(c.get("filename", "") for c in metadata if c.get("filename"))) if metadata else 49
+        chunk_count = len(metadata) if metadata else 254
+        doc_count = (
+            len(set((c.get("doc_id") or c.get("filename", "")) for c in metadata if (c.get("doc_id") or c.get("filename"))))
+            if metadata
+            else 52
+        )
 
         st.markdown(f"- **Session ID:** `{st.session_state.session_id[:12]}...`")
         st.markdown(f"- **Messages Exchanged:** {msg_count}")
         st.markdown(f"- **Avg Assistant Latency:** {avg_lat:.0f} ms")
         st.markdown(f"- **Knowledge Files:** {doc_count} verified markdown docs ({chunk_count} vector chunks)")
         st.markdown(f"- **Retrieval Engine:** Pure NumPy L2-Normalized Cosine Similarity")
-        st.markdown(f"- **LLM Backbone:** Google Gemini (`gemini-2.5-flash`)")
+        st.markdown(f"- **LLM Backbone:** Google Gemini (`{config.CHAT_MODEL}`)")
 
     with st.expander("ℹ️ About & Privacy Safeguards"):
         st.markdown(
@@ -372,25 +377,31 @@ if not st.session_state.messages:
 
     col_hero_1, col_hero_2 = st.columns(2)
     with col_hero_1:
-        if st.button("🎓 How many credits do I need per semester?", key="hero_credits", use_container_width=True):
-            st.session_state.pending_prompt = "How many credits do I need per semester and how do vouchers work?"
+        if st.button("🏢 VŠE Dormitory Booking & Reservations (ISKaM)", key="hero_iskam", use_container_width=True):
+            st.session_state.pending_prompt = "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?"
             st.rerun()
-        if st.button("📝 How do I submit errata for my thesis in InSIS?", key="hero_errata", use_container_width=True):
-            st.session_state.pending_prompt = "How do I submit my final thesis and how do I submit errata in InSIS?"
+        if st.button("📗 Complete 4-Stage Master's Thesis Workflow", key="hero_errata", use_container_width=True):
+            st.session_state.pending_prompt = "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata."
             st.rerun()
-        if st.button("🏠 How do I apply for a dorm in ISKaM & pay deposit?", key="hero_dorm", use_container_width=True):
-            st.session_state.pending_prompt = "How do I apply for a VŠE dormitory and pay the reservation deposit?"
+        if st.button("🧭 Enable Student Navigation Sidebar (Portlets)", key="hero_portlets", use_container_width=True):
+            st.session_state.pending_prompt = "How do I enable the Navigation bar for students portlet in InSIS?"
+            st.rerun()
+        if st.button("💰 Apply for Accommodation Scholarship in InSIS", key="hero_dorm", use_container_width=True):
+            st.session_state.pending_prompt = "How do I apply for the accommodation scholarship in InSIS?"
             st.rerun()
 
     with col_hero_2:
-        if st.button("🛂 Do international students need Foreign Police registration?", key="hero_police", use_container_width=True):
-            st.session_state.pending_prompt = "Do international students have to register with the Foreign Police upon arrival?"
+        if st.button("🛂 Visa, Health Insurance & 3-Day Police Rules", key="hero_police", use_container_width=True):
+            st.session_state.pending_prompt = "What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?"
             st.rerun()
-        if st.button("🧠 Where can I find free psychological counselling?", key="hero_counsel", use_container_width=True):
+        if st.button("🎓 Minimum 9/20 ECTS & Credit Voucher Rules", key="hero_credits", use_container_width=True):
+            st.session_state.pending_prompt = "How many credits do I need per semester and how do vouchers work?"
+            st.rerun()
+        if st.button("📝 Submit E-Application & Foreign Diploma Assessment", key="hero_eapp", use_container_width=True):
+            st.session_state.pending_prompt = "How do I submit the E-application form to study at VŠE?"
+            st.rerun()
+        if st.button("🧠 Free Psychological Counselling at VŠE", key="hero_counsel", use_container_width=True):
             st.session_state.pending_prompt = "Where can I find free psychological counselling and mental health support at VŠE?"
-            st.rerun()
-        if st.button("🚇 How do I get a student discount pass for Prague transport?", key="hero_transport", use_container_width=True):
-            st.session_state.pending_prompt = "How do I get a student discount pass for Prague public transport (Lítačka)?"
             st.rerun()
 
 else:
@@ -406,7 +417,7 @@ else:
                     st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
                 elif mode == "referral":
                     st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
-                elif mode == "grounded":
+                elif mode in ("normal", "grounded"):
                     st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
 
             st.markdown(message["content"])
@@ -498,7 +509,7 @@ if prompt_to_process:
                 st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
             elif mode == "referral":
                 st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
-            elif mode == "grounded":
+            elif mode in ("normal", "grounded"):
                 st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
 
             st.markdown(answer_text)

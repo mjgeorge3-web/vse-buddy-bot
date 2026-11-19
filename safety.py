@@ -15,15 +15,15 @@ import config
 # List of crisis keywords and phrases (English and Czech)
 CRISIS_PATTERNS = [
     r"\bsuicide\b",
-    r"\bkill myself\b",
+    r"\bkill(ing)? myself\b",
     r"\bkill me\b",
     r"\bdon'?t want to live\b",
     r"\bdo not want to live\b",
-    r"\bend my life\b",
+    r"\bend(ing)? my life\b",
     r"\bself[\s-]harm\b",
-    r"\bhurt myself\b",
-    r"\bharm myself\b",
-    r"\bwant to die\b",
+    r"\bhurt(ing)? myself\b",
+    r"\bharm(ing)? myself\b",
+    r"\bwant(ing)? to die\b",
     r"\bwish i were dead\b",
     r"\bsebevražda\b",
     r"\bsebevražd[yěeou]?\b",
@@ -115,6 +115,14 @@ SENSITIVE_TOPICS = {
         r"\bukončení studia\b",
         r"\binterrupt(?:ion|ing)?.*stud(?:y|ies)\b",
         r"\bpřerušení studia\b",
+    ],
+    "mental_wellbeing": [
+        r"\bstressed\b",
+        r"\bhomesick\b",
+        r"\banxiety\b",
+        r"\bdepressed\b",
+        r"\bmental health\b",
+        r"\bpsychological counselling\b",
     ],
 }
 

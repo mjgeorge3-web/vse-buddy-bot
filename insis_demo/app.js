@@ -69,25 +69,25 @@ function resetBotConversationForSession() {
         <div class="bot-hero-title">How can I help you today?</div>
         <div class="bot-hero-sub">Direct AI guidance on VŠE studies, visa rules, dormitories, and InSIS navigation &mdash; no login required.</div>
         <div class="bot-hero-cards">
-          <div class="bot-starter-card" onclick="sendBotPrompt('What are the visa and 3-day Foreign Police registration rules for international students?')">
-            <div class="starter-icon">🛂</div>
-            <div class="starter-text">
-              <div class="starter-title">Visa &amp; Police Registration</div>
-              <div class="starter-desc">3-day arrival rule, MOI appointments, accommodation confirmations</div>
-            </div>
-          </div>
-          <div class="bot-starter-card" onclick="sendBotPrompt('How do I find accommodation in VŠE dormitories or private flats in Prague?')">
+          <div class="bot-starter-card" onclick="sendBotPrompt('How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?')">
             <div class="starter-icon">🏢</div>
             <div class="starter-text">
-              <div class="starter-title">Dormitories &amp; Accommodation</div>
-              <div class="starter-desc">ISKaM reservations, Jarov/Blanice dorms, leases</div>
+              <div class="starter-title">VŠE Dormitory Booking &amp; Reservations</div>
+              <div class="starter-desc">ISKaM online room booking, kauce deposit, campuses &amp; SÚZ contacts</div>
             </div>
           </div>
-          <div class="bot-starter-card" onclick="sendBotPrompt('How do admissions and the E-application work at VŠE?')">
+          <div class="bot-starter-card" onclick="sendBotPrompt('What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?')">
+            <div class="starter-icon">🛂</div>
+            <div class="starter-text">
+              <div class="starter-title">Visa, Insurance &amp; 3-Day Police Rules</div>
+              <div class="starter-desc">Study visas, EUR 400k pVZP insurance &amp; 3-day Foreign Police registration</div>
+            </div>
+          </div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('How do I submit the E-application form to study at VŠE?')">
             <div class="starter-icon">🎓</div>
             <div class="starter-text">
-              <div class="starter-title">Admissions &amp; E-Application</div>
-              <div class="starter-desc">Programmes, deadlines, entrance exams, and first login</div>
+              <div class="starter-title">Admissions &amp; E-Application (No Login)</div>
+              <div class="starter-desc">Apply online without an account, fees, and public course catalogue</div>
             </div>
           </div>
         </div>
@@ -102,27 +102,27 @@ function resetBotConversationForSession() {
       <div class="bot-hero-container">
         <div class="bot-hero-badge">🎓 Student Mode • Demo Prototype</div>
         <div class="bot-hero-title">Welcome back, ${safeName}!</div>
-        <div class="bot-hero-sub">I have direct context of your simulated InSIS profile, credit vouchers, thesis progress, and study policies.</div>
+        <div class="bot-hero-sub">Ask about InSIS navigation, student portlets, credit vouchers, thesis stages, visas, or VŠE policies.</div>
         <div class="bot-hero-cards">
           <div class="bot-starter-card" onclick="sendBotPrompt('How many credit vouchers and credits do I have left?')">
             <div class="starter-icon">📊</div>
             <div class="starter-text">
-              <div class="starter-title">Check My Credit Vouchers</div>
-              <div class="starter-desc">Check your remaining voucher balance (120/144) and minimum progression rules</div>
+              <div class="starter-title">Check My Credit Vouchers &amp; ECTS</div>
+              <div class="starter-desc">Remaining voucher balance (120/144), earned ECTS, and degree progress</div>
             </div>
           </div>
-          <div class="bot-starter-card" onclick="sendBotPrompt('What do the 3 red Xs mean on my Master\\'s Thesis page and how do I submit errata?')">
+          <div class="bot-starter-card" onclick="sendBotPrompt('Walk me through the complete Master\\'s Thesis workflow at VŠE from topic approval to submission, defense, and errata.')">
             <div class="starter-icon">📗</div>
             <div class="starter-text">
-              <div class="starter-title">Master's Thesis Workflow</div>
-              <div class="starter-desc">Resolving the 3 red Xs, abstract entry, and submitting § 47b errata PDF</div>
+              <div class="starter-title">Master's Thesis 4-Stage Workflow</div>
+              <div class="starter-desc">Topic approval, 3 Red ✗ steps, PDF/A upload, defense reviews &amp; § 47b errata</div>
             </div>
           </div>
-          <div class="bot-starter-card" onclick="sendBotPrompt('What are the visa and 3-day Foreign Police registration rules for international students?')">
-            <div class="starter-icon">🛂</div>
+          <div class="bot-starter-card" onclick="sendBotPrompt('How do I enable the Navigation bar for students portlet in InSIS?')">
+            <div class="starter-icon">🧭</div>
             <div class="starter-text">
-              <div class="starter-title">Visa &amp; Accommodation Rules</div>
-              <div class="starter-desc">Foreign Police 3-day registration, ISKaM dormitory check-in</div>
+              <div class="starter-title">Student Sidebar Portlet &amp; Navigation</div>
+              <div class="starter-desc">Pin quick-access student links onto your InSIS Personal administration home</div>
             </div>
           </div>
         </div>
@@ -282,6 +282,7 @@ function hideAllViews() {
     "view-student-portal",
     "view-master-thesis",
     "view-coursework-submissions",
+    "view-contact-centre",
     "view-generic-page",
     "view-login",
   ];
@@ -401,6 +402,11 @@ function handleUrlKey(event) {
 // 3. Central Page Router (Supports Public Root + 195 InSIS Routes)
 // -----------------------------------------------------------------------------
 function navigateToUrl(fullUrl) {
+  if (fullUrl && !fullUrl.startsWith("https://insis.vse.cz") && fullUrl.startsWith("http")) {
+    window.open(fullUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+
   const inputEl = document.getElementById("insis-url-input");
   if (inputEl) inputEl.value = fullUrl;
 
@@ -423,9 +429,25 @@ function navigateToUrl(fullUrl) {
 
   const cleanPath = fullUrl.replace("https://insis.vse.cz", "").split("?")[0];
 
-  // If user is NOT logged in and attempts to access any public submodules,
-  // show the prototype scope notice instead of misleading fake pages!
-  if (!session.loggedIn && cleanPath !== "" && cleanPath !== "/" && cleanPath !== "/index.pl") {
+  // Allow all modeled public modules (E-application, Catalogue, Study Plans, Timetables,
+  // Academic Calendar, First Login Guide, Public Financing, Document Server) without login;
+  // show prototype scope notice only for unmodeled secondary public pages.
+  const isSupportedPublicRoute =
+    cleanPath === "" ||
+    cleanPath === "/" ||
+    cleanPath === "/index.pl" ||
+    cleanPath.includes("/prihlaska") ||
+    cleanPath.includes("/navratka") ||
+    cleanPath.includes("/katalog") ||
+    cleanPath.includes("/kurzy") ||
+    cleanPath.includes("plany.pl") ||
+    cleanPath.includes("rozvrhy") ||
+    cleanPath.includes("harmonogram") ||
+    cleanPath.includes("/navod") ||
+    cleanPath.includes("/financovani") ||
+    cleanPath.includes("/dok_server");
+
+  if (!session.loggedIn && !isSupportedPublicRoute) {
     handlePublicOutOfScope(matched.title, fullUrl);
     currentPageKey = "public_home";
     currentPageTitle = "Public Information Portal";
@@ -764,6 +786,59 @@ function renderGenericInsisPage(path, fullUrl, meta) {
       </div>
       <button onclick="alert('New E-Application Wizard started! Application PIN generated for applicant access.')" style="background:#005596; color:white; border:none; padding:8px 16px; border-radius:4px; font-weight:700; cursor:pointer;">📝 Start New E-Application (No Login Needed)</button>
     `;
+  } else if (path.includes("portlety.pl")) {
+    html = `
+      <div style="display:grid; grid-template-columns:190px 1fr; gap:20px; align-items:start;">
+        <div style="background:#f4fce3; border:1px solid #82c91e; border-radius:4px; padding:10px 12px; font-size:12px; line-height:1.8;">
+          <div style="font-weight:700; color:#1e293b; border-bottom:1px solid #c0eb75; padding-bottom:4px; margin-bottom:6px;">Student</div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/posta/slozka.pl?lang=en'); return false;" style="color:#005596;">Mail box</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/dok_server/?lang=en'); return false;" style="color:#005596;">Documents</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/katalog/rozvrhy_view.pl?lang=en'); return false;" style="color:#005596;">Timetables</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/terminy_seznam.pl?lang=en'); return false;" style="color:#005596;">Exams</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en'); return false;" style="color:#005596;">Plan of study</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/arch_studia.pl?lang=en'); return false;" style="color:#005596;">Results</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/anketa/?lang=en'); return false;" style="color:#005596;">Survey</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/registrace.pl?lang=en'); return false;" style="color:#005596;">Registration/enrollment</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/zp.pl?lang=en'); return false;" style="color:#005596;">Final thesis assignment</a></div>
+          <div><a href="#" onclick="navigateToUrl('https://insis.vse.cz/auth/student/odevzdavarna.pl?lang=en'); return false;" style="color:#005596;">Coursework submissions</a></div>
+        </div>
+        <div>
+          <h3 style="font-size:16px; color:#004b87; margin-bottom:8px;">Portlets in InSIS (/auth/system/portlety.pl)</h3>
+          <p style="font-size:12px; color:#475569; margin-bottom:12px;">
+            This application enables users to place pre-prepared portlets into InSIS pages (e.g. pinning the <strong>Navigation bar for students</strong> sidebar).
+          </p>
+          <div style="background:#eff6ff; border:1px solid #93c5fd; border-radius:4px; padding:10px 12px; font-size:12px; color:#1e40af; margin-bottom:14px;">
+            <strong>Recovery Note:</strong> If a configured portlet causes display issues, log in via <code>https://insis.vse.cz/quick</code> to remove the non-functional portlet.
+          </div>
+          <table class="insis-study-table" style="margin-bottom:14px;">
+            <thead><tr><th>Portlet</th><th>Position</th><th>Status</th><th>Changed by</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Navigation bar for students</strong></td>
+                <td>Basic &ndash; to the left from the page content</td>
+                <td><span style="color:#16a34a; font-weight:700;">Active</span></td>
+                <td>${safeUser}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px; color:#64748b;">
+            <em>Note: Scholarships, Study Financing &amp; Bank Accounts, Electronic Confirmation of Study, and Contact Centre are not listed in this sidebar &mdash; open them via Student's portal or ask VŠE Buddy Bot.</em>
+          </p>
+        </div>
+      </div>
+    `;
+  } else if (path.includes("dok_server")) {
+    html = `
+      <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">Official University Document Server (/dok_server/)</h3>
+      <p style="font-size:12px; color:#475569; margin-bottom:14px;">
+        Public repository of VŠE Study and Examination Regulations, Rector's Measures, Faculty Decrees, and Tuition Schedules.
+      </p>
+      <ul style="font-size:12px; line-height:1.8; margin-left:20px; color:#1e293b;">
+        <li><strong>Study and Examination Regulations of VŠE</strong> (ECTS credit voucher system, exam retakes, § 47b thesis publication)</li>
+        <li><strong>Disciplinary Code &amp; Academic Integrity Rules</strong> (Plagiarism &amp; AI disclosure rules)</li>
+        <li><strong>Scholarship Regulations of VŠE</strong> (Merit &amp; Accommodation scholarship rules)</li>
+      </ul>
+    `;
   } else {
     html = `
       <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:18px;">
@@ -857,10 +932,20 @@ function handlePublicOutOfScope(title, url) {
 function setupPublicLinkInterceptors() {
   const container = document.getElementById("view-public-home");
   if (!container) return;
+  const modeledIds = new Set([
+    "pub-link-login",
+    "pub-link-eapp",
+    "pub-link-preenroll",
+    "pub-link-catalogue",
+    "pub-link-plans",
+    "pub-link-timetables",
+    "pub-link-schedule",
+    "pub-link-first-login",
+  ]);
   const links = container.querySelectorAll("a");
   links.forEach((a) => {
-    // Keep primary login link completely functional
-    if (a.id === "pub-link-login") return;
+    // Keep primary login and modeled public portal modules directly navigable
+    if (modeledIds.has(a.id)) return;
     const title = a.textContent.trim();
     const onclickStr = a.getAttribute("onclick") || "";
     let url = "https://insis.vse.cz/?lang=en";
@@ -1002,7 +1087,7 @@ function openSearchModal() {
     } else if ((ql.includes("credit") || ql.includes("voucher")) && session.loggedIn) {
       navigateToUrl("https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en");
     } else if (ql.includes("rozvrh") || ql.includes("timetable")) {
-      navigateToUrl("https://insis.vse.cz/katalog/rozvrhy.pl?lang=en");
+      navigateToUrl("https://insis.vse.cz/katalog/rozvrhy_view.pl?lang=en");
     } else {
       navigateToUrl("https://insis.vse.cz/katalog/?lang=en");
     }
@@ -1037,8 +1122,9 @@ function updateBotContextUI() {
     if (chipsBox) {
       if (chatHistory.length > 0) {
         chipsBox.innerHTML = `
+          <button class="mini-chip" onclick="sendBotPrompt('How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?')">🏢 Book Dorm (ISKaM)</button>
+          <button class="mini-chip" onclick="sendBotPrompt('What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?')">🛂 Visa &amp; Police</button>
           <button class="mini-chip" onclick="showInteractiveChecklist()">📋 Arrival Checklist</button>
-          <button class="mini-chip" onclick="sendBotPrompt('How to find accomodation')">🏢 Dorms &amp; Housing</button>
         `;
       } else {
         chipsBox.innerHTML = "";
@@ -1058,12 +1144,13 @@ function updateBotContextUI() {
         if (currentPageKey === "master_thesis") {
           chipsBox.innerHTML = `
             <button class="mini-chip" onclick="sendBotPrompt('What do the 3 red X icons on this page mean for my thesis?')">❓ 3 Red Xs</button>
-            <button class="mini-chip" onclick="sendBotPrompt('How do I submit errata for my Master\\'s thesis on this page?')">📝 Submit Errata</button>
+            <button class="mini-chip" onclick="sendBotPrompt('Where do I submit errata for my Master\\'s thesis in InSIS?')">📝 Submit Errata</button>
           `;
         } else {
           chipsBox.innerHTML = `
-            <button class="mini-chip" onclick="sendBotPrompt('how many credit vouchers i have left')">📊 My Vouchers</button>
-            <button class="mini-chip" onclick="sendBotPrompt('Where is the nearest washroom in Rajská Building?')">🚽 Nearest WC</button>
+            <button class="mini-chip" onclick="sendBotPrompt('How many credit vouchers and credits do I have left?')">📊 My Vouchers</button>
+            <button class="mini-chip" onclick="sendBotPrompt('How do I apply for the accommodation scholarship in InSIS?')">💰 Housing Grant</button>
+            <button class="mini-chip" onclick="sendBotPrompt('How do I enable the Navigation bar for students portlet in InSIS?')">🧭 Student Sidebar</button>
           `;
         }
       } else {
@@ -1104,20 +1191,21 @@ function renderPopoverTopics() {
   let items = [];
   if (!session.loggedIn) {
     items = [
-      { icon: "🛂", text: "Foreign Police 3-day registration rule", prompt: "What are the visa and 3-day Foreign Police registration rules for international students?" },
-      { icon: "🏢", text: "How to find accommodation & dorms (ISKaM)", prompt: "How do I find accommodation in VŠE dormitories or private flats in Prague?" },
-      { icon: "📝", text: "How does the E-application form work?", prompt: "How do admissions and the E-application work at VŠE?" },
-      { icon: "📚", text: "Where can I view the course catalogue?", prompt: "Where can I view the course catalogue and syllabi?" },
-      { icon: "📋", text: "Open Interactive Arrival Checklist", action: "showInteractiveChecklist" }
+      { icon: "🏢", text: "VŠE Dormitory Booking, Deposit & Campuses (ISKaM)", prompt: "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?" },
+      { icon: "🛂", text: "Visa, Health Insurance (pVZP) & 3-Day Police Rules", prompt: "What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?" },
+      { icon: "📝", text: "Submit VŠE E-Application Form (No Login)", prompt: "How do I submit the E-application form to study at VŠE?" },
+      { icon: "🎓", text: "Foreign Diploma Recognition (Nostrification — 900 CZK)", prompt: "How does foreign diploma recognition (nostrification) work at VŠE?" },
+      { icon: "📚", text: "Browse Public Course Catalogue & Study Plans", prompt: "Can I browse the Course catalogue and Study plans without an account?" },
+      { icon: "📋", text: "Open Interactive Pre-Arrival & Onboarding Checklist", action: "showInteractiveChecklist" }
     ];
   } else {
     items = [
-      { icon: "📊", text: "How many credit vouchers I have left", prompt: "how many credit vouchers i have left" },
-      { icon: "📗", text: "What do the 3 red Xs mean on Thesis page?", prompt: "What do the 3 red Xs mean on my Master's Thesis page and how do I submit errata?" },
-      { icon: "📄", text: "How to get Confirmation of Study in InSIS", prompt: "Where do I download electronic confirmation of study?" },
-      { icon: "🏢", text: "How to find accommodation & dormitory ISKaM", prompt: "How do I find accommodation in VŠE dormitories or private flats in Prague?" },
-      { icon: "🚽", text: "Find nearest washroom in Rajská Building", prompt: "Where is the nearest washroom in Rajská Building?" },
-      { icon: "📋", text: "Open Interactive Arrival Checklist", action: "showInteractiveChecklist" }
+      { icon: "📊", text: "Check My Remaining Credit Vouchers & ECTS Progress", prompt: "How many credit vouchers and credits do I have left?" },
+      { icon: "📗", text: "Complete 4-Stage Master's Thesis Workflow & § 47b Errata", prompt: "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata." },
+      { icon: "🧭", text: "Enable 'Navigation bar for students' Sidebar Portlet", prompt: "How do I enable the Navigation bar for students portlet in InSIS?" },
+      { icon: "💰", text: "Apply for Accommodation Scholarship in InSIS", prompt: "How do I apply for the accommodation scholarship in InSIS?" },
+      { icon: "🏢", text: "VŠE Dormitory Booking, Rent (20th) & ISKaM Guide", prompt: "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?" },
+      { icon: "📋", text: "Open Interactive Student Onboarding Checklist", action: "showInteractiveChecklist" }
     ];
   }
   list.innerHTML = items.map((item) => {
@@ -1243,24 +1331,16 @@ async function showInteractiveChecklist(
   container.scrollTop = container.scrollHeight;
 }
 
-// Client-side instant query cache
-const botClientCache = new Map();
-
 async function submitBotMessage() {
   const inputEl = document.getElementById("bot-input-field");
   const query = inputEl.value.trim();
   if (!query) return;
-
   inputEl.value = "";
   toggleTopicsPopover(false);
-
-  // If initial hero container is present, clean it up for conversation flow
   const heroEl = document.querySelector(".bot-hero-container");
   if (heroEl) heroEl.remove();
-
   appendBotBubble("user", query);
   chatHistory.push({ role: "user", content: query });
-
   const session = getLoginSession();
   const userContext = {
     logged_in: session.loggedIn,
@@ -1270,24 +1350,11 @@ async function submitBotMessage() {
     page_title: currentPageTitle,
     page_url: currentPageUrl,
   };
-
-  const cacheKey = `${query.toLowerCase().trim()}:${session.loggedIn}:${isPersonalisedEnabled}`;
-  if (botClientCache.has(cacheKey)) {
-    const cachedData = botClientCache.get(cacheKey);
-    appendBotBubble("assistant", formatBotMarkdown(cachedData.answer));
-    chatHistory.push({ role: "assistant", content: cachedData.answer });
-    handleContextualPageActions(query, session.loggedIn);
-    updateBotContextUI();
-    const container = document.getElementById("bot-messages-area");
-    container.scrollTop = container.scrollHeight;
-    return;
-  }
-
   const loadingBubble = appendBotBubble(
     "assistant",
-    '<div style="display:flex; align-items:center; gap:8px;"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div><span style="font-size:11px; color:#64748b; font-style:italic;">Searching verified InSIS knowledge base...</span></div>'
+    '<div style="display:flex; align-items:center; gap:8px;"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div><span style="font-size:11px; color:#64748b; font-style:italic;">Generating live Gemini answer from VŠE knowledge base...</span></div>',
+    true
   );
-
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -1298,33 +1365,26 @@ async function submitBotMessage() {
         user_context: userContext,
       }),
     });
-
     if (response.ok) {
       const data = await response.json();
-      botClientCache.set(cacheKey, data);
       loadingBubble.innerHTML = formatBotMarkdown(data.answer);
       chatHistory.push({ role: "assistant", content: data.answer });
-      handleContextualPageActions(query, session.loggedIn);
+      handleContextualPageActions(query, session.loggedIn, data.answer);
     } else {
       throw new Error("API call failed");
     }
   } catch (err) {
-    const fallback = getContextualFallback(query, session.loggedIn);
-    loadingBubble.innerHTML = formatBotMarkdown(fallback);
-    chatHistory.push({ role: "assistant", content: fallback });
-    handleContextualPageActions(query, session.loggedIn);
+    const errMsg = "⚠️ **API Rate Limit or Connection Issue:** The live Google Gemini API is temporarily busy. Please wait a few seconds and try your question again.";
+    loadingBubble.innerHTML = formatBotMarkdown(errMsg);
   }
-
   updateBotContextUI();
-
   const container = document.getElementById("bot-messages-area");
   container.scrollTop = container.scrollHeight;
 }
-
-function handleContextualPageActions(query, loggedIn) {
+function handleContextualPageActions(query, loggedIn, answerText = "") {
   const ql = query.toLowerCase();
 
-  // 1. NO-LOGIN PUBLIC USER ACTIONS (Highlights & opens PUBLIC InSIS items without forcing login!)
+  // Visual co-pilot highlighting on the active InSIS page without appending duplicate link chips
   if (!loggedIn) {
     if (
       ql.includes("apply") ||
@@ -1335,9 +1395,6 @@ function handleContextualPageActions(query, loggedIn) {
       if (currentPageKey === "public_home") {
         highlightElementOnPage(["pub-link-eapp", "pub-link-preenroll"]);
       }
-      appendContextLink("📝 Open Public E-Application Form (/prihlaska/)", () => {
-        navigateToUrl("https://insis.vse.cz/prihlaska/?lang=en");
-      });
     } else if (
       ql.includes("course") ||
       ql.includes("catalogue") ||
@@ -1347,32 +1404,19 @@ function handleContextualPageActions(query, loggedIn) {
       if (currentPageKey === "public_home") {
         highlightElementOnPage(["pub-link-catalogue", "pub-link-plans"]);
       }
-      appendContextLink("📚 Open Public Course Catalogue (/katalog/)", () => {
-        navigateToUrl("https://insis.vse.cz/katalog/?lang=en");
-      });
     } else if (ql.includes("timetable") || ql.includes("schedule") || ql.includes("calendar")) {
       if (currentPageKey === "public_home") {
         highlightElementOnPage(["pub-link-schedule", "pub-link-timetables"]);
       }
-      appendContextLink("📅 Open Public Academic Schedule", () => {
-        navigateToUrl("https://insis.vse.cz/harmonogram/harmonogram.pl?lang=en");
-      });
     } else if (ql.includes("first log") || ql.includes("password") || ql.includes("otp") || ql.includes("log in")) {
       if (currentPageKey === "public_home") {
         highlightElementOnPage(["pub-link-first-login", "pub-link-login"]);
       }
-      appendContextLink("🔑 Open First Log In Instructions (/navod/)", () => {
-        navigateToUrl("https://insis.vse.cz/navod/?lang=en");
-      });
-    } else if (ql.includes("visa") || ql.includes("police") || ql.includes("dorm") || ql.includes("arrive")) {
-      appendContextLink("📋 Open Tailored Pre-Arrival Checklist", () => {
-        showInteractiveChecklist();
-      });
     }
     return;
   }
 
-  // 2. LOGGED-IN STUDENT ACTIONS
+  // Logged-in visual highlights on the active Master's Thesis page
   if (ql.includes("red x") || ql.includes("3 red")) {
     if (currentPageKey === "master_thesis") {
       highlightElementOnPage([
@@ -1381,36 +1425,16 @@ function handleContextualPageActions(query, loggedIn) {
         "action-submit-thesis",
       ]);
     }
-  } else if (ql.includes("errata")) {
-    if (currentPageKey === "master_thesis") {
-      highlightElementOnPage("action-errata");
-    } else {
-      appendContextLink("📜 Open Master's Thesis & Errata Page", () => {
-        navigateToUrl("https://insis.vse.cz/auth/student/zp.pl?lang=en");
-      });
-    }
-  } else if (ql.includes("thesis")) {
-    if (currentPageKey !== "master_thesis") {
-      appendContextLink("📗 Open Master's Thesis in InSIS", () => {
-        navigateToUrl("https://insis.vse.cz/auth/student/zp.pl?lang=en");
-      });
-    }
-  } else if (ql.includes("voucher") || ql.includes("credit")) {
-    appendContextLink("📊 Open Credit Voucher Check (120/144)", () => {
-      navigateToUrl("https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en");
-    });
-  } else if (ql.includes("confirm") && ql.includes("study")) {
-    appendContextLink("📄 Open Electronic Confirmation of Study", () => {
-      navigateToUrl("https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en");
-    });
+  } else if (ql.includes("errata") && currentPageKey === "master_thesis") {
+    highlightElementOnPage("action-errata");
   }
 }
 
-function appendBotBubble(role, text) {
+function appendBotBubble(role, text, isRawHtml = false) {
   const container = document.getElementById("bot-messages-area");
   const bubble = document.createElement("div");
   bubble.className = `bot-msg-bubble ${role}`;
-  bubble.innerHTML = formatBotMarkdown(text);
+  bubble.innerHTML = isRawHtml ? text : (role === "user" ? escapeHtml(text) : formatBotMarkdown(text));
   container.appendChild(bubble);
   container.scrollTop = container.scrollHeight;
   return bubble;
@@ -1434,14 +1458,19 @@ function appendContextLink(label, actionFn) {
 
 function formatBotMarkdown(text) {
   if (!text) return "";
-
-  let formatted = text;
+  let formatted = text.replace(/\r\n/g, "\n");
   let sourcesHtml = "";
-
-  // 1. Extract source citations and transform them into sleek badge pills
+  // 0. Unwrap any backticks directly surrounding URLs so backticks never get consumed by URL tokens
+  formatted = formatted.replace(/`(https?:\/\/[^`\s]+)`/g, "$1");
+  // 1. Extract source citations and transform them into sleek badge pills (skipping URLs already in the body)
   const sourcesMatch = formatted.match(/(?:\n|^)\*\*Sources:\*\*\s*([\s\S]*)$/i);
   if (sourcesMatch) {
     formatted = formatted.substring(0, sourcesMatch.index).trim();
+    const bodyUrls = new Set(
+      Array.from(formatted.matchAll(/https?:\/\/[^\s<\]\)`"']+/g)).map((m) =>
+        m[0].replace(/[.,;]+$/, "").replace(/\/+$/, "")
+      )
+    );
     const sourcesRaw = sourcesMatch[1].trim();
     const sourceLinks = [];
     const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
@@ -1449,6 +1478,9 @@ function formatBotMarkdown(text) {
     while ((m = linkRegex.exec(sourcesRaw)) !== null) {
       const label = escapeHtml(m[1]);
       const url = m[2];
+      if (bodyUrls.has(url.replace(/\/+$/, ""))) {
+        continue;
+      }
       const safeUrl = url.replace(/'/g, "\\'");
       if (url.startsWith("https://insis.vse.cz")) {
         sourceLinks.push(`<a class="source-pill-link insis-src" href="${url}" onclick="navigateToUrl('${safeUrl}'); return false;"><span class="src-icon">🏛️</span><span>${label}</span></a>`);
@@ -1457,62 +1489,75 @@ function formatBotMarkdown(text) {
       }
     }
     if (sourceLinks.length > 0) {
-      sourcesHtml = `<div class="bot-sources-list"><span class="bot-sources-header">Verified Sources & References:</span>${sourceLinks.join("")}</div>`;
+      sourcesHtml = `<div class="bot-sources-list"><span class="bot-sources-header">Verified Official Sources</span>${sourceLinks.join("")}</div>`;
     }
   }
-
-  // Token store to isolate HTML and prevent any nested/double regex mangling
+  // Token store to isolate HTML links/buttons and prevent nested regex collisions
   const tokens = [];
   function saveToken(htmlSnippet) {
     const id = tokens.length;
     tokens.push(htmlSnippet);
     return `%%BOT_TOKEN_${id}%%`;
   }
-
   // 2. Format standard markdown links: [Label](url) FIRST
   formatted = formatted.replace(
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     (match, label, url) => {
-      const isAction = label.includes("Go to") || label.includes("📂") || label.includes("🎓") || label.includes("📑") || label.includes("Jump to") || label.includes("View Full") || label.includes("Submission") || label.includes("Open") || label.includes("🚀");
+      const isAction =
+        label.includes("Go to") ||
+        label.includes("📂") ||
+        label.includes("🎓") ||
+        label.includes("📑") ||
+        label.includes("Jump to") ||
+        label.includes("View Full") ||
+        label.includes("Submission") ||
+        label.includes("Download ") ||
+        label.includes("Open ") ||
+        label.startsWith("Official ") ||
+        label.startsWith("VŠE ");
       const safeUrl = url.replace(/'/g, "\\'");
       const isInsis = url.startsWith("https://insis.vse.cz");
       const clickAttr = isInsis
         ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
         : `target="_blank" rel="noopener noreferrer"`;
-
       if (isAction) {
-        return saveToken(`<a class="bot-action-button" href="${url}" ${clickAttr}>${label}</a>`);
+        return saveToken(`<a class="bot-action-button" href="${url}" ${clickAttr}><span>${escapeHtml(label)}</span><span class="btn-ext-arrow">↗</span></a>`);
       }
-      const icon = isInsis ? "🏛️" : (url.includes("o365") || url.includes("microsoft") ? "💼" : (url.includes("mvcr") || url.includes("frs") ? "🛂" : (url.includes("map") ? "📍" : "🌐")));
+      const icon = isInsis ? "🏛️" : (url.includes("o365") || url.includes("microsoft") ? "💼" : (url.includes("mvcr") || url.includes("frs") || url.includes("ipc.gov") ? "🛂" : (url.includes("map") ? "📍" : "🌐")));
       const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
-      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${label}</span><span class="link-arrow">↗</span></a>`);
+      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>`);
     }
   );
-
-  // 3. Format bulleted/colon labeled URLs (e.g., "* InSIS Public Portal (English): https://insis.vse.cz/?lang=en [2]")
+  // 3. Format bulleted/colon labeled URLs
   formatted = formatted.replace(
-    /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>]+)(\s*\[[\d\s,]+\])?/g,
+    /(^|\n)([•\*\-]?\s*)(?:\*\*)?([^\n\:\*\[]+?)(?:\*\*)?:\s*(https?:\/\/[^\s<\]\)\<\>`"']+)(\s*\[[\d\s,]+\])?/g,
     (match, linePre, bullet, rawLabel, rawUrl, cite) => {
       const label = rawLabel.trim();
-      const safeUrl = rawUrl.replace(/'/g, "\\'");
-      const isInsis = rawUrl.startsWith("https://insis.vse.cz");
-      const icon = isInsis ? "🏛️" : (rawUrl.includes("o365") || rawUrl.includes("microsoft") ? "💼" : (rawUrl.includes("mvcr") || rawUrl.includes("frs") ? "🛂" : (rawUrl.includes("map") ? "📍" : "🌐")));
+      const cleanUrl = rawUrl.replace(/[.,;]+$/, "");
+      const safeUrl = cleanUrl.replace(/'/g, "\\'");
+      const isInsis = cleanUrl.startsWith("https://insis.vse.cz");
+      const icon = isInsis ? "🏛️" : (cleanUrl.includes("o365") || cleanUrl.includes("microsoft") ? "💼" : (cleanUrl.includes("mvcr") || cleanUrl.includes("frs") || cleanUrl.includes("ipc.gov") ? "🛂" : (cleanUrl.includes("map") ? "📍" : "🌐")));
       const clickAttr = isInsis
         ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
         : `target="_blank" rel="noopener noreferrer"`;
       const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
       const citeHtml = cite ? ` <span class="bot-cite-ref">${cite.trim()}</span>` : "";
-
-      const bulletPrefix = bullet.trim() ? `${bullet}` : "• ";
-      const linkSnippet = `<a class="${pillClass}" href="${rawUrl}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>`;
+      const bulletPrefix = bullet.trim() ? `${bullet}` : "- ";
+      const linkSnippet = `<a class="${pillClass}" href="${cleanUrl}" ${clickAttr} title="${escapeHtml(label)}"><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(label)}</span><span class="link-arrow">↗</span></a>`;
       return `${linePre}${bulletPrefix}${saveToken(linkSnippet)}${citeHtml}`;
     }
   );
-
-  // 4. Format any remaining bare URLs (never touches tokens since tokens don't contain 'https://')
+  // 4. Format any remaining bare URLs (never consuming backticks or trailing punctuation)
   formatted = formatted.replace(
-    /(https?:\/\/[^\s<\]\)\<\>]+)/g,
-    (match, url) => {
+    /(https?:\/\/[^\s<\]\)\<\>`"']+)/g,
+    (match, rawUrl) => {
+      let trailing = "";
+      let url = rawUrl;
+      const trailMatch = url.match(/([.,;:]+)$/);
+      if (trailMatch) {
+        trailing = trailMatch[1];
+        url = url.slice(0, -trailing.length);
+      }
       const safeUrl = url.replace(/'/g, "\\'");
       const isInsis = url.startsWith("https://insis.vse.cz");
       const icon = isInsis ? "🏛️" : "🌐";
@@ -1520,48 +1565,130 @@ function formatBotMarkdown(text) {
         ? `onclick="navigateToUrl('${safeUrl}'); return false;"`
         : `target="_blank" rel="noopener noreferrer"`;
       const pillClass = isInsis ? "bot-link-pill insis-link" : "bot-link-pill ext-link";
-      
-      let displayLabel = url.replace(/^https?:\/\/(?:www\.)?/, "");
+      let displayLabel = url.replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/+$/, "");
       if (displayLabel.length > 30) {
         displayLabel = displayLabel.substring(0, 28) + "…";
       }
-      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`);
+      return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`) + trailing;
     }
   );
-
-  // 5. Format inline citation brackets [1], [2], [1, 2] as neat citation tags
-  formatted = formatted.replace(
-    /(?<=\s|^)\[(\d+(?:\s*,\s*\d+)*)\](?=[,\.\s]|$)/g,
-    '<span class="bot-cite-ref">[$1]</span>'
-  );
-
-  // 5b. Format VŠE Insider Tip into a signature callout card
-  formatted = formatted.replace(
-    /💡 \*\*VŠE Insider Tip:\*\*\s*([\s\S]*?)(?=(?:\n\n[🇨🇿🚀\[]|$))/gi,
-    (match, tip) => {
-      return `<div class="vse-insider-callout tip-blue"><span class="vse-callout-badge">💡 VŠE Insider Tip</span><div class="vse-callout-text">${tip.trim()}</div></div>\n\n`;
+  // 5. Helper for inline typography (bold, italic, single-line inline tags, citations)
+  function formatInline(str) {
+    return str
+      .replace(/(?<=\s|^)\[(\d+(?:\s*,\s*\d+)*)\](?=[,\.\s]|$)/g, '<span class="bot-cite-ref">[$1]</span>')
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*([^\*\n]+)\*/g, "<em>$1</em>")
+      .replace(/`([^`\n]{1,50})`/g, '<span class="bot-inline-tag">$1</span>')
+      .replace(/`/g, "");
+  }
+  // 6. Structured, block-aligned layout parser (Headers, Numbered Steps, Sub-bullets, Callouts, Action Bars)
+  const rawLines = formatted.split("\n");
+  const blocks = [];
+  let currentStep = null;
+  function flushStep() {
+    if (currentStep) {
+      const subHtml = currentStep.subItems.length > 0
+        ? `<div class="bot-subbullet-list">${currentStep.subItems.join("")}</div>`
+        : "";
+      blocks.push(
+        `<div class="bot-step-row">` +
+          `<div class="bot-step-num">${currentStep.num}</div>` +
+          `<div class="bot-step-body">` +
+            `<div class="bot-step-title">${currentStep.titleHtml}</div>` +
+            `${subHtml}` +
+          `</div>` +
+        `</div>`
+      );
+      currentStep = null;
     }
-  );
-
-  // 6. Markdown typography formatting
-  formatted = formatted
-    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.*?)\*/g, "<em>$1</em>")
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/\n\n/g, "<br><br>")
-    .replace(/\n- /g, "<br>• ")
-    .replace(/\n\* /g, "<br>• ")
-    .replace(/\n/g, "<br>");
-
+  }
+  for (let i = 0; i < rawLines.length; i++) {
+    const rawLine = rawLines[i];
+    const trimmed = rawLine.trim();
+    if (!trimmed) {
+      continue;
+    }
+    // Check if this is the very first line and is a main title (**Title** or ### Title)
+    if (blocks.length === 0 && !currentStep && (
+      /^\*\*[^\*]+\*\*(?:\s*\(\*[^\)]+\*\))?$/.test(trimmed) ||
+      /^#{1,3}\s+/.test(trimmed)
+    )) {
+      const cleanTitle = trimmed.replace(/^#{1,3}\s+/, "");
+      blocks.push(
+        `<div class="bot-ans-header">` +
+          `<div class="bot-ans-verified-badge"><span class="v-dot">✓</span> Verified VŠE Guidance</div>` +
+          `<div class="bot-ans-title">${formatInline(cleanTitle)}</div>` +
+        `</div>`
+      );
+      continue;
+    }
+    // Check if line is purely action buttons (e.g., %%BOT_TOKEN_0%% • %%BOT_TOKEN_1%%)
+    if (/^(?:%%BOT_TOKEN_\d+%%(?:\s*[•·|\-]\s*)?)+$/.test(trimmed)) {
+      flushStep();
+      const btnTokens = trimmed.replace(/\s*[•·|\-]\s*/g, " ");
+      blocks.push(`<div class="bot-actions-bar">${btnTokens}</div>`);
+      continue;
+    }
+    // Check if line is a numbered step: "1. ..."
+    const stepMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+    if (stepMatch) {
+      flushStep();
+      currentStep = {
+        num: stepMatch[1],
+        titleHtml: formatInline(stepMatch[2]),
+        subItems: [],
+      };
+      continue;
+    }
+    // Check if line is an indented sub-bullet or continuation inside an active numbered step
+    const isIndented = /^\s{2,}/.test(rawLine);
+    const bulletMatch = trimmed.match(/^[\-\*•]\s+(.*)$/);
+    if (currentStep && (isIndented || bulletMatch)) {
+      const content = bulletMatch ? bulletMatch[1] : trimmed;
+      currentStep.subItems.push(
+        `<div class="bot-subbullet-row">` +
+          `<span class="bot-subbullet-dot">•</span>` +
+          `<div class="bot-subbullet-text">${formatInline(content)}</div>` +
+        `</div>`
+      );
+      continue;
+    }
+    // Top-level bullet item: "- ..." or "• ..."
+    if (bulletMatch) {
+      flushStep();
+      blocks.push(
+        `<div class="bot-bullet-row">` +
+          `<span class="bot-bullet-dot">•</span>` +
+          `<div class="bot-bullet-text">${formatInline(bulletMatch[1])}</div>` +
+        `</div>`
+      );
+      continue;
+    }
+    // Italicized note / disclaimer line: "*Note: ...*" or "*Please confirm...*"
+    if (/^\*[^\*]+\*$/.test(trimmed)) {
+      flushStep();
+      blocks.push(`<div class="bot-note-callout">${formatInline(trimmed)}</div>`);
+      continue;
+    }
+    // Section sub-heading: "### Heading" or standalone "**Heading**"
+    if (/^#{1,3}\s+/.test(trimmed) || /^\*\*[^\*]+\*\*$/.test(trimmed)) {
+      flushStep();
+      const cleanSub = trimmed.replace(/^#{1,3}\s+/, "");
+      blocks.push(`<div class="bot-section-subheading">${formatInline(cleanSub)}</div>`);
+      continue;
+    }
+    // Standard paragraph
+    flushStep();
+    blocks.push(`<div class="bot-paragraph">${formatInline(trimmed)}</div>`);
+  }
+  flushStep();
+  let finalHtml = `<div class="bot-structured-response">${blocks.join("")}</div>`;
   // 7. Safely restore all link tokens without risk of re-processing
-  formatted = formatted.replace(/%%BOT_TOKEN_(\d+)%%/g, (match, id) => {
+  finalHtml = finalHtml.replace(/%%BOT_TOKEN_(\d+)%%/g, (match, id) => {
     return tokens[parseInt(id, 10)] || "";
   });
-
-  return formatted + sourcesHtml;
+  return finalHtml + sourcesHtml;
 }
-
 function handleAssignmentUpload(courseCode, fileInputId, statusSpanId) {
   const input = document.getElementById(fileInputId);
   const status = document.getElementById(statusSpanId);
@@ -1580,7 +1707,7 @@ function handleAssignmentUpload(courseCode, fileInputId, statusSpanId) {
 }
 
 function downloadDeadlinesIcs() {
-  const icsContent = 
+  const icsContent =
     "BEGIN:VCALENDAR\r\n" +
     "VERSION:2.0\r\n" +
     "PRODID:-//VSE Prague//Coursework Deadlines//EN\r\n" +
@@ -1611,138 +1738,6 @@ function downloadDeadlinesIcs() {
   a.click();
   document.body.removeChild(a);
   alert("VSE_Semester_Deadlines.ics downloaded! You can import this file directly into Google Calendar, Apple Calendar, or Outlook.");
-}
-
-function getContextualFallback(query, loggedIn) {
-  const q = query.toLowerCase();
-  if (q.includes("assignment") || q.includes("homework") || q.includes("deadline") || q.includes("due") || q.includes("submission") || q.includes("odevzdavarna")) {
-    if (loggedIn) {
-      return (
-        "**Upcoming Coursework Assignments for WS 2026/2027 (2 urgent)**:\n\n" +
-        "- 🔴 **4IT445 Advanced Data Analytics**: *Milestone 2 - Machine Learning Pipeline Report* (25 pts)\n" +
-        "  **Due**: Nov 15, 2026 (23:59) • 3 days left\n" +
-        "  [📂 Go to 4IT445 Submission Page](https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4IT445&lang=en)\n\n" +
-        "- 🟡 **4SA421 Information Systems Management**: *Enterprise Architecture Case Study* (30 pts)\n" +
-        "  **Due**: Nov 22, 2026 (23:59) • 10 days left\n" +
-        "  [📂 Go to 4SA421 Submission Page](https://insis.vse.cz/auth/student/odevzdavarna.pl?course=4SA421&lang=en)\n\n" +
-        "- 🎓 **Master's Thesis Project**: *Final Abstracts & Full-Text PDF Upload*\n" +
-        "  **Due**: Nov 30, 2026 (23:59) • Thesis Requirement (§ 47b)\n" +
-        "  [🎓 Go to Master's Thesis Submission Area](https://insis.vse.cz/auth/student/zp.pl?lang=en)\n\n" +
-        "*(2 more assignments due in December)*\n\n" +
-        "<button class=\"bot-action-secondary-btn\" onclick=\"downloadDeadlinesIcs()\">📅 Add Deadlines to Google/Apple Calendar (.ics)</button>"
-      );
-    } else {
-      return (
-        "**InSIS Coursework Submissions (Odevzdávárna)**:\n\n" +
-        "At VŠE, student assignments and seminar papers are submitted electronically in InSIS under:\n" +
-        "**Student's Portal ➔ Coursework submissions (Odevzdávárna)** (`/auth/student/odevzdavarna.pl`).\n\n" +
-        "- Each enrolled course provides dedicated submission drop-boxes with instructions, accepted formats (.pdf, .zip), and file size limits.\n" +
-        "- Once uploaded, InSIS generates a submission timestamp and protocol.\n\n" +
-        "💡 *To view your personal active assignments and direct submission buttons, please log in with your student credentials using the button above.*"
-      );
-    }
-  } else if (q.includes("credit") || q.includes("voucher") || q.includes("left") || q.includes("remaining") || q.includes("progress")) {
-    if (loggedIn) {
-      return (
-        "**Degree Progress & Credit Breakdown (ISM Master's)**:\n\n" +
-        "- 📊 **Degree Target**: **120 ECTS** (Master in Information Systems Management)\n" +
-        "- ✅ **Credits Earned**: **90 ECTS** (75% completed)\n" +
-        "- ⏳ **Enrolled This Semester**: **24 ECTS** across 4 courses in progress\n" +
-        "- 🎯 **Remaining After Current Term**: **Only 6 ECTS!** (Master's Thesis & State Final Exam)\n" +
-        "- 🛡️ **Credit Vouchers Safety**: You have **120 spare vouchers left** (out of 144 initial). Even if you were to retake a course, your voucher safety buffer is completely safe.\n\n" +
-        "[📑 View Full E-Study Record in InSIS](https://insis.vse.cz/auth/student/studium.pl?lang=en)"
-      );
-    } else {
-      return (
-        "**Master's Credit Voucher System at VŠE**:\n\n" +
-        "- Master's students receive **144 vouchers** for a 120 ECTS degree (24 extra vouchers buffer).\n" +
-        "- You must earn at least **9 ECTS** in your first semester, or **20 ECTS** across two consecutive semesters to maintain enrollment.\n\n" +
-        "💡 *To view your individual earned credits and remaining voucher balance, please log in with your student account.*"
-      );
-    }
-  } else if (
-    (q.includes("benefit") || q.includes("stipend") || q.includes("grant") || q.includes("scholarship")) &&
-    (q.includes("accomodation") || q.includes("accommodation") || q.includes("housing") || q.includes("living") || q.includes("ubytov"))
-  ) {
-    return (
-      "### 🧭 VŠE InSIS Navigator • Finances & Scholarships\n\n" +
-      "📍 **Route Stepper:**\n" +
-      "`Personal administration` ➔ `Financing of study and scholarships` ➔ `Scholarships (Žádosti o stipendia)`\n\n" +
-      "📋 **Action Guide:**\n" +
-      "1. Direct Shortcut (Universal 1-Click): Click the direct link below while logged in to jump straight to the application form.\n" +
-      "2. Manual Navigation (Universal): In the top row, click **My College (Moje studium)** → **Student's portal** → locate **Scholarships (Žádosti o stipendia)**.\n" +
-      "3. Alternative: If active on your dashboard tiles, click **Financing of study and scholarships** → **Scholarships (Žádosti o stipendia)**.\n" +
-      "4. Select **Accommodation scholarship (Žádost o ubytovací stipendium)** and complete the online application.\n" +
-      "5. Register your active Czech bank account under **Student Study Financing, Bank Accounts & Variable Symbol** (`/auth/financovani/index.pl`) so quarterly payouts can be deposited.\n\n" +
-      "💡 **VŠE Insider Tip:**\n" +
-      "Accommodation Scholarship (Ubytovací stipendium) is a cash grant deposited directly into your Czech bank account. It is completely separate from dormitory room bookings in ISKaM. You MUST register a Czech bank account in InSIS to receive payouts.\n\n" +
-      "🇨🇿 **Official InSIS Term:** `Žádosti o stipendia a ubytovací stipendium`\n\n" +
-      "[🚀 Open Scholarships & Accommodation Grant Application (Žádosti o stipendia) in InSIS](https://insis.vse.cz/auth/stipendia/?lang=en)"
-    );
-  } else if (
-    q.includes("general quer") || q.includes("general appl") || q.includes("contact centre") ||
-    q.includes("contact center") || q.includes("kontaktn") || q.includes("searching for sol") ||
-    q.includes("search for sol") || q.includes("uradov") || q.includes("úřadov")
-  ) {
-    return (
-      "**How to Navigate to Contact Centre & Submit a General Query in InSIS**:\n\n" +
-      "**Breadcrumb Trail:**\n" +
-      "Personal administration > Contact centre > Searching for solution > General application/query\n\n" +
-      "**Step-by-step instructions:**\n" +
-      "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n" +
-      "2. In the eAgenda section, click 'Contact centre' (Kontaktní centrum).\n" +
-      "3. Click on the 'Searching for solution' tab.\n" +
-      "4. Browse the topic list on the left (Registration and Enrollment, Scholarships, Special Needs, Study Abroad, Study Issues) or click the prominent 'General application/query' button.\n" +
-      "5. Fill in the subject and message, attach any required documents, and submit.\n" +
-      "6. Track responses and status under the 'My queries' tab.\n\n" +
-      "[🏛️ Open Contact Centre: Searching for Solution & General Application / Query](https://insis.vse.cz/auth/eagenda/kontaktni_centrum.pl?lang=en)"
-    );
-  } else if (q.includes("errata") || (q.includes("thesis") && (q.includes("submit") || q.includes("upload") || q.includes("odevzd")))) {
-    return (
-      "**How to Navigate to Final Thesis Submission & Errata in InSIS**:\n\n" +
-      "**Breadcrumb Trail:**\n" +
-      "Personal administration > Student's portal > Final thesis > Editing application > Insert errata (Vložit errata)\n\n" +
-      "**Step-by-step instructions:**\n" +
-      "1. Open Student's portal > Final thesis (/auth/student/zp.pl).\n" +
-      "2. Under the 'Display and download files' section, check 'Instructions for submission process of final thesis' and 'Approval of assignment'.\n" +
-      "3. Under 'Editing application', you have 4 actions:\n" +
-      "   - 'Insert additional information' (purple plus): English & Czech abstracts/keywords.\n" +
-      "   - 'Insert the thesis and the appendices' (paperclip): PDF/A upload.\n" +
-      "   - 'Thesis submission' (green arrow): final irreversible submission.\n" +
-      "   - 'Insert errata (Vložit errata)' (dashed orange border): upload post-defense corrective PDF (§ 47b).\n" +
-      "4. Click 'Insert errata (Vložit errata)' to submit your errata protocol.\n\n" +
-      "[🏛️ Open Final Thesis Workspace](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
-    );
-  } else if (q.includes("accomodation") || q.includes("accommodation") || q.includes("dorm") || q.includes("flat") || q.includes("housing")) {
-    return (
-      "Accommodation at VŠE Prague:\n" +
-      "- **VŠE Dormitories (SUZ)**: Applied via the ISKaM system (dorms at Jarov, Blanice, Vltava, Rooseveltova).\n" +
-      "- **Accommodation Voucher/Confirmation**: SUZ issues the required housing proof for visa applications.\n" +
-      "- **Foreign Police Rule**: Dormitory administration automatically reports your stay. If living in private accommodation, you must register within 3 working days.\n\n" +
-      "[🏛️ Open Dormitory Housing Portal (ISKaM Link)](https://insis.vse.cz/auth/student/ubytovani.pl?lang=en)"
-    );
-  } else if (!loggedIn && (q.includes("apply") || q.includes("admission"))) {
-    return (
-      "You can apply without an InSIS student account right from this Public InSIS page:\n" +
-      "- Under **Admission procedure**, click **E-application form to study at VŠE** (`/prihlaska/?lang=en`).\n" +
-      "- Create a new electronic application, select your English programme, and pay the EUR 50 admission fee.\n" +
-      "- For questions, contact the Admission Office (`admissions@vse.cz`, RB 527)."
-    );
-  } else if (q.includes("thesis")) {
-    return (
-      "**How to Navigate to Final Thesis in InSIS**:\n\n" +
-      "**Breadcrumb Trail:**\n" +
-      "Personal administration > Student's portal > Final thesis > Display and download files\n\n" +
-      "**Step-by-step instructions:**\n" +
-      "1. Log into InSIS (https://insis.vse.cz/auth/?lang=en).\n" +
-      "2. Click 'Student's portal' (Portál studenta).\n" +
-      "3. In the study table, locate the 'Final thesis' column (icon with a green book) and click it.\n" +
-      "4. View 'Basic information about a final thesis' to check assignment status.\n" +
-      "5. Review 'Display and download files' and 'Editing application' icons.\n\n" +
-      "[🏛️ Open Final Thesis Workspace](https://insis.vse.cz/auth/student/zp.pl?lang=en)"
-    );
-  }
-  return "I found information from verified VŠE documentation. Click 💡 for suggested topics or explore any section on the Public InSIS page!";
 }
 
 // -----------------------------------------------------------------------------

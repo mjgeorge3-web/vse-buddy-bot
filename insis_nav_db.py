@@ -131,13 +131,13 @@ ROUTES_DATA = [
         "Final Thesis Registration & Assignment Confirmation",
         "Registrace a zadání závěrečné práce",
         "Final Thesis",
-        "/auth/student/diplomka.pl",
-        "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
-        "http://localhost:8502/auth/student/diplomka.pl",
+        "/auth/student/zp.pl",
+        "https://insis.vse.cz/auth/student/zp.pl?lang=en",
+        "http://localhost:8502/auth/student/zp.pl",
         "Personal administration > Student's portal > Final thesis > Display and download files",
-        "1. Log into InSIS (https://insis.vse.cz/auth/?lang=en).\n2. Click 'Student's portal'.\n3. In the study table, locate the 'Final thesis' column (icon with a green book) and click it.\n4. View 'Basic information about a final thesis' to check assignment status.\n5. Under 'Display and download files', click 'Instructions for submission process of final thesis' to verify deadlines and supervisor confirmation.",
+        "1. Log into InSIS and open **My College** → **Student's portal**.\n2. In your study row, click the **Final thesis** icon (green book, `/auth/student/zp.pl`) or browse **List of topics** (`/auth/student/temata_zp.pl`).\n3. Check **Basic information about a final thesis** to verify your supervisor and assignment status.\n4. Under **Display and download files**, open **Instructions for submission process of final thesis** to confirm faculty deadlines.",
         "Must be enrolled in degree programme; supervisor must confirm the assignment in InSIS before submission unlocks.",
-        "Assignment completeness status must show 'changes in assignment made by student have been confirmed by supervisor'. If not confirmed, submission icons remain locked.",
+        "Assignment completeness status must show 'confirmed by supervisor' before the 3 submission editing steps unlock.",
         "thesis registration, master thesis, bachelor thesis, assignment, diplomka, final thesis, supervisor approval, topic, zadani prace, display and download files, instructions for submission process of final thesis"
     ),
     (
@@ -146,13 +146,13 @@ ROUTES_DATA = [
         "Upload Final Thesis & Appendices (PDF/A)",
         "Odevzdání závěrečné práce a příloh",
         "Final Thesis",
-        "/auth/student/diplomka.pl",
-        "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
-        "http://localhost:8502/auth/student/diplomka.pl",
+        "/auth/student/zp.pl",
+        "https://insis.vse.cz/auth/student/zp.pl?lang=en",
+        "http://localhost:8502/auth/student/zp.pl",
         "Personal administration > Student's portal > Final thesis > Editing application > Thesis submission",
-        "1. Navigate to: Student's portal > Final thesis (/auth/student/diplomka.pl).\n2. Under 'Editing application', click 'Insert additional information' (purple plus icon) to enter English & Czech abstracts and keywords.\n3. Click 'Insert the thesis and the appendices' (paperclip icon) to upload the main thesis in PDF/A format and supplementary models/data ZIP under Appendices.\n4. Click 'Thesis submission' (green right arrow icon) to perform final irreversible submission.\n5. Under 'Display and download files', check 'Situation check' to confirm submission.",
-        "Both Czech and English abstracts and keywords must be filled. The file must comply with PDF/A standard. File size must not exceed 50 MB.",
-        "Once you click 'Thesis submission', the submission is final and cannot be edited by the student. Any subsequent updates require official § 47b Errata approval.",
+        "1. Open **My College** → **Student's portal** → **Final thesis** (`/auth/student/zp.pl`).\n2. Under **Editing application**, click **Insert additional information** to enter both English and Czech abstracts and keywords.\n3. Click **Insert the thesis and the appendices** to upload the full thesis in **PDF/A** format (plus optional ZIP data/code under Appendices).\n4. Click **Thesis submission** (green arrow) to lock your final electronic submission and trigger the Theses.cz originality check.",
+        "Both Czech and English abstracts and keywords must be filled. The file must comply with PDF/A standard (max 50 MB).",
+        "Once you click 'Thesis submission', the file is permanently locked. Any post-defense corrections must be uploaded separately via § 47b Errata.",
         "submit thesis, thesis submission, upload thesis, thesis upload, submit master thesis, submit bachelor thesis, final thesis submission, odevzdani diplomky, final thesis upload, pdf/a, abstract, keywords, submission deadline, editing application, insert additional information, insert the thesis and the appendices"
     ),
     (
@@ -161,13 +161,13 @@ ROUTES_DATA = [
         "Post-Defense Thesis Errata Submission (§ 47b)",
         "Vložení errat k obhájené práci (§ 47b)",
         "Final Thesis",
-        "/auth/student/diplomka.pl",
-        "https://insis.vse.cz/auth/student/diplomka.pl?lang=en",
-        "http://localhost:8502/auth/student/diplomka.pl",
+        "/auth/student/zp.pl",
+        "https://insis.vse.cz/auth/student/zp.pl?lang=en",
+        "http://localhost:8502/auth/student/zp.pl",
         "Personal administration > Student's portal > Final thesis > Editing application > Insert errata (Vložit errata)",
-        "1. Open Student's portal > Final thesis (/auth/student/diplomka.pl).\n2. Locate the 'Editing application' section at the bottom of the page.\n3. Click 'Insert errata (Vložit errata)' (icon with paperclip and pencil, highlighted with dashed orange border).\n4. Prepare a standalone PDF file documenting errata (corrections, typographical fixes) without altering original core findings.\n5. Upload the Errata PDF and click 'Submit Errata for Archival Review'.\n6. Retain the generated Errata Tracking Protocol number for your records.",
-        "Allowed only after the formal thesis defense has taken place pursuant to Czech Act No. 111/1998 Sb. § 47b.",
-        "Errata cannot rewrite the original thesis document; it is attached as an official separate corrective annex.",
+        "1. Open **My College** → **Student's portal** → **Final thesis** (`/auth/student/zp.pl`).\n2. Scroll to **Editing application** at the bottom of the page and click **Insert errata** (*Vložit errata*).\n3. Prepare a concise 1–2 page **PDF** listing page/line corrections (consult your thesis supervisor beforehand).\n4. Upload the Errata PDF and confirm submission so it is attached to your permanent thesis record in InSIS and Theses.cz.",
+        "Used after submission/defense pursuant to Czech Higher Education Act No. 111/1998 Sb. § 47b.",
+        "Errata does not overwrite the locked thesis PDF; it is published alongside your thesis as an official corrective annex.",
         "errata, insert errata, vlozit errata, vložit errata, thesis errata, post-defense corrections, 47b, opravy po obhajobe, thesis error fix, submit errata, post defense errata, where is errata"
     ),
     (
@@ -176,13 +176,13 @@ ROUTES_DATA = [
         "Course Registration & Enrollment (Zápis předmětů)",
         "Registrace a zápis předmětů",
         "Enrollment",
-        "/auth/student/prihlasovani.pl",
-        "https://insis.vse.cz/auth/student/prihlasovani.pl?lang=en",
-        "http://localhost:8502/auth/student/prihlasovani.pl",
+        "/auth/student/registrace.pl",
+        "https://insis.vse.cz/auth/student/registrace.pl?lang=en",
+        "http://localhost:8502/auth/student/registrace.pl",
         "Personal administration > My College > Student's portal > Registration/Enrollment",
-        "1. Go to InSIS > My College > Student's portal.\n2. In the studies table row, click the icon under 'Registration/Enrollment' (fountain pen writing).\n3. Select the upcoming academic semester (e.g., WS 2026/2027 or SS 2026/2027).\n4. Choose 'Add course by code or plan' (compulsory obligatory group, elective, or language).\n5. Add courses to your registration basket.\n6. During the enrollment round (zápis), confirm your final schedule timetable slots.\n7. Check credit voucher total (do not exceed your remaining voucher balance).",
-        "Enrollment occurs in strict time phases (Round 1 pre-registration, Round 2 enrollment by automated ranking, Round 3 open changes). Ensure tuition is paid.",
-        "Missing the registration deadline leaves you unable to enroll in compulsory courses. Remember you must earn at least 9 ECTS in your first semester and 20 ECTS per academic year.",
+        "1. Open **My College** → **Student's portal** and click **Registration/Enrollment** (`/auth/student/registrace.pl`).\n2. Select the upcoming semester and add compulsory (`oP`), specialization (`sP`), or elective (`vP`) courses to your registration basket.\n3. During your enrollment round (*zápis*), confirm concrete lecture/seminar timetable slots.\n4. Verify that total enrolled ECTS stays within your remaining credit voucher balance.",
+        "Enrollment runs in timed phases (Round 1 pre-registration, Round 2 automated allocation, Round 3 schedule adjustments).",
+        "You must earn at least 9 ECTS in your first semester and 20 ECTS per academic year to continue studies.",
         "course registration, zapis, enroll in courses, register classes, registration enrollment, add course, registration round, timetable slots"
     ),
     (
@@ -266,43 +266,43 @@ ROUTES_DATA = [
         "Tuition Fees, Bank Account & Variable Symbol",
         "Poplatky za studium, bankovní spojení a variabilní symbol",
         "Finances",
-        "/auth/student/poplatky.pl",
+        "/auth/financovani/index.pl",
         "https://insis.vse.cz/auth/financovani/index.pl?lang=en",
-        "http://localhost:8502/auth/student/poplatky.pl",
+        "http://localhost:8502/auth/financovani/index.pl",
         "Personal administration > Financing of study and scholarships > Student Study Financing, Bank Accounts & Variable Symbol",
-        "1. In InSIS, navigate to 'Personal administration'.\n2. In the 'Financing of study and scholarships' section, click 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl).\n3. Note down the mandatory payment parameters:\n   - Bank Account / IBAN: ČSOB account specified for your faculty\n   - Variable Symbol (VS): Your 8-digit InSIS student identification number\n   - Specific Symbol (SS): Faculty-specific fee identifier\n4. For international transfers, use SWIFT/BIC: CEKOCZPP and add VS into the payment narrative / reference field.",
+        "1. Open InSIS **Study Financing** (`/auth/financovani/index.pl`) or navigate via **My College** → **Student's portal**.\n2. Copy the mandatory payment details for your faculty:\n   - **Bank Account / IBAN** & **SWIFT/BIC** (`CEKOCZPP` for ČSOB international transfers)\n   - **Variable Symbol (VS)**: Your unique 8-digit InSIS student ID\n3. Always include your **Variable Symbol** so the automated clearing system pairs the payment to your account.",
         "Fee assessment is issued each semester for English-taught degree programmes according to the Dean's decree.",
-        "CRITICAL: Always specify the correct Variable Symbol (your student ID). Without the Variable Symbol, the automated VŠE clearing system cannot match the payment to your student account.",
+        "Always specify your 8-digit Variable Symbol (VS). Payments sent without a Variable Symbol cannot be automatically matched.",
         "tuition fee, pay tuition, bank account, variable symbol, variabilni symbol, iban, swift, school fees, csob, poplatky"
     ),
     (
         "TASK_CONTACT_CENTRE",
         "portal_eagenda",
-        "Contact Centre: Searching for Solution & General Application / Query",
-        "Kontaktní centrum – Hledání řešení a Obecná žádost / dotaz",
+        "Contact Centre & Document Office: General Application / Query",
+        "Kontaktní centrum a Úřadovna – Hledání řešení a Obecná žádost / dotaz",
         "Contact Centre & Official Queries",
-        "/auth/eagenda/kontaktni_centrum.pl",
-        "https://insis.vse.cz/auth/eagenda/kontaktni_centrum.pl?lang=en",
-        "http://localhost:8502/auth/eagenda/kontaktni_centrum.pl",
+        "/auth/uradovna/",
+        "https://insis.vse.cz/auth/uradovna/?lang=en",
+        "http://localhost:8502/auth/uradovna/",
         "Personal administration > Contact centre > Searching for solution > General application/query",
-        "1. Log into InSIS Personal administration.\n2. In the eAgenda section, click 'Contact centre' (Kontaktní centrum).\n3. Click on the 'Searching for solution' tab.\n4. Browse the topic list on the left (Registration and Enrollment, Scholarships, Special Needs, Study Abroad, Study Issues) or click the prominent 'General application/query' button.\n5. Fill in the subject and message, attach any required documents, and submit.\n6. Track responses and status under the 'My queries' tab.",
-        "Available to all registered students and applicants.",
-        "Use the Contact Centre for all official administrative applications and inquiries rather than emailing random departments.",
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **eAgenda**, open **Contact centre** (*Kontaktní centrum*) or **Document office** (*Úřadovna*, `/auth/uradovna/`).\n3. Open the **Searching for solution** tab and pick your topic, or click **General application/query**.\n4. Enter your subject and message, attach any supporting PDF documents, and submit.\n5. Track replies under **My queries**.",
+        "Available to all registered students.",
+        "Submit official study petitions and administrative inquiries here rather than emailing unmonitored addresses.",
         "general query, general querry, general application, general application/query, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, ask coordinator in insis, study issues, study abroad query, scholarship query, submit request, find query in insis, where to find general query, where to find general querry, where is general query, where is general querry, how to find general query, how to find general querry, general query in insis, general querry in insis"
     ),
     (
         "TASK_DORM_ISKAM",
         "portal_finances",
-        "Dormitory Housing Portal (ISKaM Link) & Accommodation",
-        "Ubytovací systém ISKaM a koleje",
+        "VŠE Dormitory Booking Portal (ISKaM)",
+        "Ubytovací systém ISKaM a koleje SÚZ VŠE",
         "Accommodation",
-        "/auth/student/ubytovani.pl",
-        "https://insis.vse.cz/auth/student/ubytovani.pl?lang=en",
-        "http://localhost:8502/auth/student/ubytovani.pl",
-        "Personal administration > Public information portal > Accommodation / ISKaM",
-        "1. Log into InSIS.\n2. On the main Personal Administration dashboard, locate 'Accommodation' or 'ISKaM login'.\n3. Click the external redirect to https://iskam-web.vse.cz.\n4. Log in using your InSIS credentials (username without @vse.cz or with VŠE single sign-on).\n5. In ISKaM, view room reservations, pay dorm deposit, sign contract, and download proof of accommodation for visa purposes.",
-        "Requires active InSIS credentials. Dormitory applications open during specific booking windows (June/July for autumn, November for spring).",
-        "ISKaM is a separate system from InSIS, but uses the same user credentials and centralized university database.",
+        "https://iskam-web.vse.cz/",
+        "https://iskam-web.vse.cz/",
+        "https://accommodation.vse.cz/",
+        "SÚZ VŠE Accommodation Portal > ISKaM Housing System (https://iskam-web.vse.cz/)",
+        "1. Open the VŠE **ISKaM** housing portal (`https://iskam-web.vse.cz/`) and sign in with your InSIS username and password.\n2. Submit your dormitory housing application during the intake window (Jarov, Blanice, Vltava, or Rooseveltova).\n3. Pay the refundable booking deposit (*kauce*) by card or bank transfer to confirm your room reservation.\n4. Request or download your signed **Proof of Accommodation** (*Doklad o zajištění ubytování*) for visa purposes.",
+        "Requires active VŠE InSIS credentials. Booking windows open in June/July for autumn and November for spring.",
+        "ISKaM (`https://iskam-web.vse.cz/`) is a dedicated housing portal separate from InSIS, operated by SÚZ VŠE (`https://accommodation.vse.cz/`).",
         "dormitory, dorms, iskam, student housing, koleje, room reservation, jarov, rooseveltova, dorm room, campus bed, suz housing"
     ),
     (
@@ -311,29 +311,29 @@ ROUTES_DATA = [
         "Change Password & Configure OTP Two-Factor Authentication",
         "Změna hesla a nastavení OTP autentizace",
         "Security",
-        "/auth/sprava/nastaveni.pl",
-        "https://insis.vse.cz/auth/sprava/nastaveni.pl?lang=en",
-        "http://localhost:8502/auth/sprava/nastaveni.pl",
+        "/auth/system/totp.pl",
+        "https://insis.vse.cz/auth/system/totp.pl?lang=en",
+        "http://localhost:8502/auth/system/totp.pl",
         "Personal administration > Information system set-up > Setting of authentication using one-time passwords (OTP)",
-        "1. In InSIS, navigate to 'Personal administration'.\n2. Find 'Information system set-up' or 'Adjustment of the information system'.\n3. To set up 2FA: Click 'Setting of authentication using one-time passwords (OTP)'.\n4. Scan QR code using Google Authenticator, Microsoft Authenticator, or Bitwarden.\n5. To change master password: Click 'User settings' > 'Change password'.\n6. The new password synchronizes with Eduroam Wi-Fi and Microsoft 365 within 15 minutes.",
-        "Passwords must be at least 12 characters long and contain uppercase, lowercase, numbers, and special symbols.",
-        "Changing your password updates InSIS, Office 365, and Eduroam. Remember to update Eduroam Wi-Fi profile on your phone/laptop after changing it.",
-        "change password, otp, two factor authentication, 2fa, mfa, eduroam password, reset password, authenticator app"
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **Information system set-up**, click **Setting of authentication using one-time passwords (OTP)** (`/auth/system/totp.pl`).\n3. Scan the QR code using Microsoft Authenticator or Google Authenticator and confirm the 6-digit code.\n4. To change your password, open **Adjustment of the information system** → **User settings** → **Change password**.",
+        "Passwords must be at least 12 characters long and include uppercase, lowercase, numbers, and symbols.",
+        "Changing your InSIS password also updates Microsoft 365 and campus eduroam Wi-Fi within ~15 minutes—remember to update saved Wi-Fi credentials on your phone and laptop.",
+        "change password, otp, two factor authentication, 2fa, mfa, eduroam password, reset password, authenticator app, totp"
     ),
     (
         "TASK_STUDY_RECORD_GRADES",
         "portal_student",
-        "Electronic Study Record & Grades (Index)",
-        "E-index a přehled známek",
+        "Electronic Study Record & Grades (E-výkaz o studiu)",
+        "E-výkaz o studiu a přehled známek",
         "Grades",
-        "/auth/student/znamky.pl",
-        "https://insis.vse.cz/auth/student/znamky.pl?lang=en",
-        "http://localhost:8502/auth/student/znamky.pl",
+        "/auth/student/arch_studia.pl",
+        "https://insis.vse.cz/auth/student/arch_studia.pl?lang=en",
+        "http://localhost:8502/auth/student/arch_studia.pl",
         "Personal administration > My College > Student's portal > E-study record",
-        "1. Go to InSIS > Student's portal.\n2. Click the 'E-study record' tab at the top.\n3. View list of courses completed and in-progress.\n4. Check recorded grades (1 - Výborně, 2 - Velmi dobře, 3 - Dobře, 4 - Nevyhověl, or Zap - Zápočet).\n5. Review Grade Point Average (weighted GPA) and cumulative ECTS earned.",
-        "Grades appear as soon as the examiner records them in InSIS.",
-        "Czech grading system is inverted compared to American/European GPA: 1 is the highest mark (A), 3 is the lowest passing mark (E), and 4 is fail (F).",
-        "grades, study record, index, znamky, gpa, transcripts, results, failed course, credits earned"
+        "1. Open **My College** → **Student's portal**.\n2. Click the **E-study record** tab (`/auth/student/arch_studia.pl`) for final grades and GPA, or **My lectures sheet** (`/auth/student/zaznamnik.pl`) for continuous semester points.\n3. Check recorded grades (`1` = Excellent, `2` = Very Good, `3` = Good, `4` = Fail, `Zap` = Unweighted Credit) and total earned ECTS.",
+        "Grades appear immediately once recorded by your examiner in InSIS.",
+        "VŠE uses an inverted 1–4 grading scale: 1 is the best grade (90–100%), 3 is the lowest passing grade (60–74%), and 4 is Fail (<60%).",
+        "grades, study record, index, znamky, gpa, transcripts, results, failed course, credits earned, arch_studia, zaznamnik"
     ),
     (
         "TASK_COURSE_CATALOGUE",
@@ -371,28 +371,28 @@ ROUTES_DATA = [
         "Course Evaluation by Students (Semester Feedback Survey)",
         "Studentská evaluace předmětů",
         "Surveys",
-        "/auth/anketa/anketa.pl",
-        "https://insis.vse.cz/auth/anketa/anketa.pl?lang=en",
-        "http://localhost:8502/auth/anketa/anketa.pl",
+        "/auth/anketa/",
+        "https://insis.vse.cz/auth/anketa/?lang=en",
+        "http://localhost:8502/auth/anketa/",
         "Personal administration > My College > Course evaluation by students",
-        "1. Open InSIS > Personal administration.\n2. In the 'My College' section, click 'Course evaluation by students'.\n3. Complete the anonymous questionnaire for each course taken in the semester.\n4. Rate course difficulty, teaching quality, and provide constructive textual comments.\n5. Submissions are strictly anonymous; teachers only see aggregated statistics after grades are recorded.",
-        "Open only during the exam period and first weeks of the subsequent semester.",
-        "Students who participate in course evaluations often receive earlier priority registration in subsequent enrollment rounds.",
-        "course evaluation, student feedback, survey, evaluace, rate professor, course rating, anonymous feedback"
+        "1. Open InSIS **Personal administration** → **My College** → **Course evaluation by students** (`/auth/anketa/`).\n2. Select each completed course and fill out the anonymous feedback questionnaire.\n3. Submit ratings on teaching quality and materials (instructors see aggregated results only after grades are finalized).",
+        "Open during the examination period and the opening weeks of the next semester.",
+        "Completing course evaluations often grants priority time slots in subsequent course registration rounds.",
+        "course evaluation, student feedback, survey, evaluace, rate professor, course rating, anonymous feedback, anketa"
     ),
     (
         "TASK_DOCUMENT_SERVER",
         "portal_personal",
-        "Document Server & Internal Regulations Repository",
+        "Document Server & Official University Regulations",
         "Dokumentový server VŠE",
         "Documents",
-        "/auth/dok_server/dok_server.pl",
-        "https://insis.vse.cz/auth/dok_server/dok_server.pl?lang=en",
-        "http://localhost:8502/auth/dok_server/dok_server.pl",
-        "Personal administration > Personal management > Document server",
-        "1. Log into InSIS > Personal administration.\n2. In the 'Personal management' box, click 'Document server'.\n3. Browse folders:\n   - University-wide directives & Dean's decrees\n   - Faculty forms & guidelines\n   - Master thesis templates and formal guidelines\n4. Download official PDFs directly.",
-        "Accessible to all authenticated students.",
-        "Check faculty-specific subfolders for exact graduation, thesis formatting, or internship guidelines.",
+        "/dok_server/",
+        "https://insis.vse.cz/dok_server/?lang=en",
+        "http://localhost:8502/dok_server/",
+        "Personal administration > Personal management > Document server (or Public Portal > Public document server)",
+        "1. Open the VŠE **Document server** (`https://insis.vse.cz/dok_server/?lang=en`) or click **Document server** under **Personal management**.\n2. Browse Rectorate study regulations, faculty noticeboards (e.g., FIS folder), Dean's decrees, and official thesis templates.\n3. Download official PDF regulations directly.",
+        "Public folders are accessible without login; internal folders require InSIS sign-in.",
+        "Check your faculty subfolder for the latest Dean's decrees on tuition, thesis formatting, and state exams.",
         "document server, templates, dean decrees, directives, download forms, dokumentovy server, university regulations"
     ),
     (
@@ -405,25 +405,25 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/posta/?lang=en",
         "http://localhost:8502/auth/posta/",
         "Personal administration > Personal management > Mail box",
-        "1. Go to InSIS > Personal administration.\n2. Click 'Mail box' in the 'Personal management' section (/auth/posta/).\n3. View official administrative notices, study department alerts, and course messages.\n4. Tip: Go to User settings > Configure transfer of events to Office 365 to auto-forward notices to your @vse.cz Outlook inbox.",
+        "1. Open InSIS **Personal administration** → **Personal management** → **Mail box** (`/auth/posta/`).\n2. Read official administrative notices, exam alerts, and study department messages.\n3. Optional: Under **Adjustment of the information system** → **Configure transfer of events to Office 365**, enable automatic forwarding to your `@vse.cz` Outlook email.",
         "Internal messaging system within VŠE.",
-        "Do not ignore InSIS mailbox messages; formal legal notices and deadline warnings are considered officially delivered when posted here.",
+        "Official administrative notices delivered to your InSIS mailbox carry formal validity—enable Office 365 forwarding so you never miss deadlines.",
         "mailbox, internal mail, messages, posta, notifications, study department email, notifications forwarding"
     ),
     (
         "TASK_ISIC_ID_PHOTO",
         "portal_tech",
-        "Student ID Card (ISIC) Photo Upload & Status",
-        "Změna fotografie a správa průkazu studenta",
+        "Personal Data, ID Photo Upload & Student Card (ISIC)",
+        "Osobní údaje, změna fotografie a průkaz studenta",
         "Identity",
-        "/auth/sprava/foto.pl",
-        "https://insis.vse.cz/auth/sprava/foto.pl?lang=en",
-        "http://localhost:8502/auth/sprava/foto.pl",
-        "Personal administration > Adjustment of the information system > Change photo (or Identification cards in use)",
-        "1. Navigate to InSIS > Personal administration.\n2. In 'Adjustment of the information system', click 'Change photo'.\n3. Upload a standard passport-format digital portrait (clear white background, neutral expression).\n4. Wait for administrative approval by the Student ID Card Office.\n5. Once approved, collect your physical ISIC card from the Card Office in the Old Building (SB).",
-        "Required upon first enrollment at VŠE.",
-        "Photo must be a realistic, front-facing portrait. Do not submit group photos, selfies with filters, or sunglasses.",
-        "student id, isic card, upload photo, change photo, id card center, prukaz studenta, identification card"
+        "/auth/lide/moje_udaje.pl",
+        "https://insis.vse.cz/auth/lide/moje_udaje.pl?lang=en",
+        "http://localhost:8502/karty/platnost.pl",
+        "Personal administration > Adjustment of the information system > Change photo / Personal data",
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **Adjustment of the information system**, click **Change photo** (or verify your details under **Personal data**, `/auth/lide/moje_udaje.pl`).\n3. Upload a passport-style portrait on a plain light background.\n4. Once approved, pick up your physical ISIC student card at the **Card Centre (Room SB 01, Old Building ground floor)**.",
+        "Required upon initial enrollment at VŠE.",
+        "Use a clear front-facing portrait without filters, hats, or sunglasses. Card validity can also be checked publicly at `/karty/platnost.pl`.",
+        "student id, isic card, upload photo, change photo, id card center, prukaz studenta, identification card, personal data, moje udaje"
     ),
     (
         "TASK_ELECTIONS_SURVEYS",
@@ -431,44 +431,59 @@ ROUTES_DATA = [
         "eSurveys & Academic Senate Student Elections",
         "Elektronické volby a ankety",
         "Elections",
-        "/auth/anketa/volby.pl",
-        "https://insis.vse.cz/auth/anketa/volby.pl?lang=en",
-        "http://localhost:8502/auth/anketa/volby.pl",
-        "Personal administration > eAgenda > My Elections (or eSurveys)",
-        "1. Log into InSIS > Personal administration.\n2. In the 'eAgenda' tile, click 'My Elections' or 'eSurveys'.\n3. View active voting ballots for Faculty and Academic Senate student chamber.\n4. Cast an encrypted, verified vote to elect student representatives.",
-        "Only active during published academic election dates.",
-        "International students are full voting members of the academic community and are eligible to vote and run for senate seats.",
+        "/auth/anketa/",
+        "https://insis.vse.cz/auth/anketa/?lang=en",
+        "http://localhost:8502/auth/anketa/",
+        "Personal administration > eAgenda > My Elections / eSurveys",
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. In the **eAgenda** tile, click **My Elections** or **eSurveys** (`/auth/anketa/`).\n3. Select active ballots for the Faculty or University Academic Senate and cast your encrypted vote.",
+        "Active during published academic election windows.",
+        "International degree students are full members of the academic community and are eligible to vote in Academic Senate elections.",
         "elections, academic senate, vote, esurveys, volby, student chamber, student representation"
     ),
     (
         "TASK_SCHOLARSHIP_ACCOMMODATION",
         "portal_finances",
-        "Scholarships & Accommodation Grant Application (Žádosti o stipendia)",
+        "Scholarships & Accommodation Grant Application",
         "Žádosti o stipendia a ubytovací stipendium",
         "Finances & Scholarships",
         "/auth/stipendia/",
         "https://insis.vse.cz/auth/stipendia/?lang=en",
         "http://localhost:8502/auth/stipendia/",
         "Personal administration > Financing of study and scholarships > Scholarships (Žádosti o stipendia)",
-        "1. Direct Shortcut (Universal 1-Click): Click the direct link below while logged in to jump straight to the application form.\n2. Manual Navigation (Universal): In the top row, click 'My College' (Moje studium) → 'Student's portal' → locate Scholarships (Žádosti o stipendia).\n3. Alternative: If active on your dashboard tiles, click 'Financing of study and scholarships' → 'Scholarships' (Žádosti o stipendia).\n4. Select 'Accommodation scholarship' (Žádost o ubytovací stipendium) and complete the online application.\n5. Register your active Czech bank account in InSIS under 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl) so quarterly payouts can be deposited.",
-        "Eligible for full-time degree students who do not have permanent residence in the Capital City of Prague and have not exceeded the standard period of study by more than one year.",
-        "Accommodation Scholarship (Ubytovací stipendium) is a cash grant deposited directly into your Czech bank account. It is completely separate from dormitory room bookings in ISKaM. You MUST register a Czech bank account in InSIS to receive payouts.",
+        "1. Open the **Scholarships** portal directly below (`/auth/stipendia/`), or navigate via **My College** → **Student's portal** → **Scholarships** (*Žádosti o stipendia*).\n2. Select **Accommodation scholarship** (*Žádost o ubytovací stipendium*) and submit the online application during the semester intake window.\n3. Verify that an active **Czech bank account** is saved under **Study Financing & Bank Accounts** (`/auth/financovani/index.pl`) so quarterly payouts can be deposited.",
+        "Eligible for full-time degree students within standard study duration (+ max 1 year) without permanent residence in Prague.",
+        "The Accommodation Scholarship is a quarterly cash grant paid to your Czech bank account—separate from booking a dormitory room in ISKaM.",
         "accommodation scholarship, accomodation scholarship, accommodation benefit, accomodation benefit, ubytovaci stipendium, ubytovací stipendium, scholarship, apply for scholarship, stipendia, zadost o ubytovaci stipendium, zadosti o stipendia, housing grant, living allowance, housing benefit, money for accommodation, how to apply for scholarship, how do i apply for accommodation benefit, how do i apply for accomodation benefit, apply for accommodation benefit, apply for accomodation benefit, student scholarship, accommodation grant, where to find accommodation benefit, where to find accomodation benefit"
     ),
     (
         "TASK_BANK_ACCOUNT_FINANCING",
         "portal_finances",
-        "Student Study Financing, Bank Accounts & Variable Symbol (Financování studia)",
+        "Student Study Financing, Bank Accounts & Variable Symbol",
         "Financování studia a bankovní spojení",
         "Finances & Scholarships",
         "/auth/financovani/index.pl",
         "https://insis.vse.cz/auth/financovani/index.pl?lang=en",
         "http://localhost:8502/auth/financovani/index.pl",
         "Personal administration > Financing of study and scholarships > Student Study Financing, Bank Accounts & Variable Symbol",
-        "1. Log into InSIS Personal administration (https://insis.vse.cz/auth/?lang=en).\n2. In the 'Financing of study and scholarships' section, click 'Student Study Financing, Bank Accounts & Variable Symbol' (/auth/financovani/index.pl).\n3. Register your active Czech bank account number (číslo účtu / kód banky or IBAN) to receive accommodation and merit scholarships.\n4. View tuition fee prescriptions, your personalized 8-digit Variable Symbol (VS), and faculty bank account details.",
-        "Active student account. Bank account for scholarship payouts must be opened in the Czech Republic.",
-        "Without entering your Czech bank account details here, accommodation scholarship disbursements cannot be completed.",
-        "bank account, bank accounts, bankovni spojeni, enter bank account, register bank account, iban, scholarship payout account, variable symbol, variabilni symbol, financovani studia, study financing"
+        "1. Open **Study Financing & Bank Accounts** (`/auth/financovani/index.pl`) while logged into InSIS.\n2. Enter your active **Czech bank account** (*číslo účtu / kód banky* or IBAN) to receive accommodation and merit scholarships.\n3. View your tuition fee prescriptions, faculty bank details, and 8-digit **Variable Symbol (VS)**.",
+        "Active student account; scholarship payouts require a bank account held in the Czech Republic.",
+        "Because dashboard tiles vary by portlet settings, using the direct `/auth/financovani/index.pl` link works reliably on every student account.",
+        "bank account, bank accounts, bankovni spojeni, enter bank account, register bank account, iban, scholarship payout account, variable symbol, variabilni symbol, financovani studia, study financing, financing of study"
+    ),
+    (
+        "TASK_INSIS_PORTLETS",
+        "portal_tech",
+        "Portlets in InSIS & Student Navigation Sidebar",
+        "Portlety v InSIS – Navigační lišta pro studenty",
+        "Customization & Navigation",
+        "/auth/system/portlety.pl",
+        "https://insis.vse.cz/auth/system/portlety.pl?lang=en",
+        "http://localhost:8502/auth/system/portlety.pl?lang=en",
+        "Personal administration > Adjustment of the information system > Portlets in InSIS",
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Scroll to **Adjustment of the information system** and click **Portlets in InSIS** (`/auth/system/portlety.pl`).\n3. Under **Placing of portlets**, select **`Navigation bar for students`**, choose **`Basic - to the left from the page content`**, and click **Add**.\n4. A green **Student** quick-link sidebar will appear on the left with 14 academic shortcuts (*Mail box, Timetables, Exams, Plan of study, Results, Registration/enrollment, Final thesis assignment, Coursework submissions*).",
+        "Authenticated InSIS account (portlets are not displayed in simplified/GPRS modes).",
+        "The 'Navigation bar for students' portlet omits Scholarships (/auth/stipendia/), Study Financing & Bank Accounts (/auth/financovani/index.pl), Electronic Confirmation of Study (/auth/student/potvrzeni.pl), and Contact Centre (/auth/uradovna/). If a portlet breaks display, log in via https://insis.vse.cz/quick to remove it.",
+        "portlets, portlet, portlets in insis, navigation bar for students, student navigation bar, left sidebar insis, customize insis, personal administration tiles, switch off portlets, insis quick, navigation guide for students"
     )
 ]
 
@@ -485,7 +500,10 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
         
         # 1. Populate InSIS modules & routes
         cur.execute("SELECT COUNT(*) FROM insis_modules;")
-        if cur.fetchone()[0] == 0 or force_refresh:
+        mod_count = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM insis_routes;")
+        route_count = cur.fetchone()[0]
+        if mod_count == 0 or route_count != len(ROUTES_DATA) or force_refresh:
             cur.execute("DELETE FROM insis_routes_fts;")
             cur.execute("DELETE FROM insis_routes;")
             cur.execute("DELETE FROM insis_modules;")
@@ -571,8 +589,14 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
 def get_connection() -> sqlite3.Connection:
     """Returns an open connection with row_factory set to sqlite3.Row."""
     if not DB_PATH.exists():
-        return init_database()
-    conn = sqlite3.connect(str(DB_PATH))
+        try:
+            return init_database()
+        except Exception:
+            pass
+    try:
+        conn = sqlite3.connect(f"file:{DB_PATH.resolve().as_posix()}?mode=ro", uri=True)
+    except Exception:
+        conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -668,11 +692,27 @@ def search_policies(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
         
     conn = get_connection()
     cur = conn.cursor()
-    tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
-    if not tokens:
+    raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
+    if not raw_tokens:
+        conn.close()
         return []
 
-    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
+    stopwords_pol = {
+        "what", "happens", "happen", "if", "when", "where", "how", "why", "who",
+        "can", "do", "does", "did", "is", "are", "am", "be", "to", "the", "in",
+        "on", "at", "of", "for", "with", "from", "by", "an", "a", "my", "you",
+        "your", "vse", "vše", "insis", "university", "prague", "student", "students",
+        "rule", "rules", "policy", "policies", "times", "time",
+    }
+    substantive = [t for t in raw_tokens if len(t) > 1 and t.lower() not in stopwords_pol]
+    if "3" in raw_tokens and ("fail" in query_str.lower() or "exam" in query_str.lower()):
+        substantive.extend(["retake", "second", "attempt"])
+    tokens = substantive if substantive else [t for t in raw_tokens if len(t) > 1]
+    if not tokens:
+        conn.close()
+        return []
+
+    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens)
     results = []
     if fts_match_expr:
         try:
@@ -726,11 +766,22 @@ def search_campus_locations(query_str: str, limit: int = 3) -> List[Dict[str, An
         
     conn = get_connection()
     cur = conn.cursor()
-    tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
-    if not tokens:
+    raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
+    if not raw_tokens:
+        conn.close()
         return []
 
-    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens if len(t) > 1)
+    stopwords_loc = {
+        "where", "whre", "is", "are", "the", "nearest", "closest", "find", "locate",
+        "how", "to", "get", "in", "on", "at", "of", "for", "a", "an", "my", "vse", "vše",
+    }
+    substantive = [t for t in raw_tokens if len(t) > 1 and t.lower() not in stopwords_loc]
+    tokens = substantive if substantive else [t for t in raw_tokens if len(t) > 1]
+    if not tokens:
+        conn.close()
+        return []
+
+    fts_match_expr = " OR ".join(f'"{t}"*' for t in tokens)
     results = []
     if fts_match_expr:
         try:

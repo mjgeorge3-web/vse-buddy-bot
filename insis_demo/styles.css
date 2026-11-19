@@ -1372,11 +1372,11 @@ body {
 
 /* Chat Message Bubbles */
 .bot-msg-bubble {
-  max-width: 88%;
-  padding: 10px 13px;
+  max-width: 91%;
+  padding: 12px 14px;
   border-radius: 10px;
   font-size: 12.5px;
-  line-height: 1.48;
+  line-height: 1.58;
   word-break: break-word;
 }
 
@@ -2083,7 +2083,7 @@ body {
 /* ==========================================================================
    VŠE InSIS Navigator Signature UI Elements
    ========================================================================== */
-.bot-bubble h3 {
+.bot-msg-bubble.assistant h3 {
   color: #004b87;
   font-size: 13.5px;
   font-weight: 700;
@@ -2095,15 +2095,15 @@ body {
   padding-bottom: 5px;
 }
 
-.bot-bubble code {
+.bot-msg-bubble.assistant code {
   background: #f1f5f9;
   color: #0369a1;
   border: 1px solid #e2e8f0;
-  padding: 1.5px 6px;
+  padding: 1px 5px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
-  font-family: inherit;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 .vse-insider-callout {
@@ -2144,3 +2144,266 @@ body {
   background: #003666 !important;
 }
 
+
+
+/* ==========================================================================
+   10. STANDARDIZED INSTITUTIONAL RESPONSE LAYOUT (Clean Alignment & Typography)
+   ========================================================================== */
+.bot-msg-bubble.assistant {
+  background: #ffffff;
+  color: #1e293b;
+  align-self: flex-start;
+  border: 1px solid #dbe3ec;
+  border-radius: 12px;
+  padding: 13px 15px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  width: 94%;
+  max-width: 94%;
+}
+
+.bot-structured-response {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #1e293b;
+}
+
+.bot-ans-header {
+  border-bottom: 1.5px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+}
+
+.bot-ans-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1.5px 7px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.bot-ans-verified-badge .v-dot {
+  font-weight: 900;
+  color: #059669;
+}
+
+.bot-ans-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.38;
+}
+
+.bot-ans-title strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.bot-ans-title em {
+  color: #475569;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.bot-paragraph {
+  color: #1e293b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.bot-section-subheading {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+/* Numbered Step Card / Row — Strict 2-Column Alignment */
+.bot-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+
+.bot-step-num {
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
+  border-radius: 50%;
+  background: #004b87;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.bot-step-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.bot-step-title {
+  color: #1e293b;
+  line-height: 1.48;
+}
+
+.bot-step-title strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Sub-bullets inside a Numbered Step — Strict Hanging Indent Alignment */
+.bot-subbullet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5px;
+  margin-top: 2px;
+  padding-top: 5px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.bot-subbullet-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.48;
+}
+
+.bot-subbullet-dot {
+  color: #0284c7;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 1.45;
+  flex-shrink: 0;
+  width: 8px;
+  text-align: center;
+}
+
+.bot-subbullet-text {
+  flex: 1;
+  min-width: 0;
+  color: #1e293b;
+}
+
+.bot-subbullet-text strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Top-Level Bullet Rows — Strict Hanging Indent Alignment */
+.bot-bullet-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 2px;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.bot-bullet-dot {
+  color: #004b87;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1.45;
+  flex-shrink: 0;
+  width: 10px;
+  text-align: center;
+}
+
+.bot-bullet-text {
+  flex: 1;
+  min-width: 0;
+  color: #1e293b;
+}
+
+.bot-bullet-text strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Neutral Inline Tag (replaces awkward blue monospace code) */
+.bot-inline-tag,
+.bot-msg-bubble.assistant code {
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0px 5px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+}
+
+/* Reassuring Note / Advisory Callout */
+.bot-note-callout {
+  background: #f8fafc;
+  border-left: 3px solid #64748b;
+  padding: 6px 10px;
+  border-radius: 0 6px 6px 0;
+  font-size: 11.5px;
+  color: #475569;
+  line-height: 1.45;
+}
+
+/* Bottom Action Buttons Bar */
+.bot-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.bot-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: #004b87 !important;
+  color: #ffffff !important;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none !important;
+  margin: 0;
+  box-shadow: 0 1px 3px rgba(0, 56, 107, 0.2);
+  transition: background 0.15s ease, transform 0.12s ease;
+  cursor: pointer;
+}
+
+.bot-action-button:hover {
+  background: #00386b !important;
+  transform: translateY(-1px);
+  color: #ffffff !important;
+}
+
+.bot-action-button .btn-ext-arrow {
+  font-size: 11px;
+  opacity: 0.85;
+}

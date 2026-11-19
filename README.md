@@ -1,26 +1,28 @@
-# VŠE Buddy Bot 🎓
+# VSE Buddy Bot
 
-A research prototype Retrieval-Augmented Generation (RAG) chatbot developed for international students at the **Prague University of Economics and Business (Vysoká škola ekonomická v Praze, VŠE)**.
+A research prototype Retrieval-Augmented Generation (RAG) chatbot developed for international students at the **Prague University of Economics and Business (Vysoka skola ekonomicka v Praze, VSE)**.
 
 This prototype was developed as part of a Master's Thesis in Information Systems Management (ISM). It provides verified, grounded answers regarding admissions, arrival, student housing, visas, university IT, exams, and daily life in Prague.
 
+Live demo: `https://vse-buddy-bot.vercel.app`
+
 ---
 
-## 🏛️ Architecture & Architectural Rationale
+## Architecture & Architectural Rationale
 
 | Architectural Decision | Thesis Design Rationale |
 | :--- | :--- |
-| **Retrieval-Augmented Generation (RAG)** | Restricts bot answers strictly to 41 verified VŠE web pages, effectively minimizing hallucinations and ungrounded fabrications. |
-| **Pure NumPy Vector Search** | A 41-page knowledge base produces ~71 chunks. A complex vector database (e.g. Pinecone/Chroma) introduces unnecessary overhead and costs. Pure NumPy dot-product cosine similarity is fast, lightweight, and 100% reproducible. |
+| **Retrieval-Augmented Generation (RAG)** | Restricts bot answers strictly to 52 verified VŠE knowledge documents and structured SQLite tables, effectively minimizing hallucinations and ungrounded fabrications. |
+| **Pure NumPy Vector Search** | A 52-document knowledge base produces 254 vector chunks. A complex vector database (e.g. Pinecone/Chroma) introduces unnecessary overhead and costs. Pure NumPy dot-product cosine similarity is fast, lightweight, and 100% reproducible. |
 | **Deterministic Crisis Filter (No LLM)** | Rule-based regex pattern matching ensures guaranteed detection of self-harm/suicide terms without latency, cost, or non-deterministic LLM failure risks. |
 | **Deterministic Sensitive Topic Referrals** | Topics involving legal, visa, police registration, or exam failures trigger mandatory administrative referral notices to protect students from outdated immigration advice. |
 | **Explicit Source Citations & Flags** | Inline numbered citations `[1]`, `[2]` with clickable URLs and explicit `unverified` flags promote student trust and transparency. |
 | **Low Temperature (0.2)** | Ensures factual consistency, conservative generation, and reliable refusal on gap queries. |
-| **Reproducible Evaluation Script** | `evaluate.py` enables standardized benchmarking against a 30-question test set across different stages and question categories. |
+| **Reproducible Evaluation Script** | `evaluate.py` enables standardized benchmarking against a 40-question test set across different stages and question categories. |
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 vse-buddy-bot/
@@ -31,16 +33,21 @@ vse-buddy-bot/
 ├── safety.py            # Deterministic crisis & sensitive-topic detection
 ├── prompts.py           # System prompt, guardrails, and context formatting
 ├── bot.py               # End-to-end pipeline: safety → retrieve → generate → cite
+├── insis_nav_db.py      # SQLite engine for InSIS routes, SZŘ policies, and campus locations
+├── student_profile.py   # Authenticated student session & GDPR opt-out context builder
 ├── evaluate.py          # Automated benchmark runner for test questions dataset
-├── knowledge/           # 41 curated Markdown knowledge files + contacts.md
+├── insis_demo/          # Interactive VŠE InSIS simulation server & frontend (port 8502)
+├── api/                 # Vercel serverless deployment entrypoint
+├── knowledge/           # 51 curated Markdown knowledge files + contacts.md (52 total)
 ├── data/
-│   ├── index.npz        # Committed L2-normalized Gemini embeddings matrix
+│   ├── index.npz        # Committed L2-normalized Gemini embeddings matrix (254 × 3072)
 │   ├── index_meta.json  # Chunk metadata (doc_id, title, url, unverified, text)
+│   ├── insis_navigation.db # SQLite database (7 modules, 24 routes, 50 policies, 42 locations)
 │   ├── knowledge_hash.txt # SHA-256 integrity hash of knowledge base
-│   └── test_questions.csv # 30-question thesis test dataset
+│   └── test_questions.csv # 40-question thesis test dataset
 ├── logs/                # chat_log.csv and feedback.csv (anonymous interaction logs)
 ├── results/             # Generated evaluation benchmark CSV reports
-├── tests/               # Pytest unit test suite
+├── tests/               # Pytest unit test suite (73 tests)
 ├── traceability.csv     # Source URLs and verification dates for all pages
 ├── .env.example         # Template for environment variables
 ├── .gitignore           # Ignores secrets, logs, and cache
@@ -50,7 +57,7 @@ vse-buddy-bot/
 
 ---
 
-## 🚀 Getting Started Locally
+## Getting Started Locally
 
 ### 1. Prerequisites
 - Python 3.10 or higher
@@ -74,7 +81,7 @@ GEMINI_API_KEY=your_actual_gemini_api_key_here
 ```
 
 ### 4. Build Knowledge Base & Vector Index
-Run the ingestion pipeline to parse all 42 files in `knowledge/`, generate chunks, and build the NumPy vector index:
+Run the ingestion pipeline to parse all 52 files in `knowledge/`, generate 254 chunks, and build the NumPy vector index:
 ```bash
 python ingest.py
 ```
@@ -89,15 +96,15 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Running Automated Tests & Evaluation
+## Running Automated Tests & Evaluation
 
-### 1. Safety Unit Tests
-Run the pytest suite covering deterministic crisis and sensitive topic rules:
+### 1. Unit & Integration Test Suite
+Run the full pytest suite (73 tests) covering deterministic crisis and sensitive topic rules, SQLite navigation/policy databases, student profile personalization, and UI link formatting:
 ```bash
-pytest tests/test_safety.py -v
+pytest tests/ -v
 ```
 
-### 2. Full Test-Set Evaluation (30 Questions)
+### 2. Full Test-Set Evaluation (40 Questions)
 Execute the thesis evaluation set:
 ```bash
 python evaluate.py
@@ -114,7 +121,7 @@ The script writes results to `results/eval_YYYYMMDD_HHMM.csv` and outputs:
 
 ---
 
-## ☁️ Streamlit Community Cloud Deployment
+## Deployment (Vercel & Streamlit Community Cloud)
 
 Follow these steps to deploy the application online for user testing:
 
@@ -140,7 +147,7 @@ Follow these steps to deploy the application online for user testing:
 
 ---
 
-## 🔒 Privacy & Ethical Safeguards
+## Privacy & Ethical Safeguards
 
 - **No Personal Data Collected:** The bot does not request or store student names, ID numbers, or contact details.
 - **Anonymous Interaction Logging:** All logs use random UUID session identifiers, timestamps, and retrieval metrics.

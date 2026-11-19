@@ -4,10 +4,11 @@ Handles query embedding, cosine similarity calculation against the precomputed
 index.npz vector store, hybrid title-keyword boosting, and fallback contacts inclusion.
 """
 
+import difflib
 import json
 import re
 import concurrent.futures
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 from google import genai
@@ -92,9 +93,20 @@ INTENT_EXPANSIONS = {
     "psychologist": ["psychological", "counselling", "mental", "support", "academic", "centre"],
     "therapy": ["psychological", "counselling", "mental", "support", "academic"],
     "stress": ["psychological", "counselling", "mental", "anxiety", "academic", "centre"],
+    "stressed": ["psychological", "counselling", "mental", "stress", "anxiety", "academic", "centre"],
+    "stressful": ["psychological", "counselling", "mental", "stress", "anxiety", "academic"],
     "anxiety": ["psychological", "counselling", "mental", "stress", "academic", "centre"],
+    "anxious": ["psychological", "counselling", "mental", "anxiety", "stress", "academic"],
     "homesick": ["psychological", "counselling", "adaptation", "culture", "shock"],
+    "homesickness": ["psychological", "counselling", "adaptation", "homesick", "mental"],
     "mental": ["psychological", "counselling", "support", "wellbeing", "academic"],
+    "mentally": ["psychological", "counselling", "mental", "stress", "wellbeing", "academic"],
+    "depressed": ["psychological", "counselling", "mental", "depression", "support", "academic"],
+    "depression": ["psychological", "counselling", "mental", "support", "academic", "centre"],
+    "lonely": ["psychological", "counselling", "loneliness", "mental", "esn", "clubs"],
+    "loneliness": ["psychological", "counselling", "mental", "support", "adaptation"],
+    "overwhelmed": ["psychological", "counselling", "mental", "stress", "anxiety", "academic"],
+    "burnout": ["psychological", "counselling", "mental", "stress", "academic"],
     "litacka": ["prague", "public", "transport", "pid", "metro", "tram", "student"],
     "lítačka": ["prague", "public", "transport", "pid", "metro", "tram", "student"],
     "transport": ["pid", "litacka", "metro", "tram", "bus", "student", "discount"],
@@ -110,9 +122,17 @@ INTENT_EXPANSIONS = {
     "timetable": ["insis", "course", "registration", "schedule", "classes"],
     "schedule": ["insis", "course", "registration", "timetable", "academic", "calendar"],
     "ects": ["credit", "voucher", "courses", "study", "regulations"],
-    "internship": ["career", "services", "job", "fair", "employment", "work"],
-    "work": ["employment", "work", "permit", "part-time", "career", "job"],
-    "job": ["career", "services", "employment", "work", "job", "fair"],
+    "internship": ["career", "services", "job", "fair", "sance"],
+    "internships": ["career", "services", "job", "fair", "sance", "internship"],
+    "work": ["employment", "during", "studies", "permit"],
+    "job": ["career", "services", "fair", "sance", "employment"],
+    "jobs": ["career", "services", "job", "fair", "sance"],
+    "money": ["cost", "living", "budgeting", "expenses", "czk"],
+    "email": ["microsoft", "365", "outlook", "teams", "onedrive"],
+    "materials": ["moodle", "elearning", "assignments"],
+    "meet": ["clubs", "esn", "buddy", "ambassadors"],
+    "eat": ["catering", "menza", "canteen", "meals", "food"],
+    "cheaply": ["catering", "menza", "canteen", "meals"],
     "errata": ["thesis", "submission", "insis", "corrections", "erratum", "defense"],
     "erratum": ["thesis", "errata", "submission", "insis", "corrections"],
     "thesis": ["final", "submission", "defense", "insis", "supervisor", "errata", "bachelor", "master"],
@@ -140,6 +160,11 @@ INTENT_EXPANSIONS = {
     "grading": ["scale", "grades", "exam", "vyborne", "ects"],
     "expulsion": ["termination", "studies", "vouchers", "credits", "regulations"],
     "termination": ["studies", "vouchers", "credits", "expulsion", "regulations"],
+    "portlet": ["portlets", "insis", "navigation", "student", "adjustment", "sidebar"],
+    "portlets": ["portlet", "insis", "navigation", "student", "adjustment", "sidebar"],
+    "admission": ["admissions", "application", "prihlaska", "apply", "programmes"],
+    "admissions": ["admission", "application", "prihlaska", "apply", "programmes"],
+    "visa": ["residence", "permit", "embassy", "ipc", "frs", "insurance", "police"],
 }
 
 
@@ -150,7 +175,32 @@ class Retriever:
         self.matrix: Optional[np.ndarray] = None
         self.metadata: List[Dict[str, Any]] = []
         self.client: Optional[genai.Client] = None
+        self._vocab_set: Set[str] = set()
         self._ensure_index_loaded()
+
+    def _build_vocabulary(self):
+        """Build a set of known domain terms from INTENT_EXPANSIONS and indexed document text for fuzzy typo recovery."""
+        vocab: Set[str] = set(INTENT_EXPANSIONS.keys())
+        for vals in INTENT_EXPANSIONS.values():
+            vocab.update(vals)
+        for m in self.metadata:
+            for w in re.findall(r"\w+", (m.get("title", "") + " " + m.get("text", "")).lower(), re.UNICODE):
+                if len(w) >= 4 and w not in STOPWORDS:
+                    vocab.add(w)
+        self._vocab_set = vocab
+
+    def _resolve_word_and_stems(self, word: str) -> List[str]:
+        """Return candidate root forms, applying fuzzy typo recovery if a word >= 5 chars is unknown to the corpus."""
+        stems = self._candidate_stems(word)
+        if not self._vocab_set:
+            return stems
+        if any(s in self._vocab_set for s in stems):
+            return stems
+        if len(word) >= 5:
+            matches = difflib.get_close_matches(word, self._vocab_set, n=1, cutoff=0.78)
+            if matches:
+                return self._candidate_stems(matches[0])
+        return stems
 
     def _ensure_index_loaded(self):
         """Load index from disk or automatically rebuild if knowledge changed."""
@@ -176,9 +226,10 @@ class Retriever:
             self.matrix = npz["embeddings"]
             with open(config.INDEX_META_PATH, "r", encoding="utf-8") as f:
                 self.metadata = json.load(f)
+        self._build_vocabulary()
 
     def _get_client(self) -> genai.Client:
-        """Lazily initialize Google Gemini API client."""
+        """Lazily initialize Google Gemini API client with 15s (15000ms) timeout."""
         if self.client is None:
             api_key = config.get_gemini_api_key()
             if not api_key:
@@ -187,15 +238,17 @@ class Retriever:
                 )
             self.client = genai.Client(
                 api_key=api_key,
-                http_options=types.HttpOptions(timeout=5.0),
+                http_options=types.HttpOptions(timeout=15000),
             )
         return self.client
 
-    def embed_query(self, query: str) -> np.ndarray:
+    def embed_query(self, query: str) -> Optional[np.ndarray]:
         """Embed user query with task_type='RETRIEVAL_QUERY' and L2-normalize.
         
-        Uses a 2.0s timeout; falls back gracefully to keyword search if offline or throttled.
+        Uses a 15.0s timeout with automatic retry on transient rate limits.
         """
+        import time
+
         client = self._get_client()
 
         def _do_embed():
@@ -208,25 +261,57 @@ class Retriever:
             norm = np.linalg.norm(vec)
             return vec / norm if norm > 0 else vec
 
-        future = _EMBED_EXECUTOR.submit(_do_embed)
-        return future.result(timeout=2.0)
+        for attempt in range(2):
+            try:
+                future = _EMBED_EXECUTOR.submit(_do_embed)
+                return future.result(timeout=15.0)
+            except Exception as e:
+                if attempt == 0 and ("429" in str(e) or "RESOURCE_EXHAUSTED" in str(e) or "quota" in str(e).lower()):
+                    time.sleep(4.0)
+                    continue
+                return None
+        return None
+
+    @staticmethod
+    def _candidate_stems(word: str) -> List[str]:
+        """Return candidate root forms for common English inflections (-ly, -ed, -ing, -es, -s)."""
+        stems = [word]
+        if len(word) >= 6 and word.endswith("ly"):
+            stems.append(word[:-2])
+        if len(word) >= 6 and word.endswith("ed"):
+            stems.append(word[:-2])
+            stems.append(word[:-1])
+        if len(word) >= 6 and word.endswith("ing"):
+            stems.append(word[:-3])
+            stems.append(word[:-3] + "e")
+        if len(word) >= 5 and word.endswith("es"):
+            stems.append(word[:-2])
+        elif len(word) >= 5 and word.endswith("s") and not word.endswith("ss"):
+            stems.append(word[:-1])
+        return [s for s in stems if len(s) >= 3]
 
     def extract_query_keywords(self, query: str) -> List[str]:
         """Extract lowercased keywords with length >= config.MIN_KEYWORD_LENGTH excluding stopwords,
         and expand with semantic intent synonyms for fragmented student queries.
         """
-        words = re.findall(r"\w+", query.lower(), re.UNICODE)
+        norm_q = query.lower().replace("wi-fi", "wifi").replace("e-mail", "email")
+        words = re.findall(r"\w+", norm_q, re.UNICODE)
         keywords = [
             w for w in words
             if len(w) >= config.MIN_KEYWORD_LENGTH and w not in STOPWORDS
         ]
-        # Expand keywords using semantic intent dictionary
+        # Expand keywords using semantic intent dictionary (including stemmed & typo-recovered roots)
         expanded = set(keywords)
         for w in words:
-            if w in INTENT_EXPANSIONS:
-                for exp_w in INTENT_EXPANSIONS[w]:
-                    if len(exp_w) >= config.MIN_KEYWORD_LENGTH and exp_w not in STOPWORDS:
-                        expanded.add(exp_w)
+            for candidate in self._resolve_word_and_stems(w):
+                if len(candidate) >= config.MIN_KEYWORD_LENGTH and candidate not in STOPWORDS:
+                    expanded.add(candidate)
+                if candidate in INTENT_EXPANSIONS:
+                    for exp_w in INTENT_EXPANSIONS[candidate]:
+                        if len(exp_w) >= config.MIN_KEYWORD_LENGTH and exp_w not in STOPWORDS:
+                            expanded.add(exp_w)
+        if "where" in words and "visa" in words:
+            expanded.update(["embassies", "embassy", "mzv", "abroad", "consulate"])
         return list(expanded)
 
     def retrieve(
@@ -256,6 +341,31 @@ class Retriever:
             query_vec = None
 
         keywords = self.extract_query_keywords(query)
+        norm_q = query.lower().replace("wi-fi", "wifi").replace("e-mail", "email")
+        raw_words = [
+            w for w in re.findall(r"\w+", norm_q, re.UNICODE)
+            if len(w) >= 3 and w not in STOPWORDS
+        ]
+        direct_words = set()
+        for w in raw_words:
+            for s in self._resolve_word_and_stems(w):
+                if s not in STOPWORDS:
+                    direct_words.add(s)
+        ubiquitous_terms = {
+            "vše", "vse", "student", "students", "international", "university",
+            "prague", "czech", "study", "studying", "campus", "english",
+            "courses", "course", "find", "need", "apply", "access", "cam",
+        }
+        generic_qualifiers = {
+            "central", "centre", "center", "office", "department", "service",
+            "services", "system", "portal", "page", "option", "options",
+            "information", "help", "question", "guide", "rules", "rule",
+        }
+        specific_words = direct_words - ubiquitous_terms - generic_qualifiers
+        word_patterns = {
+            w: re.compile(rf"\b{re.escape(w)}", re.UNICODE)
+            for w in (direct_words | set(keywords))
+        }
 
         if query_vec is not None:
             raw_similarities = np.dot(self.matrix, query_vec)
@@ -267,22 +377,57 @@ class Retriever:
             chunk_copy = dict(meta)
             base_score = float(sim)
             title_lower = chunk_copy.get("title", "").lower()
+            doc_id_lower = chunk_copy.get("doc_id", "").lower().replace("-", " ")
+            header_lower = f"{title_lower} {doc_id_lower}"
             text_lower = chunk_copy.get("text", "").lower()
 
             if query_vec is None:
-                # High-fidelity keyword retrieval over verified knowledge corpus
-                title_matches = sum(1 for kw in keywords if kw in title_lower)
-                text_matches = sum(1 for kw in keywords if kw in text_lower)
-                if keywords:
-                    total_matches = title_matches * 3 + text_matches
-                    base_score = min(0.95, 0.45 + (total_matches / (len(keywords) * 4.0)) * 0.50) if total_matches > 0 else 0.20
+                # High-fidelity keyword retrieval weighting specific domain words and word boundaries
+                direct_title = 0.0
+                direct_text = 0.0
+                specific_hits = 0
+                for w in direct_words:
+                    pat = word_patterns[w]
+                    is_spec = w in specific_words
+                    if is_spec:
+                        weight = 1.0
+                    elif w in generic_qualifiers:
+                        weight = 0.85
+                    else:
+                        weight = 0.20 if specific_words else 1.0
+                    in_hdr = bool(pat.search(header_lower))
+                    in_txt = bool(pat.search(text_lower))
+                    if in_hdr:
+                        direct_title += weight
+                    if in_txt:
+                        direct_text += weight
+                    if is_spec and (in_hdr or in_txt):
+                        specific_hits += 1
+
+                exp_title = sum(
+                    1.0 for kw in keywords
+                    if kw not in direct_words and word_patterns[kw].search(header_lower)
+                )
+                exp_text = sum(
+                    1.0 for kw in keywords
+                    if kw not in direct_words and word_patterns[kw].search(text_lower)
+                )
+                # Strict topicality gate: if the query has specific topic words and this chunk matches
+                # zero specific words and zero expanded keywords, never let generic words cross MIN_SCORE.
+                if specific_words and specific_hits == 0 and exp_title == 0 and exp_text == 0:
+                    base_score = 0.25
+                elif keywords or direct_words:
+                    weighted = (direct_title * 5.5) + (direct_text * 2.5) + (exp_title * 1.5) + (exp_text * 0.4)
+                    effective_len = len(specific_words) if specific_words else len(direct_words)
+                    denom = max(float(effective_len * 5.0 + 4.0), 6.0)
+                    base_score = min(0.95, 0.45 + (weighted / denom) * 0.50) if weighted > 0 else 0.20
                 else:
                     base_score = 0.50
 
             # Calculate keyword boost
             boost = 0.0
             for kw in keywords:
-                if kw in title_lower:
+                if word_patterns[kw].search(header_lower):
                     boost += config.KEYWORD_BOOST
             boost = min(boost, config.MAX_KEYWORD_BOOST)
 
@@ -297,9 +442,17 @@ class Retriever:
 
         top_score = scored_chunks[0]["score"] if scored_chunks else 0.0
 
-        # Filter chunks that pass minimum score threshold
+        # Filter chunks that pass minimum score threshold (cap at 2 chunks per document for diversity)
         passing_chunks = [c for c in scored_chunks if c["score"] >= min_score]
-        selected_chunks = passing_chunks[:k]
+        selected_chunks: List[Dict[str, Any]] = []
+        doc_counts: Dict[str, int] = {}
+        for c in passing_chunks:
+            did = c.get("doc_id", "")
+            if doc_counts.get(did, 0) < 2:
+                selected_chunks.append(c)
+                doc_counts[did] = doc_counts.get(did, 0) + 1
+                if len(selected_chunks) >= k:
+                    break
 
         # Mode determination: normal or no_context
         mode = "normal" if len(selected_chunks) > 0 else "no_context"

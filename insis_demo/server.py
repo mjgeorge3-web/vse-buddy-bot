@@ -255,7 +255,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             
             try:
                 data = json.loads(body)
-                question = data.get("question", "")
+                question = (data.get("question") or data.get("message") or "").strip()
                 history = data.get("history", [])
                 user_context = data.get("user_context")
 
@@ -263,7 +263,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                 if bot:
                     result = bot.answer(question=question, history=history, user_context=user_context)
                     resp_data = {
-                        "status": "success",
+                        "status": "success" if result.get("mode") != "error" else "error",
                         "answer": result.get("answer", ""),
                         "mode": result.get("mode", "normal"),
                         "sources": result.get("sources", []),
@@ -272,9 +272,9 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                     }
                 else:
                     resp_data = {
-                        "status": "fallback",
-                        "answer": "Backend bot currently unavailable. Using offline verified knowledge.",
-                        "mode": "fallback",
+                        "status": "error",
+                        "answer": "⚠️ **Backend Unavailable:** Could not initialize BuddyBot. Please check your GEMINI_API_KEY configuration.",
+                        "mode": "error",
                     }
             except Exception as e:
                 resp_data = {

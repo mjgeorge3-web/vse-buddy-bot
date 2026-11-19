@@ -14,16 +14,16 @@ This official repository contains 50 verified policies and regulations governing
 ## Academic Regulations
 
 ### [POL_001] Minimum 9 ECTS First-Semester Requirement
-**Official Reference:** VŠE Study and Examination Regulations, Art. 12(1)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Every newly admitted student must obtain at least 9 ECTS credits in their first semester to continue studying.  
 
-Pursuant to the VŠE Study and Examination Regulations (Art. 12, para. 1), a student must obtain a minimum of 9 ECTS credits in their first semester of study. Failing to obtain 9 credits results in an automatic, ex-officio termination of study.
+Pursuant to the VŠE Study and Examination Regulations , a student must obtain a minimum of 9 ECTS credits in their first semester of study. Failing to obtain 9 credits results in an automatic, ex-officio termination of study.
 
 **Non-Compliance Consequence / Sanction:** Immediate termination of study. No exceptions or waivers permitted under Czech law.  
 **Keywords & Triggers:** minimum credits first semester, 9 ects rule, what happens if i get 8 credits, first semester minimum, pass first semester
 
 ### [POL_002] Annual Progression Requirement (20 ECTS per Academic Year)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 12(2)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students must achieve at least 20 ECTS credits in each academic year to enroll in the subsequent year.  
 
 In every subsequent academic year after the first semester, students must achieve a minimum of 20 credits per academic year (autumn + spring semesters combined) to be eligible to enroll in the following year.
@@ -35,7 +35,7 @@ In every subsequent academic year after the first semester, students must achiev
 ## Credit Vouchers & ECTS
 
 ### [POL_003] Master's Credit Voucher Allocation (144 Vouchers)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 10; Dean's Guidelines  
+**Official Reference:** VŠE Study and Examination Regulations; Dean's Guidelines  
 **Summary:** Master's students receive 144 credit vouchers to complete a 120 ECTS degree (24 buffer vouchers).  
 
 Master's degree students are allocated 144 credit vouchers at the beginning of their studies. Successfully completing a 120 ECTS degree leaves a margin of 24 buffer vouchers for failed courses or extra electives.
@@ -44,7 +44,7 @@ Master's degree students are allocated 144 credit vouchers at the beginning of t
 **Keywords & Triggers:** credit vouchers master, 144 vouchers, voucher allocation, how many vouchers do i have, buffer vouchers
 
 ### [POL_004] Bachelor's Credit Voucher Allocation (216 Vouchers)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 10  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Bachelor's students receive 216 credit vouchers to complete a 180 ECTS degree (36 buffer vouchers).  
 
 Undergraduate students are allocated 216 credit vouchers to fulfill their 180 ECTS study plan. The 36 additional vouchers allow for repeating failed courses or taking additional elective courses.
@@ -53,7 +53,7 @@ Undergraduate students are allocated 216 credit vouchers to fulfill their 180 EC
 **Keywords & Triggers:** bachelor credit vouchers, 216 vouchers, undergraduate voucher limit, bachelor ects
 
 ### [POL_005] Voucher Consumption for Failed Courses
-**Official Reference:** VŠE Study and Examination Regulations, Art. 10(3)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Enrolling in a course burns credit vouchers equal to its ECTS value; failing the course does not refund vouchers.  
 
 Credit vouchers are deducted upon enrollment in a course. If a student receives grade '4 - Nevyhověl' (Fail) or is unexcused, the vouchers are permanently lost. Enrolling in the course again in a later semester requires spending a new batch of vouchers.
@@ -65,7 +65,7 @@ Credit vouchers are deducted upon enrollment in a course. If a student receives 
 ## Academic Regulations
 
 ### [POL_006] Maximum Duration of Study
-**Official Reference:** Czech Higher Education Act No. 111/1998 Sb. § 56; VŠE Regulations Art. 13  
+**Official Reference:** Czech Higher Education Act No. 111/1998 Sb. § 56; VŠE Regulations  
 **Summary:** Studies must be completed within the standard duration plus a maximum of two additional calendar years.  
 
 For a 2-year Master's degree (standard duration 4 semesters), the maximum permitted duration of study is 4 years (8 semesters). For a 3-year Bachelor's degree (6 semesters), the maximum duration is 5 years (10 semesters).
@@ -74,7 +74,7 @@ For a 2-year Master's degree (standard duration 4 semesters), the maximum permit
 **Keywords & Triggers:** maximum study duration, how many years can i study, study time limit, extension limit
 
 ### [POL_007] Mandatory Re-enrollment of Failed Compulsory Courses
-**Official Reference:** VŠE Study and Examination Regulations, Art. 11  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** If a student fails a compulsory (obligatory) course, they must re-register it in the immediately following semester.  
 
 A compulsory course (oP) that was not successfully completed must be re-registered in the immediately following semester in which it is offered. Elective courses (vP) do not have to be repeated; an alternative elective may be chosen.
@@ -83,7 +83,7 @@ A compulsory course (oP) that was not successfully completed must be re-register
 **Keywords & Triggers:** fail compulsory course, repeat subject, re-enroll failed class, failed op course
 
 ### [POL_008] Interruption of Studies (Přerušení studia)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 14; Act No. 111/1998 Sb. § 54  
+**Official Reference:** VŠE Study and Examination Regulations; Act No. 111/1998 Sb. § 54  
 **Summary:** Students may request study interruption for medical, personal, or family reasons for up to two semesters.  
 
 A student may apply for interruption of studies via InSIS Contact Centre. The student must have earned at least 9 ECTS in their first semester prior to requesting interruption. During interruption, student status is suspended (no student discounts, visa implications for non-EU students).
@@ -101,7 +101,7 @@ Students may apply for credit recognition for equivalent courses completed in pr
 **Keywords & Triggers:** credit recognition, transfer credits, recognize previous courses, uznani zkousek
 
 ### [POL_010] Minor Specialization (Vedlejší specializace) Policy
-**Official Reference:** VŠE Study and Examination Regulations, Art. 9; Faculty Curricula  
+**Official Reference:** VŠE Study and Examination Regulations; Faculty Curricula  
 **Summary:** Master's students must choose and complete one approved Minor Specialization (30 ECTS total).  
 
 Master's degree curricula at VŠE require students to register for a Minor Specialization (vedlejší specializace) comprising 30 ECTS of specialized courses and a comprehensive minor state examination (souborná zkouška z VS).
@@ -113,7 +113,7 @@ Master's degree curricula at VŠE require students to register for a Minor Speci
 ## Examination & Grading
 
 ### [POL_011] Czech 1–4 Inverted Grading Scale
-**Official Reference:** VŠE Study and Examination Regulations, Art. 16  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** VŠE uses a 4-point grading scale where 1 is the highest passing grade and 4 is failure.  
 
 Grading scale at VŠE: 1 = Výborně (Excellent, 90-100%), 2 = Velmi dobře (Very Good, 75-89%), 3 = Dobře (Good, 60-74%), 4 = Nevyhověl (Fail, 0-59%). Non-graded courses receive 'Zap' (Zápočet / Credit).
@@ -122,7 +122,7 @@ Grading scale at VŠE: 1 = Výborně (Excellent, 90-100%), 2 = Velmi dobře (Ver
 **Keywords & Triggers:** grading system, what does grade 1 mean, grading scale, czech grades, passing grade vse
 
 ### [POL_012] Three-Attempt Exam Rule (1 Regular + 2 Retakes)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 17(4)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students are entitled to a maximum of three exam attempts per enrolled course in a single semester.  
 
 Every enrolled student has the right to one regular examination attempt (řádný termín) and up to two retake attempts (opravné termíny) within the designated examination period of that semester, provided exam dates are available.
@@ -131,7 +131,7 @@ Every enrolled student has the right to one regular examination attempt (řádn�
 **Keywords & Triggers:** exam retakes, how many exam attempts, retake policy, failed exam retake, opravny termin, fail an exam 3 times, failed exam three times, fail exam 3 times, third attempt fail
 
 ### [POL_013] Prerequisite Continuous Assessment (Zápočet) Threshold
-**Official Reference:** VŠE Study and Examination Regulations, Art. 15  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students must fulfill semester coursework requirements before they are admitted to the final exam.  
 
 If a course syllabus specifies a prerequisite continuous assessment (zápočet) or minimum semester point threshold (typically 50% or 60%), students who fail to meet this threshold are not permitted to register for the final exam.
@@ -140,7 +140,7 @@ If a course syllabus specifies a prerequisite continuous assessment (zápočet) 
 **Keywords & Triggers:** zapocet, continuous assessment, can i take exam without zapocet, semester requirements
 
 ### [POL_014] Unexcused Exam Absence Penalty
-**Official Reference:** VŠE Study and Examination Regulations, Art. 18(2)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Missing a registered examination without an approved medical excuse results in an automatic Grade 4 (Fail).  
 
 If a student registers for an exam date in InSIS and fails to appear without deregistering before the deadline or submitting an excused medical note, the examiner records grade '4 - Nevyhověl' (Fail) and one attempt is burned.
@@ -149,7 +149,7 @@ If a student registers for an exam date in InSIS and fails to appear without der
 **Keywords & Triggers:** missed exam, didn't show up for exam, unexcused absence exam, no show exam penalty
 
 ### [POL_015] Medical Absence Excuse Submission (5-Day Deadline)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 18(3)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Medical excuses must be submitted within 5 working days of the missed exam date via InSIS Contact Centre.  
 
 To excuse an exam absence for illness, a student must obtain a certified doctor's note and submit an official absence request via the InSIS Contact Centre within 5 business days of the examination date.
@@ -158,7 +158,7 @@ To excuse an exam absence for illness, a student must obtain a certified doctor'
 **Keywords & Triggers:** doctor note exam, sick during exam, medical excuse deadline, omluvenka, 5 days doctor note
 
 ### [POL_016] Exam Deregistration (Cancellation) Deadline
-**Official Reference:** VŠE Study and Examination Regulations, Art. 17(6)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students may cancel their exam registration in InSIS up to the deadline specified by the course examiner (usually 24h prior).  
 
 Students can withdraw from an exam date directly in InSIS without penalty, provided the cancellation occurs before the published closing deadline (typically 24 to 48 hours before the exam start time).
@@ -176,7 +176,7 @@ In the rare event that two mandatory exams clash at the exact same hour, the stu
 **Keywords & Triggers:** exam clash, overlapping exams, two exams same time, exam schedule conflict
 
 ### [POL_018] Right to Inspect Written Exam Papers (14-Day Window)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 19  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students have the legal right to inspect their graded written exam papers within 14 days of grade publication.  
 
 Every student has the right to inspect their evaluated exam paper, test answers, and scoring criteria within 14 calendar days of the grade being entered into InSIS, and to request a review if a calculation error occurred.
@@ -224,7 +224,7 @@ Academic papers, seminar projects, and final dissertations must consistently fol
 **Keywords & Triggers:** citation style, apa 7th, iso 690, bibliography format, how to cite sources vse
 
 ### [POL_023] Fabrication or Falsification of Research Data
-**Official Reference:** VŠE Code of Ethics, Art. 4  
+**Official Reference:** VŠE Code of Ethics  
 **Summary:** Inventing survey responses, experimental data, or company financials is classified as severe academic fraud.  
 
 Fabricating empirical findings, simulating fictitious survey respondents, or falsifying statistical data in master theses or seminar papers is strictly prohibited and subject to immediate disciplinary proceedings.
@@ -281,7 +281,7 @@ In accordance with Czech university standards, students must enter abstracts and
 **Keywords & Triggers:** czech abstract required, thesis keywords, abstract in czech, insis thesis submission blocked
 
 ### [POL_029] State Comprehensive Examination (SZZ) Eligibility
-**Official Reference:** VŠE Study and Examination Regulations, Art. 21  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Students must pass all required course credits (120 ECTS Master's / 180 ECTS Bachelor's) before taking SZZ.  
 
 To be eligible to sit for the State Comprehensive Examination (Státní závěrečná zkouška - SZZ) and thesis defense, the student must have completed all study requirements, passed all courses, and verified their study plan in InSIS.
@@ -299,7 +299,7 @@ Under Czech Higher Education Act § 47b, the defended thesis file is legally imm
 **Keywords & Triggers:** thesis error after defense, errata 47b, correct mistakes after defense, errata submission protocol
 
 ### [POL_031] Reviewer & Supervisor Reports Availability (3-Day Rule)
-**Official Reference:** VŠE Study and Examination Regulations, Art. 22(3)  
+**Official Reference:** VŠE Study and Examination Regulations  
 **Summary:** Supervisor and opponent evaluation reports must be published in InSIS at least 3 business days before defense.  
 
 Both the thesis supervisor's evaluation and the external opponent's review report must be uploaded to InSIS at least 3 working days prior to the date of the oral defense, allowing the student time to prepare responses to questions.
@@ -338,7 +338,7 @@ If tuition is not received by the deadline, a formal warning notice is issued in
 **Keywords & Triggers:** unpaid tuition consequence, late fee penalty, what happens if i don't pay tuition, account locked tuition
 
 ### [POL_035] Merit-Based Scholarship (Prospěchové stipendium) Criteria
-**Official Reference:** VŠE Scholarship Regulations, Art. 4  
+**Official Reference:** VŠE Scholarship Regulations  
 **Summary:** Awarded to the top 10% of students with weighted GPA <= 1.50 and minimum 30 ECTS earned.  
 
 Merit scholarships are evaluated annually. Students who obtain at least 30 ECTS in the preceding academic year with a weighted grade point average of 1.50 or better and rank in the top percentage of their cohort receive a non-repayable cash grant.
@@ -347,7 +347,7 @@ Merit scholarships are evaluated annually. Students who obtain at least 30 ECTS 
 **Keywords & Triggers:** merit scholarship, prospecchove stipendium, scholarship requirements, how to get scholarship, good grades bonus
 
 ### [POL_036] Accommodation Scholarship (Ubytovací stipendium)
-**Official Reference:** VŠE Scholarship Regulations, Art. 7  
+**Official Reference:** VŠE Scholarship Regulations  
 **Summary:** Eligible students with permanent residence outside Prague receive a state housing grant quarterly.  
 
 Under Czech state guidelines, students studying in standard duration who do not have permanent residence in the Capital City of Prague are eligible for the quarterly accommodation scholarship (approximately 700-1,000 CZK/month). Application is submitted via InSIS in October.
@@ -368,7 +368,7 @@ Tuition fees cannot be refunded once the semester teaching has started. A refund
 ## Dormitories & Housing (ISKaM)
 
 ### [POL_038] Monthly Dormitory Rent Payment Due Date (20th of Each Month)
-**Official Reference:** VŠE Central Accommodation Administration (SÚZ) Accommodation Contract Art. 5  
+**Official Reference:** VŠE Central Accommodation Administration (SÚZ) Accommodation Contract  
 **Summary:** Dormitory accommodation fees must be paid by the 20th day of the current calendar month via ISKaM.  
 
 All dormitory residents must settle their monthly rent by the 20th of each month using the ISKaM portal (via payment card or Czech domestic bank transfer with the assigned student Variable Symbol).
@@ -377,7 +377,7 @@ All dormitory residents must settle their monthly rent by the 20th of each month
 **Keywords & Triggers:** dorm rent due date, when to pay dorm, iskam rent deadline, pay koleje, late dorm payment fine
 
 ### [POL_039] Overnight Guest Registration Policy
-**Official Reference:** SÚZ Accommodation Rules, Art. 8  
+**Official Reference:** SÚZ Accommodation Rules  
 **Summary:** All overnight guests must register at reception; maximum 3 consecutive nights; guest fee applies.  
 
 Residents may host overnight guests in their rooms provided the roommate explicitly consents. The guest must be registered at the dormitory reception before 22:00, presenting a valid passport or ID, and paying the established guest fee (approx. 150-250 CZK/night).
@@ -386,7 +386,7 @@ Residents may host overnight guests in their rooms provided the roommate explici
 **Keywords & Triggers:** guests in dorm, can a friend stay overnight, dorm guest policy, sleepover rules koleje
 
 ### [POL_040] Quiet Hours (Noční klid) from 22:00 to 06:00
-**Official Reference:** Czech Civil Code; SÚZ Dormitory Code of Conduct, Art. 6  
+**Official Reference:** Czech Civil Code; SÚZ Dormitory Code of Conduct  
 **Summary:** Strict quiet hours are enforced in all university dormitories between 22:00 and 06:00 daily.  
 
 To protect students' study environment, quiet hours (noční klid) apply from 22:00 to 06:00. Playing loud music, shouting in corridors, or holding parties during quiet hours is strictly prohibited under Czech municipal law and SÚZ rules.
@@ -395,7 +395,7 @@ To protect students' study environment, quiet hours (noční klid) apply from 22
 **Keywords & Triggers:** quiet hours dorm, party in dorm, nocni klid, noise complaint dorm, curfew dorm
 
 ### [POL_041] Total Smoking and Vaping Prohibition in Dormitories
-**Official Reference:** SÚZ Fire Prevention & Safety Regulations, Art. 12  
+**Official Reference:** SÚZ Fire Prevention & Safety Regulations  
 **Summary:** Smoking and electronic vaping are strictly prohibited inside all dorm rooms, balconies, and indoor spaces.  
 
 Smoking traditional cigarettes, electronic cigarettes, or vaping devices is totally prohibited inside all VŠE dormitories (including student bedrooms, private balconies, kitchens, and bathrooms). Smoke detectors are connected directly to building alarm panels.
@@ -425,7 +425,7 @@ If a resident loses their physical dorm key or electronic RFID access fob, they 
 ## Campus Facilities & Library
 
 ### [POL_044] Library Book Loan Periods and Late Fines
-**Official Reference:** VŠE CIKS Library Regulations, Art. 7  
+**Official Reference:** VŠE CIKS Library Regulations  
 **Summary:** Standard book loan is 30 days; late return fine is 5 CZK per book per day.  
 
 Books borrowed from the VŠE Žižkov Library (Knihovna Žižkov) have a standard loan period of 30 days (extendable online in the library catalogue if no one has reserved the title). A late fee of 5 CZK per item per business day applies automatically.

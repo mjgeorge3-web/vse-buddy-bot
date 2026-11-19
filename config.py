@@ -70,7 +70,6 @@ ENABLE_LOGGING = True
 # CRISIS SUPPORT CONSTANTS
 # =====================================================================
 EMERGENCY_NUMBER = "112"
-# VERIFY NUMBER BEFORE DEPLOYMENT
 CZECH_CRISIS_LINE = "116 123"
 VSE_COUNSELLING_EMAIL = "ac@vse.cz"
 

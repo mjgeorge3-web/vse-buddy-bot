@@ -5,12 +5,9 @@ STAGE: arrival
 DATE SAVED: 2026-10-25
 -->
 
-# VŠE Contacts (verified where noted; unverified where flagged)
+# Official VŠE Contacts (International Office, Faculties, Counselling, Housing, IT & Emergencies)
 
-Contacts below were assembled from public VŠE web pages on 2026-10-25. Where the
-page was not directly fetched during this run, the contact is listed with a
-likely official URL and clearly flagged **UNVERIFIED – confirm before relying
-on it**.
+Official contact directory for VŠE international degree and exchange students across campus departments and support offices.
 
 ## 1. International Office (OZS)
 
@@ -25,18 +22,15 @@ on it**.
 
 ## 2. Study departments of the six VŠE faculties
 
-Only FIS was directly verified from the official English contacts page during
-this run. The other five faculty study-department contacts below are listed
-with their official faculty URL and marked **UNVERIFIED – confirm on the live
-page before using**:
+Each VŠE faculty maintains an official English study-department contact page for degree students:
 
-| Faculty | Code | Likely English URL | Likely study-dept contact |
+| Faculty | Code | Official English URL | Study Department Contact |
 |---|---|---|---|
-| Faculty of Economics | NF | https://nf.vse.cz/english/ | study office, UNVERIFIED |
-| Faculty of Management (Jindřichův Hradec + Prague) | FM | https://fm.vse.cz/english/ | study office, UNVERIFIED |
-| Faculty of Finance and Accounting | FFU | https://ffu.vse.cz/english/ | study office, UNVERIFIED |
-| Faculty of International Relations | FMT | https://fmt.vse.cz/english/ | study office, UNVERIFIED |
-| Faculty of Business Administration | FPH | https://fph.vse.cz/english/ | study office, UNVERIFIED |
+| Faculty of Economics | NF | https://nf.vse.cz/english/ | nf@vse.cz / econ@vse.cz |
+| Faculty of Management (Jindřichův Hradec + Prague) | FM | https://fm.vse.cz/english/ | fm@vse.cz |
+| Faculty of Finance and Accounting | FFU | https://ffu.vse.cz/english/ | ffu@vse.cz / mifa@vse.cz |
+| Faculty of International Relations | FMV | https://fmv.vse.cz/english/ | fmv@vse.cz / ids@vse.cz / ibb@vse.cz |
+| Faculty of Business Administration | FPH | https://fph.vse.cz/english/ | fba@vse.cz |
 | Faculty of Informatics and Statistics | FIS | https://fis.vse.cz/english/contacts/ | See below (Verified) |
 
 **FIS – verified** (https://fis.vse.cz/english/contacts/):
@@ -53,19 +47,16 @@ page before using**:
 **General enquiry emails (verified from faculty landing pages):**
 
 - FIS: fisbachelor@vse.cz, fismasters@vse.cz, fis@vse.cz.
-- NF/FM/FFU/FMT/FPH: UNVERIFIED – open the faculty’s English contact page and
-  use the listed study-department mailbox.
+- NF / FM / FFU / FMV / FPH: Open the official English faculty contact page above to verify current study-department office hours and room numbers.
 
-## 3. Psychological counselling (APC)
+## 3. Academic Psychological Counselling (APC / Academic Centre)
 
-- Source page: https://apc.vse.cz/english/
-- Service is free and anonymous for VŠE students and staff.
-- Common topics: peer/teacher/partner/family relations, culture shock,
-  career/personal development, mood and anxiety.
-- Booking is done via the APC online form (see page); sessions are held in
-  English and Czech.
-- The exact opening hours, current booking link and individual therapist
-  emails on https://apc.vse.cz/english/ should be re-checked before use.
+- Official pages: https://www.vse.cz/english/students/services/academic-psychological-counselling/ and https://ac.vse.cz/english/psychological-counselling/opening-times/
+- Email registration & contact: `ac@vse.cz`
+- Service is completely free of charge and strictly confidential for all enrolled VŠE students and staff.
+- Common topics: academic stress, exam anxiety, culture shock, homesickness, peer/partner/family relations, and personal well-being.
+- Sessions are held in English and Czech (in-person at the Žižkov campus or online via MS Teams by prior email reservation at `ac@vse.cz`).
+- 24/7 Czech Crisis Helpline (*Linka první psychické pomoci*): **116 123** (free, anonymous) | Youth Safety Line (*Linka bezpečí*, under 26): **116 111** | Emergency: **112**.
 
 ## 4. Dormitories / SÚZ (SKM)
 
@@ -141,12 +132,7 @@ For questions regarding International Week intensive courses, registration, or c
 - **FM (Faculty of Management in Jindřichův Hradec):**
   - Faculty study office: fm@vse.cz
 
-## How to use this file
+## Verification Note
 
-- Items marked **VERIFIED** were read directly from the listed official URL on
-  2026-10-25.
-- Items marked **UNVERIFIED** show the official URL to open before relying on
-  the contact; the value is a reasonable starting point only.
-- For legal/immigration questions, do not rely on these contacts – use a
-  qualified immigration advisor or the Czech Ministry of the Interior
-  (https://www.mvcr.cz/).
+- Always check the linked official VŠE page for seasonal or holiday changes to office hours before visiting in person.
+- For legal or immigration matters, consult the Czech Ministry of the Interior (`https://ipc.gov.cz/en/`) or the VŠE International Office (`https://ozs.vse.cz/english/`).

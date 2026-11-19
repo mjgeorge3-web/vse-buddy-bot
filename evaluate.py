@@ -3,13 +3,12 @@
 Runs the test questions dataset from data/test_questions.csv through BuddyBot,
 evaluates retrieval hits, refusals on gaps, referrals on sensitive topics,
 and writes structured CSV output with blank manual scoring columns to results/.
-Includes a 4-second delay between queries to respect free-tier Gemini API rate limits.
+Includes a 5-second delay between queries to respect free-tier Gemini API rate limits.
 """
 
 import csv
 from datetime import datetime
 from pathlib import Path
-import re
 import time
 from typing import Any, Dict, List
 
@@ -19,7 +18,7 @@ from bot import BuddyBot
 
 def evaluate_test_set(
     test_csv_path: Path = config.TEST_QUESTIONS_PATH,
-    delay_between_calls: float = 4.0,
+    delay_between_calls: float = 5.0,
     limit: int = None,
 ):
     """Run evaluation on test questions and generate summary report and CSV."""
@@ -33,7 +32,7 @@ def evaluate_test_set(
 
     # Read test questions
     rows: List[Dict[str, str]] = []
-    with open(test_csv_path, "r", encoding="utf-8") as f:
+    with open(test_csv_path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for r in reader:
             rows.append(r)
@@ -68,7 +67,7 @@ def evaluate_test_set(
         expected_points = row.get("expected_points", "")
         expected_source = row.get("expected_source", "").strip()
 
-        print(f"[{idx}/{len(rows)}] (ID: {q_id}, Type: {q_type}) {question[:60]}...")
+        print(f"[{idx}/{len(rows)}] (ID: {q_id}, Type: {q_type}) {question[:60]}...", flush=True)
 
         # Fresh conversation history for each test question
         result = bot.answer(question=question, history=[])
@@ -85,7 +84,7 @@ def evaluate_test_set(
         retrieved_sources_str = "; ".join(retrieved_sources)
 
         # -------------------------------------------------------------
-        # Automatic Helper Checks
+        # Automatic Helper Checks (Retrieval, Refusal, Referral)
         # -------------------------------------------------------------
         # 1. Source match check
         if expected_source.lower() == "none":
@@ -127,6 +126,7 @@ def evaluate_test_set(
         else:
             referral_present = "N/A"
 
+        # Leave score (0-2) and notes blank for manual researcher grading
         eval_results.append({
             "id": q_id,
             "stage": stage,
@@ -172,7 +172,7 @@ def evaluate_test_set(
         "notes",
     ]
 
-    with open(output_path, "w", newline="", encoding="utf-8") as f:
+    with open(output_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(eval_results)
@@ -194,12 +194,12 @@ def evaluate_test_set(
     print(f"Refusal Rate on Gaps (Type G 'don't have verified'): {refusal_rate:.1f}% ({refused_hits}/{gap_count})")
     print(f"Referral Rate on Sensitive (Type R): {referral_rate:.1f}% ({referral_hits}/{referral_count})")
     print(f"Average Response Latency: {avg_latency:.1f} ms")
+    print("Note: 'score (0-2)' and 'notes' columns are left blank for manual grading.")
     print("=" * 70)
 
 
 if __name__ == "__main__":
     import sys
-    # Optional --limit flag for quick dry runs on example rows
     limit_arg = None
     if len(sys.argv) > 1 and sys.argv[1].isdigit():
         limit_arg = int(sys.argv[1])

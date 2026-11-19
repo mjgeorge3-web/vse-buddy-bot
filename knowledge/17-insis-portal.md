@@ -87,4 +87,15 @@ DATE SAVED: 2026-10-25
 
 ## 13. Course and teacher evaluation survey (Studentská evaluace)
 - At the end of each semester, InSIS opens the anonymous **Student Evaluation of Teaching**.
-- Access via **Student's Portal** → **Student Evaluation (Evaluace)** to provide anonymous feedback on course content, professors, seminar tutors, and materials.
+- Access via **Student's Portal** → **Student Evaluation (Evaluace)** (https://insis.vse.cz/auth/anketa/?lang=en) to provide anonymous feedback on course content, professors, seminar tutors, and materials.
+
+## 14. Customizing Personal Administration & Student Navigation Portlet (Portlets in InSIS)
+- **Why InSIS dashboards look different across students:** Each student's **Personal administration** home page (https://insis.vse.cz/auth/?lang=en) can be customized with portlets, meaning certain tiles or sidebars may be visible for one student and hidden for another.
+- **How to enable the Student Navigation Sidebar (`Navigation bar for students`):**
+  1. Log into **Personal administration** (https://insis.vse.cz/auth/?lang=en).
+  2. Scroll to the **Adjustment of the information system** section and click **Portlets in InSIS** (`/auth/system/portlety.pl`).
+  3. Under **Placing of portlets**, select **`Navigation bar for students`** (*Navigation bar with the most frequent applications for students*).
+  4. Under **Space for placing a portlet**, select **`Basic - to the left from the page content`** and click **Add**.
+- **Quick links included in `Navigation bar for students`:** Once added, a green **Student** sidebar appears on the left of InSIS pages with 14 academic shortcuts: *Mail box, Documents, Discussion platforms, Timetables, Exams, My lectures sheet, Schoolmates, Plan of study, Results, Survey, Registration/enrollment, Final thesis assignment, Coursework submissions, List of topics*.
+- **Important coverage limitation:** Even when enabled, `Navigation bar for students` **does NOT include** administrative and financial portals such as **Scholarships** (*Žádosti o stipendia*, `/auth/stipendia/`), **Student Study Financing & Bank Accounts** (`/auth/financovani/index.pl`), **Electronic Confirmation of Study** (`/auth/student/potvrzeni.pl`), **Contact Centre / Document Office** (*Úřadovna*, `/auth/uradovna/`), **Personal Data** (`/auth/lide/moje_udaje.pl`), or **OTP Two-Factor Setup** (`/auth/system/totp.pl`). Use direct InSIS links or **My College → Student's portal** for those tasks.
+- **Emergency recovery (`https://insis.vse.cz/quick`):** If a placed portlet causes an InSIS page to display improperly, log in via https://insis.vse.cz/quick (or click **Switch off the portlets in my Personal administration**) to remove the problematic portlet.
