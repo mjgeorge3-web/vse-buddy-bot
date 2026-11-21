@@ -1,5 +1,5 @@
 <!--
-SOURCE: https://admissions.vse.cz/tuition-fees/, https://www.vse.cz/english/admissions/
+SOURCE: https://admissions.vse.cz/
 TITLE: Tuition fees, bank details and payment procedures at VŠE
 STAGE: pre_arrival
 DATE SAVED: 2026-10-25

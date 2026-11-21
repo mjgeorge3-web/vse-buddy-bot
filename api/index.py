@@ -38,6 +38,18 @@ def get_bot():
     return _bot
 
 
+MAX_POST_BODY_BYTES = 1_048_576  # 1 MB cap for API POST bodies
+
+
+def _parse_limit(params: dict, default: int = 3, max_val: int = 20) -> int:
+    """Safely parse and clamp ?limit= query parameter."""
+    try:
+        val = int(params.get("limit", [default])[0])
+    except (ValueError, TypeError, IndexError):
+        return default
+    return max(1, min(val, max_val))
+
+
 def resolve_api_path(req_path: str, headers) -> tuple[str, dict]:
     parsed = urllib.parse.urlparse(req_path)
     params = urllib.parse.parse_qs(parsed.query)
@@ -86,7 +98,7 @@ class handler(BaseHTTPRequestHandler):
         # 1. API: InSIS Navigation Database Query
         if path.startswith("/api/insis/navigate"):
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
             try:
                 import insis_nav_db
                 routes = insis_nav_db.search_routes(query_str, limit=limit_val)
@@ -105,7 +117,7 @@ class handler(BaseHTTPRequestHandler):
         # 2. API: VŠE Policies & Regulations Query
         if path.startswith("/api/vse/policies"):
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
             try:
                 import insis_nav_db
                 policies = insis_nav_db.search_policies(query_str, limit=limit_val)
@@ -124,7 +136,7 @@ class handler(BaseHTTPRequestHandler):
         # 3. API: VŠE Campus Locations
         if path.startswith("/api/vse/locations"):
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
             try:
                 import insis_nav_db
                 locations = insis_nav_db.search_campus_locations(query_str, limit=limit_val)
@@ -143,7 +155,7 @@ class handler(BaseHTTPRequestHandler):
         # 4. API: Unified Search
         if path.startswith("/api/vse/unified"):
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
             try:
                 import insis_nav_db
                 res = insis_nav_db.unified_search(query_str, limit=limit_val)
@@ -191,20 +203,15 @@ class handler(BaseHTTPRequestHandler):
 
         # 6. API: insis-links JSON
         if path.startswith("/api/insis-links"):
-            candidate_paths = [
-                BASE_DIR / "all_urls.json",
-                BASE_DIR / "public" / "all_urls.json",
-                BASE_DIR / "insis_demo" / "all_urls.json",
-            ]
-            for p in candidate_paths:
-                if p.exists():
-                    resp_bytes = p.read_bytes()
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json; charset=utf-8")
-                    self.send_header("Content-Length", str(len(resp_bytes)))
-                    self.end_headers()
-                    self.wfile.write(resp_bytes)
-                    return
+            all_urls_path = BASE_DIR / "public" / "all_urls.json"
+            if all_urls_path.exists():
+                resp_bytes = all_urls_path.read_bytes()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(resp_bytes)))
+                self.end_headers()
+                self.wfile.write(resp_bytes)
+                return
             self.send_response(404)
             self.end_headers()
             return
@@ -218,7 +225,14 @@ class handler(BaseHTTPRequestHandler):
         path, params = resolve_api_path(self.path, self.headers)
 
         if path == "/api/chat":
-            content_length = int(self.headers.get("Content-Length", 0))
+            try:
+                content_length = int(self.headers.get("Content-Length", 0))
+            except ValueError:
+                self.send_error(400, "Invalid Content-Length")
+                return
+            if content_length < 0 or content_length > MAX_POST_BODY_BYTES:
+                self.send_error(413, "Request payload too large")
+                return
             body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
 
             try:
@@ -234,6 +248,8 @@ class handler(BaseHTTPRequestHandler):
                         "status": "success" if result.get("mode") != "error" else "error",
                         "answer": result.get("answer", ""),
                         "mode": result.get("mode", "normal"),
+                        "sensitive": result.get("sensitive", False),
+                        "sensitive_topic": result.get("sensitive_topic"),
                         "sources": result.get("sources", []),
                         "top_score": result.get("top_score", 0.0),
                         "latency_ms": result.get("latency_ms", 0.0),

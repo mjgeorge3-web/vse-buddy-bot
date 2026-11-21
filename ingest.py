@@ -24,13 +24,15 @@ import config
 def compute_knowledge_hash(knowledge_dir: Path = config.KNOWLEDGE_DIR) -> str:
     """Compute a single deterministic SHA-256 hash for all *.md files in knowledge/.
     
-    Used to detect if the knowledge base has changed and trigger automatic re-indexing.
+    Normalizes CRLF/LF line endings so Windows, macOS, and Linux checkouts produce
+    the exact same hash and never trigger unnecessary re-indexing on clone.
     """
     hasher = hashlib.sha256()
     md_files = sorted(knowledge_dir.glob("*.md"))
     for file_path in md_files:
         hasher.update(file_path.name.encode("utf-8"))
-        hasher.update(file_path.read_bytes())
+        normalized = file_path.read_text(encoding="utf-8").replace("\r\n", "\n")
+        hasher.update(normalized.encode("utf-8"))
     return hasher.hexdigest()
 
 
@@ -58,10 +60,11 @@ def split_section_paragraphs(
         for line in lines:
             if current_len + len(line) + 1 > target_max and current_lines:
                 chunks.append("\n".join(current_lines))
-                # Retain last line if within overlap limit
-                if len(line) <= overlap:
-                    current_lines = [line]
-                    current_len = len(line)
+                # Retain previous chunk's last line if within overlap limit
+                prev_line = current_lines[-1]
+                if len(prev_line) <= overlap:
+                    current_lines = [prev_line]
+                    current_len = len(prev_line)
                 else:
                     current_lines = []
                     current_len = 0
@@ -179,8 +182,8 @@ def parse_and_chunk_file(file_path: Path) -> List[Dict[str, Any]]:
     for sec in sections:
         sub_chunks = split_section_paragraphs(sec)
         for sub_text in sub_chunks:
-            sub_clean = sub_text.strip()
-            if not sub_clean:
+            sub_clean = re.sub(r"(?m)^\s*---+\s*$", "", sub_text).strip()
+            if len(re.sub(r"[^A-Za-z0-9À-ž]", "", sub_clean)) < 30:
                 continue
             # Prepend page TITLE to chunk text before embedding (improves recall)
             text_with_title = f"{title}\n\n{sub_clean}".strip()
@@ -295,10 +298,10 @@ def build_and_save_index(force: bool = False) -> Tuple[np.ndarray, List[Dict[str
     chunks, chunk_counts = load_all_chunks(config.KNOWLEDGE_DIR)
     chunk_texts = [c["text"] for c in chunks]
 
-    # Reuse existing cached vectors for identical chunk texts to speed up incremental re-indexing
+    # Reuse existing cached vectors only during incremental rebuilds (force=True rebuilds cleanly from scratch)
     cached_vecs: Dict[str, np.ndarray] = {}
     dim = 3072
-    if config.INDEX_PATH.exists() and config.INDEX_META_PATH.exists():
+    if not force and config.INDEX_PATH.exists() and config.INDEX_META_PATH.exists():
         try:
             old_npz = np.load(config.INDEX_PATH)
             old_mat = old_npz["embeddings"]
@@ -319,29 +322,23 @@ def build_and_save_index(force: bool = False) -> Tuple[np.ndarray, List[Dict[str
     # Verify Gemini API key
     api_key = config.get_gemini_api_key()
     if not api_key and missing_indices:
-        print("\n[WARNING] GEMINI_API_KEY is not set.")
-        return np.zeros((len(chunks), 1), dtype=np.float32), chunks, chunk_counts
+        raise ValueError(
+            "GEMINI_API_KEY is not configured. Please set GEMINI_API_KEY in .env before running ingest.py."
+        )
 
     new_vecs_map: Dict[int, np.ndarray] = {}
     if missing_indices:
         missing_texts = [chunk_texts[idx] for idx in missing_indices]
-        try:
-            client = genai.Client(
-                api_key=api_key,
-                http_options=types.HttpOptions(timeout=8.0),
-            )
-            print(f"Generating embeddings for {len(missing_texts)} updated/new chunks (reusing {len(chunks) - len(missing_texts)} cached)...")
-            embedded_missing = embed_chunks_with_backoff(client, missing_texts, model=config.EMBEDDING_MODEL)
-            dim = embedded_missing.shape[1]
-            for idx, vec in zip(missing_indices, embedded_missing):
-                new_vecs_map[idx] = vec
-        except Exception as e:
-            print(f"[Ingest Notice] Embedding API unreachable ({e}); using deterministic lexical fallback vectors for {len(missing_indices)} chunks.")
-            for idx in missing_indices:
-                rng = np.random.default_rng(abs(hash(chunk_texts[idx])) % (2**32))
-                v = rng.standard_normal(dim).astype(np.float32)
-                v /= max(float(np.linalg.norm(v)), 1e-12)
-                new_vecs_map[idx] = v
+        # HttpOptions.timeout is in milliseconds (30000 ms = 30 seconds)
+        client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(timeout=30000),
+        )
+        print(f"Generating embeddings for {len(missing_texts)} updated/new chunks (reusing {len(chunks) - len(missing_texts)} cached)...")
+        embedded_missing = embed_chunks_with_backoff(client, missing_texts, model=config.EMBEDDING_MODEL)
+        dim = embedded_missing.shape[1]
+        for idx, vec in zip(missing_indices, embedded_missing):
+            new_vecs_map[idx] = vec
 
     assembled: List[np.ndarray] = []
     for idx, txt in enumerate(chunk_texts):

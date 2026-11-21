@@ -18,11 +18,11 @@ def test_public_no_login_visa_question_skips_insis_menu_clutter():
     assert chunks == []
 
 
-def test_logged_in_idea2_personal_vouchers_and_gdpr_toggle():
+def test_logged_in_personal_vouchers_and_gdpr_toggle():
     ctx_on = {
         "logged_in": True,
         "personalised": True,
-        "user_name": "George Joseph",
+        "user_name": "Alex Novak",
         "page_key": "student_portal",
     }
     chunks_on = student_profile.build_dynamic_context_chunks(
@@ -30,7 +30,15 @@ def test_logged_in_idea2_personal_vouchers_and_gdpr_toggle():
     )
     assert len(chunks_on) == 1
     assert chunks_on[0]["id"] == "student_personal_profile"
-    assert "120 remaining out of 144" in chunks_on[0]["text"]
+    assert "30 remaining out of 144" in chunks_on[0]["text"]
+
+    # General policy questions must NOT inject personal study records even when logged in
+    assert student_profile.build_dynamic_context_chunks(
+        "How do credit vouchers work at VŠE in general?", ctx_on
+    ) == []
+    assert student_profile.build_dynamic_context_chunks(
+        "Where is Odevzdávárna in InSIS?", ctx_on
+    ) == []
 
     # GDPR Opt-Out: personalised=False must NOT inject personal study profile
     ctx_off = dict(ctx_on, personalised=False)
@@ -44,17 +52,20 @@ def test_logged_in_smart_topic_switch_ignores_open_insis_screen():
     ctx = {
         "logged_in": True,
         "personalised": True,
-        "user_name": "George Joseph",
+        "user_name": "Alex Novak",
         "page_key": "master_thesis",
     }
     chunks = student_profile.build_dynamic_context_chunks(
-        "Where is the nearest washroom in Rajská Building and how does visa extension work?",
+        "Where is the FIS Study Department and how does visa extension work?",
         ctx,
     )
     assert chunks == []
+    # Bare words like 'left' or 'overdue' must NOT falsely inject personal profile
+    assert student_profile.build_dynamic_context_chunks("Should I turn left to reach RB 101?", ctx) == []
+    assert student_profile.build_dynamic_context_chunks("What is the library overdue book fine?", ctx) == []
 
 
-def test_idea3_onboarding_checklist_variants():
+def test_onboarding_checklist_variants_and_legal_accuracy():
     flat_items = student_profile.get_onboarding_checklist(
         origin="non_eu", housing="flat", stage="arrival"
     )
@@ -65,9 +76,16 @@ def test_idea3_onboarding_checklist_variants():
     )
     assert any("automatically" in item["task"] for item in dorm_items)
 
+    # EU private-flat stay >30 days must reflect mandatory Czech Act No. 326/1999 Sb. § 93 reporting
+    eu_flat_items = student_profile.get_onboarding_checklist(
+        origin="eu", housing="flat", stage="arrival"
+    )
+    assert any("Mandatory" in item["task"] and "Foreign Police" in item["task"] for item in eu_flat_items)
+    assert not any("Optional" in item["task"] for item in eu_flat_items)
+
 
 def test_public_home_html_contains_all_seven_authentic_sections():
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    html = (BASE_DIR / "public" / "index.html").read_text(encoding="utf-8")
     expected_headings = [
         "Personal administration",
         "Admission procedure",
@@ -98,10 +116,9 @@ def test_custom_user_login_profile_uses_exact_logged_in_name():
     assert len(chunks) == 1
     assert "Maria Novak" in chunks[0]["title"]
     assert "Authenticated Student: Maria Novak" in chunks[0]["text"]
-    assert "George Joseph" not in chunks[0]["text"]
 
 
-def test_logged_out_context_never_contains_student_name():
+def test_logged_out_context_never_contains_student_profile():
     ctx = {
         "logged_in": False,
         "personalised": False,
@@ -111,19 +128,14 @@ def test_logged_out_context_never_contains_student_name():
     chunks = student_profile.build_dynamic_context_chunks(
         "How many credit vouchers do I have left?", ctx
     )
-    for c in chunks:
-        assert "George Joseph" not in c["text"]
-        assert "student_personal_profile" != c["id"]
+    assert chunks == []
 
 
 def test_login_password_and_clean_logout_in_frontend():
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
     assert 'REQUIRED_INSIS_PASSWORD = "ism_mastersthesis"' in app_js
     assert 'localStorage.removeItem("insis_session_user_v3")' in app_js
     assert "resetBotConversationForSession()" in app_js
-    assert "George Joseph" not in html
-    assert "George Joseph" not in app_js
 
 
 def test_multiturn_accommodation_query_isolation(monkeypatch):
@@ -159,23 +171,22 @@ def test_multiturn_credit_vouchers_query_isolation():
     assert "errata" not in query.lower()
     assert "thesis" not in query.lower()
 
-    # Verify dynamic profile returns student voucher info
+    # Verify dynamic profile returns accurate student voucher info (144 - 90 - 24 = 30 remaining)
     ctx = {"logged_in": True, "personalised": True, "user_name": "Alexander Kovac", "page_key": "student_portal"}
     dyn_chunks = student_profile.build_dynamic_context_chunks(query, ctx)
     assert len(dyn_chunks) == 1
     assert "Alexander Kovac" in dyn_chunks[0]["title"]
-    assert "120" in dyn_chunks[0]["text"]
-    assert "144" in dyn_chunks[0]["text"]
+    assert "30 remaining out of 144" in dyn_chunks[0]["text"]
 
 
 def test_vse_logo_and_academic_demo_disclaimers():
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
-    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    html = (BASE_DIR / "public" / "index.html").read_text(encoding="utf-8")
+    css = (BASE_DIR / "public" / "styles.css").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
 
     # Logo assets exist and are linked in header
-    assert (BASE_DIR / "insis_demo" / "assets" / "vse_logo.svg").exists()
-    assert (BASE_DIR / "insis_demo" / "assets" / "vse_logo.png").exists()
+    assert (BASE_DIR / "public" / "assets" / "vse_logo.svg").exists()
+    assert (BASE_DIR / "public" / "assets" / "vse_logo.png").exists()
     assert 'src="assets/vse_logo.svg"' in html
     assert 'alt="VŠE Prague Logo"' in html
 
@@ -217,14 +228,14 @@ def test_logged_in_pending_assignments_with_submission_links():
     assert "4SA421" in chunk_text
     assert "odevzdavarna.pl" in chunk_text
     assert "Go to 4IT445 Submission Page" in chunk_text
-    assert "Nov 15, 2026" in chunk_text
+    assert "3 days left" in chunk_text
 
 
 def test_logged_in_credits_left_detailed_breakdown():
     ctx = {
         "logged_in": True,
         "personalised": True,
-        "user_name": "George Joseph",
+        "user_name": "Alex Novak",
         "page_key": "student_portal"
     }
 
@@ -233,7 +244,8 @@ def test_logged_in_credits_left_detailed_breakdown():
     assert "90" in chunk_text  # earned
     assert "24" in chunk_text  # enrolled
     assert "6" in chunk_text   # remaining after current term
-    assert "120" in chunk_text # target and vouchers
+    assert "120" in chunk_text # degree target
+    assert "30 remaining out of 144" in chunk_text # accurate voucher math
 
 
 def test_public_guest_assignments_inquiry_safety():
@@ -247,10 +259,7 @@ def test_public_guest_assignments_inquiry_safety():
 
     # Guest asking about assignments should NOT leak private profile
     chunks = student_profile.build_dynamic_context_chunks("what assignments do i have to submit?", ctx)
-    for c in chunks:
-        assert "Alexander Kovac" not in c.get("text", "")
-        assert "George Joseph" not in c.get("text", "")
-        assert "4IT445" not in c.get("text", "")
+    assert chunks == []
 
     routes = insis_nav_db.search_routes("Coursework submissions Odevzdávárna")
     assert len(routes) > 0
@@ -258,9 +267,9 @@ def test_public_guest_assignments_inquiry_safety():
 
 
 def test_coursework_submissions_view_and_ics_in_frontend():
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
-    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
+    html = (BASE_DIR / "public" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
+    css = (BASE_DIR / "public" / "styles.css").read_text(encoding="utf-8")
 
     # Authentic Coursework Submissions (Odevzdávárna) view exists
     assert 'id="view-coursework-submissions"' in html
@@ -280,8 +289,8 @@ def test_coursework_submissions_view_and_ics_in_frontend():
 
 
 def test_public_secondary_links_scope_interceptor():
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    html = (BASE_DIR / "public" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
 
     # Scope notice modal exists in HTML
     assert 'id="out-of-scope-modal"' in html
@@ -300,8 +309,8 @@ def test_public_secondary_links_scope_interceptor():
 
 
 def test_polished_chat_links_and_citation_ui():
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
-    css = (BASE_DIR / "insis_demo" / "styles.css").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
+    css = (BASE_DIR / "public" / "styles.css").read_text(encoding="utf-8")
     import prompts
 
     # CSS contains polished link pill and modern citation badge styles
@@ -325,8 +334,8 @@ def test_polished_chat_links_and_citation_ui():
 
 def test_contact_centre_general_query_route_and_view():
     import insis_nav_db
-    html = (BASE_DIR / "insis_demo" / "index.html").read_text(encoding="utf-8")
-    app_js = (BASE_DIR / "insis_demo" / "app.js").read_text(encoding="utf-8")
+    html = (BASE_DIR / "public" / "index.html").read_text(encoding="utf-8")
+    app_js = (BASE_DIR / "public" / "app.js").read_text(encoding="utf-8")
 
     # 1. Test search_routes matches general query / querry with Contact Centre
     routes = insis_nav_db.search_routes("whre to find the general querry in insis")

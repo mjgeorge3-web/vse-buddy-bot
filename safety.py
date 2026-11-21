@@ -89,7 +89,7 @@ SENSITIVE_TOPICS = {
         r"\btuition payment\b",
         r"\bfee payment\b",
         r"\bpay.*fees?\b",
-        r"\bfees?\b",
+        r"\b(?:tuition|study|application|semester|school)\s+fees?\b",
         r"\btuition\b",
         r"\bbank transfer\b",
         r"\bvariable symbol\b",
@@ -125,6 +125,33 @@ SENSITIVE_TOPICS = {
         r"\bpsychological counselling\b",
     ],
 }
+
+
+REFERRAL_TARGETS = {
+    "visa_residence": "the VŠE International Office and the Czech Ministry of the Interior (mvcr.cz)",
+    "foreign_police": "the Czech Foreign Police and the VŠE International Office",
+    "employment_work": "the Czech Ministry of the Interior (mvcr.cz) and the VŠE International Office",
+    "health_insurance": "the official health insurance provider and the VŠE International Office",
+    "legal": "the VŠE Legal Department or an authorized legal advisor",
+    "tuition_payment": "your faculty Study Department or the VŠE Admission Office",
+    "academic_failure_expulsion": "your faculty Study Department and official VŠE Study Regulations",
+    "mental_wellbeing": "VŠE Academic Psychological Counselling (ac@vse.cz)",
+}
+
+REFERRAL_MARKERS = (
+    "confirm with", "confirm this with", "verify with", "verify on",
+    "check with", "consult ", "contact ", "reach out to",
+    "ac@vse.cz", "ozs@vse.cz", "admissions@vse.cz", "fismasters@vse.cz",
+    "ipc.gov.cz", "mvcr.cz", "refer to", "speak with",
+)
+
+
+def has_explicit_referral(text: str) -> bool:
+    """Return True if text contains explicit verification or official office contact phrasing."""
+    if not text:
+        return False
+    lowered = text.lower()
+    return any(marker in lowered for marker in REFERRAL_MARKERS)
 
 
 def get_crisis_response() -> str:

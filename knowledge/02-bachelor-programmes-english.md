@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/study-at-vse/bachelor-programmes/
 TITLE: Bachelor Programmes taught in English at VŠE
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: pre_arrival
 DATE SAVED: 2026-10-25
 -->
 

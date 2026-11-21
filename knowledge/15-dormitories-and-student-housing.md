@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://accommodation.vse.cz/
 TITLE: VŠE dormitories and student housing (SÚZ VŠE)
-STAGE: Before arrival
+STAGE: pre_arrival
 DATE SAVED: 2026-10-28
 -->
 
@@ -25,6 +25,8 @@ VŠE offers student accommodation across multiple dormitories grouped primarily 
 - **Other locations:** Rooseveltova dormitory (Prague 7 - Holešovice).
 
 ## How to Apply for Dormitory Accommodation via ISKaM
+> **UNVERIFIED (Seasonal Dates & Prices):** Exact monthly dormitory fees, deposit amounts, and semester booking deadlines change each academic year and are not verified in real time. Always confirm current prices and deadlines directly on https://accommodation.vse.cz/ or with SÚZ VŠE (`ubytovani@vse.cz`).
+
 1. **Access ISKaM Portal:** Log in to the ISKaM accommodation portal at https://iskam-web.vse.cz/ using your VŠE InSIS username and password.
 2. **Submit Housing Request:** Complete and submit the online accommodation application during the designated registration window for international or incoming students.
 3. **Select Room and Dormitory:** Choose from available room types (typically 2-bed rooms in apartment units or shared rooms).

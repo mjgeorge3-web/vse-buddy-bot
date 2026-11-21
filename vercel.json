@@ -4,7 +4,7 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 30,
-      "includeFiles": "data/**,knowledge/**,results/**,*.py,*.json"
+      "includeFiles": "data/**,knowledge/**,results/**,public/all_urls.json,*.py"
     }
   },
   "rewrites": [

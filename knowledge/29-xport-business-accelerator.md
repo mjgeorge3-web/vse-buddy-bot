@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/services/xport-vse-business-accelerator/
 TITLE: xPORT VŠE Business Accelerator
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

@@ -1,5 +1,5 @@
 <!--
-SOURCE: https://www.vse.cz/english/students/scholarships/, https://ci.vse.cz/english/
+SOURCE: https://www.vse.cz/english/about-vse/information-and-regulations/scholarship-regulations/, https://ci.vse.cz/english/
 TITLE: Scholarships, campus building navigation and SafeQ printing at VŠE
 STAGE: studies
 DATE SAVED: 2026-10-25
@@ -21,11 +21,11 @@ DATE SAVED: 2026-10-25
 
 ## Campus buildings and room code navigation
 VŠE classrooms and offices are designated by building prefixes on the main Žižkov campus:
-- **RB = Rajská budova (Paradise Building):** Houses the main entrance from nám. W. Churchilla, lecture halls (RB 101, RB 201), the Admission Office (RB 527), and International Office (OZS, 5th floor).
-- **SB = Stará budova (Old Building):** Central wing featuring the historic Vencovského aula auditorium and lecture rooms.
-- **NB = Nová budova (New Building):** Houses the main university library (Knihovna), computer study labs, student study departments (e.g. FIS on the 4th floor NB 403), and menza dining facilities.
-- **JM = Jižní Město campus:** Satellite campus in Prague 4 (Kunratice) hosting specific freshman courses, sports grounds, and student dormitories.
-- **Room decoding rule:** The first digit of a room code represents the floor. For example, `RB 209` is located in Rajská budova on the 2nd floor; `NB 403` is in Nová budova on the 4th floor.
+- **RB = Rajská budova (Paradise Building):** Houses the modern atrium entrance from nám. W. Churchilla, lecture halls (RB 101, RB 201), the Admission Office (RB 527), and the International Office (OZS, 5th floor).
+- **SB = Stará budova (Old Building):** Houses the Central Library (Knihovna Žižkov, mezzanine), Likešova aula, Centrum informatiky (CI) IT Helpdesk (SB 22/23), and lecture rooms.
+- **NB = Nová budova (New Building):** Houses Vencovského aula, faculty study departments (e.g., FIS Study Department on the 4th floor, NB 403), lecture halls (NB A–D), and student dining facilities (Menza).
+- **JM = Jižní Město campus:** Satellite campus in Prague 4 (Kunratice) hosting specific courses, study library, IT helpdesk (JM 355), and student dormitories.
+- **Room decoding rule:** For standard three-digit room numbers, the first digit represents the floor. For example, `RB 209` is in Rajská budova on the 2nd floor; `NB 403` is in Nová budova on the 4th floor.
 
 ## Printing and copying on campus (SafeQ)
 - VŠE operates the **SafeQ** centralized printing and copying service.

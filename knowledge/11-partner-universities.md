@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://ozs.vse.cz/english/partner-universities/
 TITLE: Partner universities and international networks
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

@@ -3,77 +3,77 @@
 **Thesis Project:** *Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague*  
 **System Name:** VSE Buddy Bot  
 **System Type:** Domain-Specific Retrieval-Augmented Generation (RAG) Support Prototype  
-**Environment:** Python 3.11, Streamlit / FastAPI (Vercel), Google Gemini API, NumPy Vector Index, SQLite FTS5  
+**Environment:** Python 3.10+, Streamlit / Python `http.server` (`insis_demo/server.py`), Google Gemini API, NumPy Vector Index, SQLite FTS5  
 
 ---
 
 ## 1. Design Principles
 
-VSE Buddy Bot is a research prototype designed to provide grounded guidance for international students navigating administrative procedures, academic rules, campus facilities, and immigration requirements at the Prague University of Economics and Business (VSE).
+VSE Buddy Bot is a research prototype designed to provide grounded guidance for international students navigating administrative procedures, academic rules, campus offices, and immigration requirements at the Prague University of Economics and Business (VSE).
 
-1. **Strict Grounding (Anti-Hallucination):** The assistant answers strictly from curated VSE documentation and structured university rules. When verified information is missing (retrieval score < `0.55`), the bot refuses to guess and refers the student to the responsible VSE office.
-2. **Deterministic Safety Guardrails:** Mental health crisis messages and sensitive administrative topics (visas, Foreign Police, exam failure, tuition, legal issues) are handled by rule-based checks (`safety.py`) before or after generation.
-3. **Hybrid Retrieval Without Heavy Frameworks:** Combines dense NumPy vector search (`data/index.npz`, 3,072-dimensional embeddings across 52 Markdown guides) with a local SQLite FTS5 database (`data/insis_navigation.db`) storing 50 VSE rules (`VSEPolicy`), InSIS breadcrumb routes (`InSISRoute`), and campus room locations (`CampusLocation`).
-4. **Privacy by Design (GDPR Compliance):** Uses random session UUIDs (`logs/chat_log.csv`), redacts crisis inputs as `[CRISIS REDACTED]`, and only injects personal study records (`student_profile.py`) when the student explicitly enables the Opt-In toggle.
+1. **Strict Grounding (Two-Stage Anti-Hallucination Defense):** The assistant answers strictly from curated VSE documentation and structured university rules. Stage 1 gates raw `gemini-embedding-001` cosine similarity at `MIN_SCORE = 0.63` (before keyword boost) to reject out-of-domain queries into `no_context` mode (`contacts.md` only) — generic policy/campus keyword hits never override `no_context`. Stage 2 applies strict prompt-level grounding (Rule 2) so in-domain knowledge gaps still refuse cleanly and refer the student to the responsible VSE office.
+2. **Deterministic Safety Guardrails:** Mental health crisis messages and sensitive administrative topics (visas, Foreign Police, exam failure, tuition, legal issues, mental wellbeing) are handled by rule-based checks (`safety.py`) before or after generation.
+3. **Hybrid Retrieval Without Heavy Frameworks:** Combines dense NumPy vector search (`data/index.npz`, 3,072-dimensional embeddings across 52 verified Markdown guides / 199 chunks) with a local SQLite FTS5 database (`data/insis_navigation.db`) storing 18 verified core VSE policies (`VSEPolicy`), 24 InSIS breadcrumb routes (`InSISRoute`), and 12 verified campus service locations (`CampusLocation`).
+4. **Privacy by Design (GDPR Compliance):** Uses random session UUIDs (`logs/chat_log.csv`), redacts crisis inputs as `[CRISIS REDACTED]`, and only injects simulated personal study records (`student_profile.py`) when the student explicitly enables the Opt-In toggle.
 
 ---
 
 ## 2. Three-Layer Enterprise Architecture (ArchiMate 3.2 Alignment)
 
-The system architecture aligns directly with the three layers modeled in `3_Architecture_Models/VSE_Buddy_Bot_Layered_Architecture.archimate`:
+The system architecture aligns directly with the three layers modeled in the accompanying thesis verification package (`3_Architecture_Models/VSE_Buddy_Bot_Layered_Architecture.archimate`):
 
 1. **Business Layer:**
    - **Actors:** *International Student* (Pre-Arrival, Arrival, and Ongoing Study) and *VSE Support Offices* (International Office OZS, Faculty Study Departments, SUZ Dormitory Administration, AC VSE Psychological Counselling).
    - **Business Services & Processes:** *VSE Regulation & FAQ Guidance Service*, *InSIS Breadcrumb & Campus Navigation Service*, *Personal ECTS, Voucher & Deadline Check Service*, and *Crisis Helpline & Official Office Referral Process*.
 
 2. **Application Layer:**
-   - **Web Chat & Simulated InSIS Portal UI (`app.py`, `insis_demo/`, `api/index.py`):** Student-facing interface with academic prototype disclaimers, quick prompts, Opt-In study profile toggle, and thumbs-up/down feedback.
+   - **Web Chat & Simulated InSIS Portal UI (`app.py`, `public/`, `insis_demo/server.py`, `api/index.py`):** Student-facing interface served from a single canonical `public/` frontend (both locally via `insis_demo/server.py` and on Vercel via `api/index.py`), with academic prototype disclaimers, quick prompts, Opt-In study profile toggle, HTML-escaped rendering, and mode-gated guidance badges.
    - **BuddyBot Core Orchestrator (`bot.py`):** Coordinates safety scanning, query formulation, hybrid retrieval, prompt assembly, citation formatting (`[1]`, `[2]`), and anonymous logging.
-   - **Deterministic Safety & Sensitivity Filter (`safety.py`):** Regex crisis filter and sensitive-topic detector (`visa_residence`, `foreign_police`, `employment_work`, `health_insurance`, `legal`, `tuition_payment`, `academic_failure_expulsion`).
-   - **Hybrid Semantic Retriever Service (`retriever.py`):** Performs cosine similarity search (`TOP_K = 5`, `MIN_SCORE = 0.55`) with title/keyword boosting (`+0.05` per match, capped at `+0.15`).
-   - **Policy, InSIS Route & Campus Lookup Service (`insis_nav_db.py`, `vse_data_fixtures.py`):** Queries structured university rules (`POL_001` to `POL_050`), step-by-step InSIS menu breadcrumbs, and floor-by-floor campus directions (SB, NB, RB, IB).
-   - **Opt-In Student Profile Context Adapter (`student_profile.py`):** Injects simulated student progress (90/120 ECTS, 120/144 credit vouchers, enrolled courses, and `PendingAssignment` deadlines) only when Opt-In is active and the query asks about personal study status.
+   - **Deterministic Safety & Sensitivity Filter (`safety.py`):** Regex crisis filter, sensitive-topic detector (`visa_residence`, `foreign_police`, `employment_work`, `health_insurance`, `legal`, `tuition_payment`, `academic_failure_expulsion`, `mental_wellbeing`), and centralized referral target/marker verification (`has_explicit_referral`).
+   - **Hybrid Semantic Retriever Service (`retriever.py`):** Performs cosine similarity search (`TOP_K = 5`, raw cosine gate `MIN_SCORE = 0.63`) with title/keyword boosting (`+0.05` per match, capped at `+0.15`).
+   - **Policy, InSIS Route & Campus Lookup Service (`insis_nav_db.py`, `vse_data_fixtures.py`):** Queries 18 verified core VSE statutory policies (`POL_001` to `POL_018`), 24 step-by-step InSIS menu breadcrumb routes, and 12 verified VSE campus service offices & halls (SB, NB, RB, JM, Jarov/SUZ), each with a live-verified official VSE URL.
+   - **Opt-In Student Profile Context Adapter (`student_profile.py`):** Injects simulated demo student progress (90/120 ECTS earned, 24 enrolled, 30/144 credit vouchers remaining, enrolled courses, and dynamic `PendingAssignment` deadlines) only when Opt-In is active and the query asks about personal study status.
 
 3. **Technology Layer:**
-   - **NumPy Vector Index (`data/index.npz` & `data/index_meta.json`):** Stores 254 L2-normalized chunks with 3,072-dimensional vectors generated by `gemini-embedding-001`.
+   - **NumPy Vector Index (`data/index.npz` & `data/index_meta.json`):** Stores 199 L2-normalized chunks with 3,072-dimensional vectors generated by `gemini-embedding-001`.
    - **Local Policy & Route DB (`data/insis_navigation.db`):** Built-in Python SQLite FTS5 file storing `vse_policies`, `insis_routes`, and `campus_locations`.
-   - **Python Runtime & Google Gemini API:** Executes retrieval and calls `gemini-2.5-flash` / `gemini-flash-lite-latest` at `temperature = 0.2`, `max_output_tokens = 600`.
+   - **Python Runtime & Google Gemini API:** Executes retrieval and calls `gemini-flash-lite-latest` at `temperature = 0.2`, `max_output_tokens = 600`.
    - **CSV Audit File Store (`logs/chat_log.csv`):** Append-only anonymous interaction log.
 
 ---
 
 ## 3. Static Class Structure & Cardinalities (UML 2.5 Alignment)
 
-Matches `3_Architecture_Models/VSE_Buddy_Bot_Class_Diagram.drawio`:
+Matches the thesis verification package model (`3_Architecture_Models/VSE_Buddy_Bot_Class_Diagram.drawio`):
 
 | Source Class | Target Class | Relationship | Cardinality | Role / Responsibility |
 | :--- | :--- | :--- | :---: | :--- |
 | `BuddyBot` | `SafetyModule` | Directed Association | `1` -> `1` | `checks safety` before retrieval and LLM calls |
 | `BuddyBot` | `StudentProfile` | Directed Association | `1` -> `0..1` | `injects opt-in profile` when logged in and enabled |
 | `BuddyBot` | `ChatLogEntry` | Directed Association | `1` -> `0..*` | `records anonymized log` (redacting crisis text) |
-| `BuddyBot` | `Retriever` | Composition | `1` -> `1` | `queries vectors` (`TOP_K = 5`, `SIMILARITY_THRESHOLD = 0.55`) |
+| `BuddyBot` | `Retriever` | Composition | `1` -> `1` | `queries vectors` (`TOP_K = 5`, `MIN_SCORE = 0.63`) |
 | `BuddyBot` | `InSISNavDatabase` | Composition | `1` -> `1` | `queries rules & routes` via SQLite FTS5 |
 | `StudentProfile` | `PendingAssignment` | Composition | `1` -> `0..*` | `tracks deadlines` for enrolled courses |
 | `Retriever` | `VectorChunk` | Aggregation | `1` -> `1..*` | `ranks top-k chunks` (`float[3072]` embeddings) |
 | `KnowledgeDocument` | `VectorChunk` | Composition | `1` -> `1..*` | `splits into` chunks during `ingest.py` indexing |
-| `InSISNavDatabase` | `VSEPolicy` | Composition | `1` -> `1..50` | `stores policies` (`POL_001`..`POL_050` with penalties) |
-| `InSISNavDatabase` | `InSISRoute` | Composition | `1` -> `1..*` | `stores routes` (20+ InSIS menu breadcrumb paths) |
-| `InSISNavDatabase` | `CampusLocation` | Composition | `1` -> `1..*` | `stores rooms` (35+ SB/NB/RB/IB campus locations) |
+| `InSISNavDatabase` | `VSEPolicy` | Composition | `1` -> `1..18` | `stores policies` (18 verified core VSE statutory rules) |
+| `InSISNavDatabase` | `InSISRoute` | Composition | `1` -> `1..*` | `stores routes` (24 InSIS menu breadcrumb paths) |
+| `InSISNavDatabase` | `CampusLocation` | Composition | `1` -> `1..*` | `stores offices` (12 verified SB/NB/RB/JM/SUZ service locations) |
 
 ---
 
 ## 4. End-to-End Runtime Process (BPMN 2.0 Alignment)
 
-Matches `3_Architecture_Models/VSE_Buddy_Bot_Query_Process.bpmn` across three swimlanes (*International Student*, *BuddyBot Orchestrator & Safety Filter*, *Knowledge Base & Gemini API*):
+Matches the thesis verification package model (`3_Architecture_Models/VSE_Buddy_Bot_Query_Process.bpmn`) across three swimlanes (*International Student*, *BuddyBot Orchestrator & Safety Filter*, *Knowledge Base & Gemini API*):
 
 1. **Step 1 (Submit Question):** Student submits a query (with optional Opt-In Study Profile enabled).
 2. **Step 2 & Gateway G1 (Safety Scan & Crisis Check):** `safety.check_crisis()` scans the input.
    - **If Crisis = Yes (Step 2a):** Logs `[CRISIS REDACTED]` and immediately returns emergency helplines (`112`, `116 123`, VSE Counselling `ac@vse.cz`) without calling the retriever or LLM.
    - **If Crisis = No (Step 3):** Formulates the retrieval query (`build_retrieval_query()`), incorporating previous turn context only for genuine short follow-ups.
 3. **Step 4 (Hybrid Knowledge Search):** Searches both the 52 Markdown documents (`data/index.npz` vector similarity + keyword boost) and the SQLite database (`data/insis_navigation.db` for policies, InSIS breadcrumbs, and campus locations).
-4. **Gateway G2 (Score >= 0.55?):**
-   - **If Score < 0.55 (Step 5a):** Enters `no_context` refusal mode and restricts context to official VSE contact information (`contacts.md`).
-   - **If Score >= 0.55 -> Gateway G3 (Opt-In Profile Query?):** If the student enabled Opt-In and asked a personal study question, attaches `StudentProfile` (**Step 5b**); otherwise proceeds directly to prompt assembly.
+4. **Gateway G2 (Raw Cosine >= 0.63?):**
+   - **If Raw Cosine < 0.63 (Step 5a):** Enters `no_context` refusal mode and restricts context to official VSE contact information (`contacts.md`).
+   - **If Raw Cosine >= 0.63 -> Gateway G3 (Opt-In Profile Query?):** If the student enabled Opt-In and asked a personal study question, attaches `StudentProfile` (**Step 5b**); otherwise proceeds directly to prompt assembly (where Prompt Rule 2 enforces refusal on in-domain knowledge gaps).
 5. **Step 6 & Step 7 (Prompt Assembly & Gemini Generation):** Combines retrieved chunks, matched policy/route records, and optional profile context into a grounded prompt and invokes the Gemini API (`temperature = 0.2`).
 6. **Gateway G4 (Sensitive Topic?) & Step 8a:** If `safety.check_sensitive()` flagged a high-stakes topic and the generated text lacks an explicit office referral, appends a verification notice pointing to the responsible VSE office or ministry (`mvcr.cz`).
 7. **Step 9 & Step 10 (Citations, Logging & Delivery):** Formats inline citations `[1], [2]` into clickable source links, appends any direct InSIS route link, logs the anonymous session row to `logs/chat_log.csv`, and displays the response to the student.
@@ -86,4 +86,4 @@ Matches `3_Architecture_Models/VSE_Buddy_Bot_Query_Process.bpmn` across three sw
   - **F (Factual, 28 questions):** Tests retrieval accuracy and grounded factual answers.
   - **R (Referral, 9 questions):** Tests detection of sensitive topics and presence of official office referrals.
   - **G (Gap, 3 questions):** Tests refusal on out-of-scope topics without hallucination.
-- **Rate-Limit Handling:** `evaluate.py` includes a 5-second pause between queries (`delay_between_calls = 5.0`) to respect free-tier Gemini API rate limits and records raw answers, retrieved source IDs, similarity scores, and latencies into timestamped CSV files under `results/`.
+- **Rate-Limit Handling & Referral Transparency:** `evaluate.py` includes a 5-second pause between queries (`delay_between_calls = 5.0`) to respect free-tier Gemini API rate limits and records raw answers, retrieved source IDs, cited source IDs, similarity scores, latencies, and separate flags for LLM-native referrals (`llm_native_referral`) vs. guardrail-enforced referrals (`referral_enforced`) into timestamped CSV files under `results/`.

@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://research.vse.cz/
 TITLE: PhD studies and research at VŠE
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

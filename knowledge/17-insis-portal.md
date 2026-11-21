@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://insis.vse.cz/?lang=en, https://ci.vse.cz/english/
 TITLE: InSIS – complete student portal navigation and services guide
-STAGE: studies
+STAGE: arrival
 DATE SAVED: 2026-10-25
 -->
 
@@ -37,14 +37,15 @@ DATE SAVED: 2026-10-25
   - 1 = Excellent (*Výborně*, 90–100%)
   - 2 = Very Good (*Velmi dobře*, 75–89%)
   - 3 = Good (*Dobře*, 60–74%)
-  - 4+ / 4 = Failed (*Nevyhověl*, under 60%)
+  - 4+ = Conditional Fail with right to one retake during the active exam period (*Nevyhověl s možností opravy*, 50–59%)
+  - 4 = Definitive Fail (*Nevyhověl*, under 50%)
   - Zápočet (z) = Satisfied / ungraded course requirement.
 
 ## 6. Exam registration, dates and cancellation (Přihlašování na zkoušky)
 - **Register for exams:** InSIS → **Student's Portal** → **Exam Dates and Registration (Přihlašování na zkoušky)**.
 - Browse available examination dates (*řádné termíny*), check room locations, examiner names, and capacity limits.
-- **Deregistration / Cancellation:** If you cannot attend an exam, you must cancel your registration in InSIS before the cancellation deadline (typically 24 hours prior). Unexcused absences count as a failed attempt (grade 4) and deduct from your retake attempts.
-- **Exam retakes (Opravný termín):** If you fail an exam, you are entitled to up to 2 retake dates within the semester exam period.
+- **Deregistration / Cancellation:** If you cannot attend an exam, you must cancel your registration in InSIS before the cancellation deadline (typically 24 hours prior). Unexcused absences result in grade 4 (Fail).
+- **Exam retakes (`4+` / *Opravný termín*):** Under VŠE Study and Examination Regulations, students who earn a conditional fail of **`4+`** (50–59%) are entitled to **one retake date** within the same exam period (cannot be awarded twice in succession or on the last exam date of the period; an unused `4+` converts to `4`). Confirm course-specific exam rules in the InSIS syllabus and with your Study Department.
 
 ## 7. Official Electronic Confirmation of Study (Potvrzení o studiu)
 - **Generate digitally signed PDF:** InSIS → **Student's Portal** → **Student Confirmation** → click **Electronic Confirmation of Study**.
@@ -67,7 +68,7 @@ DATE SAVED: 2026-10-25
 
 ## 10. Study plan audit, completed credits and credit vouchers
 - **Audit degree progress:** InSIS → **Student's Portal** → **Check of Study Plan (Kontrola studijního plánu)**.
-- Displays completed ECTS credits vs required credits across mandatory (`sP`), optional (`sV`), and faculty groups, as well as your cumulative Grade Point Average (GPA / *studijní průměr*).
+- Displays completed ECTS credits vs required credits across compulsory (`oP`), minor specialization (`sP`/`sV`), and faculty/free elective (`fV`) groups, as well as your cumulative Grade Point Average (GPA / *studijní průměr*).
 - Check your remaining **credit voucher balance** (Bachelor students start with 216 vouchers; Master students start with 144 vouchers).
 
 ## 11. Official electronic requests via Document Office (Úřadovna)

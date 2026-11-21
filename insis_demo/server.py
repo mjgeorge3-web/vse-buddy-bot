@@ -35,11 +35,23 @@ def get_bot():
     return _bot
 
 
+MAX_POST_BODY_BYTES = 1_048_576  # 1 MB cap for local API POST body
+STATIC_DIR = BASE_DIR / "public"
+
+
+def _parse_limit(params: dict, default: int = 3, max_val: int = 20) -> int:
+    """Safely parse and clamp ?limit= query parameter."""
+    try:
+        val = int(params.get("limit", [default])[0])
+    except (ValueError, TypeError, IndexError):
+        return default
+    return max(1, min(val, max_val))
+
+
 class InSISDemoHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        # Serve files from insis_demo directory
-        demo_dir = str(Path(__file__).resolve().parent)
-        super().__init__(*args, directory=demo_dir, **kwargs)
+        # Serve static frontend assets from the single canonical public/ directory
+        super().__init__(*args, directory=str(STATIC_DIR), **kwargs)
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
@@ -53,7 +65,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
 
             try:
                 import insis_nav_db
@@ -86,7 +98,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
 
             try:
                 import insis_nav_db
@@ -113,13 +125,13 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             self.wfile.write(resp_bytes)
             return
 
-        # 1c. API: VŠE Campus Locations (Washrooms, Classrooms, Coordinators)
+        # 1c. API: VŠE Campus Locations (Offices, Libraries, Dining & Halls)
         if self.path.startswith("/api/vse/locations"):
             import urllib.parse
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
 
             try:
                 import insis_nav_db
@@ -152,7 +164,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
             query_str = params.get("q", [""])[0]
-            limit_val = int(params.get("limit", [3])[0])
+            limit_val = _parse_limit(params, default=3)
 
             try:
                 import insis_nav_db
@@ -218,7 +230,7 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
 
         # 1f. API: insis-links JSON
         if self.path.startswith("/api/insis-links"):
-            all_urls_path = Path(__file__).resolve().parent / "all_urls.json"
+            all_urls_path = STATIC_DIR / "all_urls.json"
             if all_urls_path.exists():
                 resp_bytes = all_urls_path.read_bytes()
                 self.send_response(200)
@@ -229,17 +241,26 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(resp_bytes)
                 return
 
-        # 2. Check if a physical file exists on disk
+        # 2. Check if a physical static web asset exists safely inside STATIC_DIR
         req_clean = self.path.split("?")[0].lstrip("/")
-        demo_dir = Path(__file__).resolve().parent
-        file_path = demo_dir / req_clean
+        static_root = STATIC_DIR.resolve()
+        file_path = (static_root / req_clean).resolve()
+        blocked_suffixes = {".py", ".pyc", ".pyo", ".db", ".sqlite", ".sqlite3", ".env"}
 
-        if req_clean and file_path.exists() and file_path.is_file():
-            # Real static asset (styles.css, app.js, all_urls.json, etc.)
+        if req_clean and (not file_path.is_relative_to(static_root) or file_path.suffix.lower() in blocked_suffixes or file_path.name.startswith(".")):
+            self.send_error(403, "Forbidden")
+            return
+
+        if (
+            req_clean
+            and file_path.exists()
+            and file_path.is_file()
+        ):
+            # Real static asset (styles.css, app.js, all_urls.json, assets/*)
             super().do_GET()
         else:
-            # 3. SPA Fallback: Serve index.html for all InSIS URLs!
-            index_file = demo_dir / "index.html"
+            # 3. SPA Fallback: Serve index.html for all simulated InSIS URLs
+            index_file = static_root / "index.html"
             content = index_file.read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -250,7 +271,14 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/api/chat":
-            content_length = int(self.headers.get("Content-Length", 0))
+            try:
+                content_length = int(self.headers.get("Content-Length", 0))
+            except ValueError:
+                self.send_error(400, "Invalid Content-Length")
+                return
+            if content_length < 0 or content_length > MAX_POST_BODY_BYTES:
+                self.send_error(413, "Request payload too large")
+                return
             body = self.rfile.read(content_length).decode("utf-8")
             
             try:
@@ -266,6 +294,8 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
                         "status": "success" if result.get("mode") != "error" else "error",
                         "answer": result.get("answer", ""),
                         "mode": result.get("mode", "normal"),
+                        "sensitive": result.get("sensitive", False),
+                        "sensitive_topic": result.get("sensitive_topic"),
                         "sources": result.get("sources", []),
                         "top_score": result.get("top_score", 0.0),
                         "latency_ms": result.get("latency_ms", 0.0),
@@ -305,15 +335,15 @@ class InSISDemoHandler(SimpleHTTPRequestHandler):
 
 
 def run(port=8502):
-    print("⏳ Pre-warming BuddyBot knowledge engine...", flush=True)
+    print("[Server] Initializing BuddyBot knowledge engine...", flush=True)
     get_bot()
-    print("✅ BuddyBot engine ready!", flush=True)
+    print("[Server] BuddyBot engine ready.", flush=True)
     server_address = ("", port)
     httpd = ThreadingHTTPServer(server_address, InSISDemoHandler)
-    print(f"============================================================", flush=True)
-    print(f"🚀 InSIS Demo Website running at: http://localhost:{port}", flush=True)
-    print(f"🎓 Embedded VŠE Buddy Bot API ready at: http://localhost:{port}/api/chat", flush=True)
-    print(f"============================================================", flush=True)
+    print("=" * 60, flush=True)
+    print(f"InSIS Demo Portal running at: http://localhost:{port}", flush=True)
+    print(f"Embedded Buddy Bot API ready: http://localhost:{port}/api/chat", flush=True)
+    print("=" * 60, flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/study/study-regulations/, https://www.vse.cz/english/students/study-essentials/
 TITLE: VŠE Study Regulations, ECTS credits, minimum semester requirements and credit vouchers
-STAGE: Studying
+STAGE: studies
 DATE SAVED: 2026-10-29
 -->
 
@@ -26,14 +26,14 @@ To remain actively enrolled at VŠE, you must satisfy two critical threshold che
    - If you earn fewer than 9 credits in your first semester, your studies are **immediately terminated** by the Dean for failure to make required academic progress.
 2. **Ongoing Semesters Progression Threshold (20 Credits Rule):**
    - For every active (non-interrupted) semester, your cumulative earned credits must satisfy the formula:
-     $$\text{Cumulative Minimum Credits} \ge 20 \times \text{number of active semesters}$$
+     `Cumulative Minimum Credits >= 20 x number of active semesters`
      - **After Semester 1:** At least 9 credits to avoid expulsion; **20 credits** to stay on track without voucher deduction penalties.
      - **After Semester 2:** At least **40 credits** accumulated.
      - **After Semester 3:** At least **60 credits** accumulated.
      - **After Semester 4:** At least **80 credits** accumulated.
      - **After Semester 5:** At least **100 credits** accumulated.
      - **After Semester 6:** At least **120 credits** (or 180 to graduate for Bachelor's).
-   - If your accumulated credits fall below the $20 \times \text{semesters}$ requirement, the system automatically subtracts credit vouchers equal to the missing credits as a penalty!
+   - If your accumulated credits fall below `20 x active semesters`, the system automatically subtracts credit vouchers equal to the missing credits as a penalty.
 
 ### Maximum Credits per Semester: Can I Take More Than 30 Credits?
 - **No Upper Cap:** There is **no administrative limit** preventing you from enrolling in 35, 40, or more ECTS credits in a single semester.
@@ -54,7 +54,7 @@ Upon initial enrollment, every student receives a voucher pool equal to **120%**
 - **1 ECTS Credit = 1 Voucher:** Enrolling in a 6-credit course deducts 6 vouchers from your active voucher balance.
 - **Passing a Course:** Successfully completing the course converts the deducted vouchers into permanent earned ECTS credits.
 - **Failing a Course:** If you fail a course, the deducted vouchers are **lost permanently**. You gain 0 ECTS credits, and your reserve voucher pool is depleted.
-- **Voucher Penalty Deduction:** If at the end of a semester your cumulative credits are less than $20 \times \text{semesters}$, additional vouchers are deducted from your account.
+- **Voucher Penalty Deduction:** If at the end of a semester your cumulative credits are less than `20 x active semesters`, additional vouchers are deducted from your account.
 
 ### Study Termination Due to Insufficient Vouchers
 - At the end of each semester, InSIS checks your remaining voucher balance against the remaining ECTS credits needed to graduate.
@@ -65,35 +65,40 @@ Upon initial enrollment, every student receives a voucher pool equal to **120%**
 ## 3. Course Types and Repeating Failed Courses
 
 ### Course Categories in Your Study Plan
-1. **Compulsory Courses (sP / oP - Povinné předměty):**
-   - Mandatory for all students in your programme.
+1. **Compulsory Courses (`oP` – Povinné předměty, Class I):**
+   - Mandatory for all students in your programme or major.
    - **Failing a Compulsory Course:** You **must re-enroll** in the course in the next semester it is offered, which consumes another batch of vouchers from your reserve pool.
    - **Maximum Enrollments:** A compulsory course can only be enrolled a maximum of **two times**. If you fail a compulsory course on its second enrollment, your studies are terminated.
-2. **Compulsory Electives (sV - Povinně volitelné předměty):**
-   - Chosen from specialized lists (e.g. major specialization or branch courses).
-   - If you fail an `sV` course, the vouchers are lost, but you may choose a different eligible `sV` course in future semesters.
-3. **Free Electives (fV - Volitelné předměty):**
-   - General electives, foreign language courses, sports, or International Week courses.
-   - If failed, you lose the vouchers, but you do not need to repeat the same course; you can choose any other free elective.
-4. **Minor Specialization (Vedlejší specializace):**
-   - For Master's students: a structured block of **30 ECTS credits** chosen in your second year, concluding with a separate state exam component.
+2. **Minor Specialization Courses (`sP` compulsory Class I / `sV` selective Class II):**
+   - Belong to a Minor Specialization (*vedlejší specializace*).
+   - If you fail an elective `sV` course, the vouchers are lost, and you may choose a different eligible `sV` course in future semesters.
+3. **Faculty & Free Electives (`fV` / `cV` / `oV`, Class II):**
+   - Faculty electives, university-wide electives, foreign language courses, sports, or International Week courses.
+   - If failed, you lose the vouchers, but you do not need to repeat the same course; you can choose an alternative elective.
+4. **Minor Specialization (*Vedlejší specializace*):**
+   - Standard Czech Master's curricula and selected programmes include a structured **30 ECTS Minor Specialization** concluding with a minor comprehensive exam. Requirements vary for English-taught Master's programmes (such as ISM), so verify your programme plan in InSIS (**Check of Study Plan**) or with your faculty Study Department.
 
 ---
 
 ## 4. Grading System and Exam Retakes
 
-### VŠE Grading Scale
-VŠE uses a 4-tier grading scale:
-| Grade | Czech Term | Meaning | Percentage Scale | ECTS Grade Equivalent |
+### VŠE Grading Scale (Including `4+`)
+VŠE uses an inverted Czech grading scale with a distinctive **`4+`** conditional-fail grade:
+| Grade | Czech Term | Meaning | Percentage Scale | ECTS Equivalent |
 | :---: | :---: | :---: | :---: | :---: |
 | **1** | Výborně | Excellent | 90–100% | A |
-| **2** | Velmi dobře | Very Good | 75–89% | B – C |
-| **3** | Dobře | Good | 60–74% | D – E |
-| **4** | Nevyhověl | Failed | 0–59% | F (No credits gained) |
+| **2** | Velmi dobře | Very Good | 75–89% | B |
+| **3** | Dobře | Good | 60–74% | C – E |
+| **4+** | Nevyhověl s možností opravy | Conditional Fail (one retake right) | 50–59% | FX (Retake permitted) |
+| **4** | Nevyhověl | Definitive Fail | 0–49% | F (No credits gained) |
 
-### Exam Retake Attempts (Opravné termíny)
-- For every enrolled course in a semester, you are entitled to **1 regular exam attempt** plus up to **2 retake attempts** (*opravný termín*), for a maximum of 3 attempts per semester, provided exam dates are still available.
-- Retake attempts must be taken during the examination period of the same semester; they cannot be carried over into the next semester.
+### Exam Retakes (`4+` Rule — *Opravný termín*)
+- Under the VŠE Study and Examination Regulations (SZŘ), a student who receives a **`4+`** grade (typically **50–59%**) is entitled to **one retake attempt** (*opravný termín*) on an available exam date within the same examination period.
+- **Key Restrictions on `4+`:**
+  - `4+` **cannot be awarded twice in succession** for the same course.
+  - `4+` **cannot be awarded on the last exam date** of the period (because no remaining date exists for a retake), so students are strongly advised not to leave their first attempt until the final exam slot.
+  - If you do not use your retake before the exam period closes, `4+` **automatically converts to a definitive `4` (Fail)**.
+- A definitive grade of **`4`** (below 50% or failing the `4+` retake) yields 0 ECTS and permanently consumes the course's credit vouchers; you must re-enroll in a future semester if it is a compulsory course (`oP`). Always confirm course-specific assessment rules in the InSIS syllabus and with your faculty Study Department.
 
 ---
 
@@ -108,11 +113,10 @@ VŠE uses a 4-tier grading scale:
 ---
 
 ## 6. Transfer and Recognition of Previous Credits (Uznávání předmětů)
-- Courses completed at another university or in previous studies may be recognized by VŠE.
+- Courses completed at another university or in previous VŠE studies may be recognized by your faculty.
 - **Conditions:**
-  - Must have been passed with a grade of **1 or 2** (A, B, or C).
-  - Must not be older than **5 years**.
-  - Course content must match at least 70–80% of the VŠE course syllabus.
+  - Only courses evaluated with grade **1 (Excellent)**, **2 (Very Good)**, or **Credited (*započteno*)** are eligible for recognition — grade **3 (Good)** is generally not eligible.
+  - Eligibility time limits (commonly **3 calendar years** for prior VŠE studies) and syllabus equivalence rules are set by faculty Dean's Directives — confirm exact rules with your faculty Study Department.
 - **How to Apply:** Submit an official recognition request via InSIS with your official transcript of records and syllabus to the Vice-Dean for Study Affairs.
 
 ---

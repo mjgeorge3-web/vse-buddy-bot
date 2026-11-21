@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://admissions.vse.cz/
 TITLE: Admission Office and applications (international degree programmes)
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: pre_arrival
 DATE SAVED: 2026-10-25
 -->
 
@@ -9,7 +9,7 @@ DATE SAVED: 2026-10-25
 
 > General information only. Confirm with the relevant official authority or the VŠE International Office / Admission Office before acting.
 ## Admission & Marketing Office (Rajská Building, RB 527)
-- Email: admissions [at] vse.cz
+- Email: admissions@vse.cz
 - Tel.: +420 224 098 527
 - Contact hours by prior phone/email agreement.
 

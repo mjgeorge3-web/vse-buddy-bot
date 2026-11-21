@@ -30,7 +30,8 @@ FEEDBACK_LOG_PATH = LOGS_DIR / "feedback.csv"
 # =====================================================================
 # MODEL SETTINGS (Google Gemini)
 # =====================================================================
-# Generation model (gemini-2.5-flash is retired by Google for new users; gemini-flash-lite-latest is active)
+# Generation model (evaluated with Google Gemini Flash-Lite free-tier alias;
+# note that `-latest` is a rolling Google alias, so evaluation runs record timestamp and latency)
 CHAT_MODEL = "gemini-flash-lite-latest"
 
 # Embedding model
@@ -53,13 +54,19 @@ EMBEDDING_BATCH_SIZE = 50
 # RETRIEVAL THRESHOLDS
 # =====================================================================
 TOP_K = 5
-MIN_SCORE = 0.55
+# Calibrated on raw gemini-embedding-001 cosine similarity (before keyword boost):
+# off-topic out-of-domain queries sit near 0.55-0.60, whereas relevant VSE chunks sit >= 0.65.
+MIN_SCORE = 0.63
 KEYWORD_BOOST = 0.05
 MAX_KEYWORD_BOOST = 0.15
 MIN_KEYWORD_LENGTH = 4
 
 # Multi-turn history turns to retain for context window (last 6 messages)
 MAX_HISTORY_MESSAGES = 6
+
+# Structured SQLite fixture verification date and configurable local demo URL
+STRUCTURED_DATA_DATE = "2026-11-21"
+DEMO_BASE_URL = os.getenv("DEMO_BASE_URL", "http://localhost:8502").rstrip("/")
 
 # =====================================================================
 # PRIVACY & LOGGING
@@ -79,7 +86,7 @@ _CACHED_GEMINI_API_KEY = None
 def get_gemini_api_key() -> str:
     """Retrieve Gemini API key from environment variable or Streamlit secrets with memory caching."""
     global _CACHED_GEMINI_API_KEY
-    if _CACHED_GEMINI_API_KEY is not None:
+    if _CACHED_GEMINI_API_KEY:
         return _CACHED_GEMINI_API_KEY
 
     # Priority 1: Environment variable (.env or system)
@@ -94,5 +101,7 @@ def get_gemini_api_key() -> str:
         except Exception:
             pass
 
-    _CACHED_GEMINI_API_KEY = (key or "").strip()
-    return _CACHED_GEMINI_API_KEY
+    cleaned = (key or "").strip()
+    if cleaned:
+        _CACHED_GEMINI_API_KEY = cleaned
+    return cleaned

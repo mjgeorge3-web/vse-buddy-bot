@@ -2,23 +2,52 @@
 
 A research prototype Retrieval-Augmented Generation (RAG) chatbot developed for international students at the **Prague University of Economics and Business (Vysoka skola ekonomicka v Praze, VSE)**.
 
-This prototype was developed as part of a Master's Thesis in Information Systems Management (ISM). It provides verified, grounded answers regarding admissions, arrival, student housing, visas, university IT, exams, and daily life in Prague.
+This prototype was developed as part of a Master's Thesis in Information Systems Management (ISM). It provides grounded guidance regarding admissions, arrival, student housing, visas, university IT, InSIS navigation, academic regulations, and daily life in Prague.
 
-Live demo: `https://vse-buddy-bot.vercel.app`
+Live demo: https://vse-buddy-bot.vercel.app
 
 ---
 
-## Architecture & Architectural Rationale
+## Independent Verification (Quick Audit)
+
+A reviewer can verify the codebase and core claims in three steps:
+
+1. **Automated Unit, Security & Data-Integrity Suite (No API Key Required):**
+   ```bash
+   pytest tests/ -v
+   ```
+   Runs **84 tests** covering deterministic crisis and sensitive-topic safety rules, real vector index integrity (`199 x 3072` L2-normalized embeddings and SHA-256 hash consistency), SQLite FTS5 routes/policies/campus lookup, opt-in personalisation boundaries, HTTP path security, and Vercel API parameter clamping.
+
+2. **Knowledge Base Hash & Corpus Consistency Check (No API Key Required):**
+   ```bash
+   python -c "import config, ingest; print('Computed:', ingest.compute_knowledge_hash()); print('Recorded:', config.INDEX_HASH_PATH.read_text().strip())"
+   ```
+   Confirms that `data/index.npz` and `data/index_meta.json` match the exact 52 Markdown documents in `knowledge/` (`traceability.csv`).
+
+3. **Live End-to-End Benchmark Execution (Requires `GEMINI_API_KEY`):**
+   ```bash
+   # Quick 3-query live check
+   python evaluate.py 3
+
+   # Full 40-query thesis benchmark (includes 5s delay between calls for free-tier rate limits)
+   python evaluate.py
+   ```
+   Writes a timestamped raw CSV into `results/` recording retrieved sources, cited sources, raw cosine score, end-to-end latency, refusal checks, and separate tracking for **LLM-native referrals** vs. **guardrail-enforced referrals**, leaving `score (0-2)` and `notes` blank for manual rubric grading.
+
+---
+
+## Architecture & Design Rationale
 
 | Architectural Decision | Thesis Design Rationale |
 | :--- | :--- |
-| **Retrieval-Augmented Generation (RAG)** | Restricts bot answers strictly to 52 verified VŠE knowledge documents and structured SQLite tables, effectively minimizing hallucinations and ungrounded fabrications. |
-| **Pure NumPy Vector Search** | A 52-document knowledge base produces 254 vector chunks. A complex vector database (e.g. Pinecone/Chroma) introduces unnecessary overhead and costs. Pure NumPy dot-product cosine similarity is fast, lightweight, and 100% reproducible. |
-| **Deterministic Crisis Filter (No LLM)** | Rule-based regex pattern matching ensures guaranteed detection of self-harm/suicide terms without latency, cost, or non-deterministic LLM failure risks. |
-| **Deterministic Sensitive Topic Referrals** | Topics involving legal, visa, police registration, or exam failures trigger mandatory administrative referral notices to protect students from outdated immigration advice. |
-| **Explicit Source Citations & Flags** | Inline numbered citations `[1]`, `[2]` with clickable URLs and explicit `unverified` flags promote student trust and transparency. |
-| **Low Temperature (0.2)** | Ensures factual consistency, conservative generation, and reliable refusal on gap queries. |
-| **Reproducible Evaluation Script** | `evaluate.py` enables standardized benchmarking against a 40-question test set across different stages and question categories. |
+| **Retrieval-Augmented Generation (RAG)** | Restricts answers to 52 curated VSE Markdown guides and structured SQLite lookup tables to reduce unsupported fabrications. |
+| **Pure NumPy Vector Search** | The 52-document corpus yields 199 chunks (`199 x 3072`). Exact dot-product cosine similarity in NumPy is fast, transparent, and easy to inspect without external vector-DB infrastructure. |
+| **Two-Stage Anti-Hallucination Refusal** | Stage 1 gates raw `gemini-embedding-001` cosine similarity at `MIN_SCORE = 0.63` (before keyword boosting) to route off-topic queries into `no_context` mode (`contacts.md` only). Stage 2 applies strict prompt grounding (Rule 2) so in-domain knowledge gaps refuse and refer students to the responsible office. |
+| **Deterministic Crisis Filter (No LLM)** | Rule-based regex matching intercepts self-harm/suicide expressions before retrieval or LLM invocation and returns emergency contacts (`112`, `116 123`, `ac@vse.cz`). |
+| **Deterministic Sensitive-Topic Referrals** | Visa, Foreign Police, work permit, health insurance, legal, tuition payment, exam failure, and mental wellbeing queries trigger post-processing checks (`safety.has_explicit_referral`) and append an explicit verification notice if the LLM omitted one. |
+| **Explicit Source Citations & UNVERIFIED Flags** | Inline numbered citations `[1]`, `[2]` map to clickable URLs, and dynamic external details (such as dormitory price lists and embassy booking links) carry explicit `UNVERIFIED` markers. |
+| **Low Generation Temperature (`0.2`)** | Promotes factual consistency and conservative adherence to retrieved context. |
+| **Auditable Evaluation Harness (`evaluate.py`)** | Runs the 40-question dataset (`28` Factual, `9` Referral, `3` Gap), logging both LLM-native referrals and deterministic guardrail referrals separately so safety enforcement is not conflated with raw LLM behavior. |
 
 ---
 
@@ -26,33 +55,44 @@ Live demo: `https://vse-buddy-bot.vercel.app`
 
 ```text
 vse-buddy-bot/
-├── app.py               # Streamlit user interface & chat session management
-├── config.py            # Centralized settings, model names, and retrieval thresholds
-├── ingest.py            # Chunker and embedder (saves index.npz and index_meta.json)
-├── retriever.py         # NumPy vector search with hybrid title-keyword boosting
-├── safety.py            # Deterministic crisis & sensitive-topic detection
-├── prompts.py           # System prompt, guardrails, and context formatting
-├── bot.py               # End-to-end pipeline: safety → retrieve → generate → cite
-├── insis_nav_db.py      # SQLite engine for InSIS routes, SZŘ policies, and campus locations
-├── student_profile.py   # Authenticated student session & GDPR opt-out context builder
-├── evaluate.py          # Automated benchmark runner for test questions dataset
-├── insis_demo/          # Interactive VŠE InSIS simulation server & frontend (port 8502)
-├── api/                 # Vercel serverless deployment entrypoint
-├── knowledge/           # 51 curated Markdown knowledge files + contacts.md (52 total)
-├── data/
-│   ├── index.npz        # Committed L2-normalized Gemini embeddings matrix (254 × 3072)
-│   ├── index_meta.json  # Chunk metadata (doc_id, title, url, unverified, text)
-│   ├── insis_navigation.db # SQLite database (7 modules, 24 routes, 50 policies, 42 locations)
-│   ├── knowledge_hash.txt # SHA-256 integrity hash of knowledge base
-│   └── test_questions.csv # 40-question thesis test dataset
-├── logs/                # chat_log.csv and feedback.csv (anonymous interaction logs)
-├── results/             # Generated evaluation benchmark CSV reports
-├── tests/               # Pytest unit test suite (73 tests)
-├── traceability.csv     # Source URLs and verification dates for all pages
-├── .env.example         # Template for environment variables
-├── .gitignore           # Ignores secrets, logs, and cache
-├── requirements.txt     # Pinned Python package dependencies
-└── README.md            # System documentation and deployment instructions
+|-- app.py                     # Streamlit chat interface & inline feedback logging
+|-- bot.py                     # End-to-end pipeline: safety -> retrieve -> generate -> cite
+|-- cli.py                     # Interactive terminal chat mode
+|-- config.py                  # Centralized settings, model names, thresholds & paths
+|-- ingest.py                  # Structural Markdown chunker & Gemini embedder
+|-- retriever.py               # NumPy cosine search with hybrid title-keyword boosting
+|-- safety.py                  # Deterministic crisis filter, sensitive topics & referral helpers
+|-- prompts.py                 # System prompt, grounding rules & context formatting
+|-- insis_nav_db.py            # SQLite FTS5 engine for InSIS routes, policies & campus offices
+|-- vse_data_fixtures.py       # Verified core VSE policy rules (18) and campus offices (12)
+|-- student_profile.py         # Simulated opt-in student profile & onboarding checklists
+|-- evaluate.py                # Automated live benchmark runner for the 40-question dataset
+|-- api/
+|   |-- index.py               # Vercel serverless API handler (/api/chat, search endpoints)
+|   `-- requirements.txt       # Pinned runtime dependencies for Vercel
+|-- public/                    # Single canonical web frontend (served by Vercel & local server)
+|   |-- index.html             # Simulated InSIS portal & embedded Buddy Bot UI
+|   |-- app.js                 # Frontend router, session control, HTML escaping & chat client
+|   |-- styles.css             # Portal and chat styling
+|   |-- all_urls.json          # Reference index of public/authenticated InSIS paths
+|   `-- assets/                # Official VSE logo assets
+|-- insis_demo/
+|   `-- server.py              # Local ThreadingHTTPServer serving public/ on port 8502
+|-- knowledge/                 # 51 curated Markdown guides + contacts.md (52 files total)
+|-- data/
+|   |-- index.npz              # Pre-built L2-normalized Gemini embeddings (199 x 3072)
+|   |-- index_meta.json        # Chunk metadata (doc_id, title, url, unverified, text)
+|   |-- insis_navigation.db    # SQLite DB (7 modules, 24 routes, 18 core policies, 12 offices)
+|   |-- knowledge_hash.txt     # Normalized SHA-256 hash of knowledge/ (CRLF/LF-safe)
+|   `-- test_questions.csv     # 40-question thesis benchmark (28 Factual, 9 Referral, 3 Gap)
+|-- results/                   # Live benchmark evaluation CSV outputs
+|-- tests/                     # Pytest suite (84 unit, HTTP security & integrity tests)
+|-- traceability.csv           # Source URLs, journey stages, and verification dates
+|-- insis_reference_links.csv  # Audited InSIS reference URL directory
+|-- vercel.json                # Vercel deployment routing and serverless function config
+|-- requirements.txt           # Local Python dependencies (Python 3.10+)
+|-- ARCHITECTURE.md            # ArchiMate / UML / BPMN alignment specification
+`-- README.md                  # Setup and independent verification guide
 ```
 
 ---
@@ -64,92 +104,50 @@ vse-buddy-bot/
 - A Google Gemini API Key from [Google AI Studio](https://aistudio.google.com/)
 
 ### 2. Clone and Install Dependencies
-Navigate into the `vse-buddy-bot` directory:
 ```bash
+git clone https://github.com/mjgeorge3-web/vse-buddy-bot.git
 cd vse-buddy-bot
 pip install -r requirements.txt
 ```
 
 ### 3. Configure API Key
-Create a `.env` file in the `vse-buddy-bot` directory based on `.env.example`:
 ```bash
 cp .env.example .env
 ```
-Open `.env` and add your Gemini API key:
+Add your key to `.env`:
 ```env
 GEMINI_API_KEY=your_actual_gemini_api_key_here
 ```
 
-### 4. Build Knowledge Base & Vector Index
-Run the ingestion pipeline to parse all 52 files in `knowledge/`, generate 254 chunks, and build the NumPy vector index:
-```bash
-python ingest.py
-```
-*Note: Once generated, `data/index.npz` and `data/index_meta.json` are committed to the repository so the application can run immediately without re-embedding on every start.*
+### 4. Run the Prototype Locally
+The pre-built Gemini vector index (`data/index.npz` and `data/index_meta.json`) is included in the repository so you can run immediately without re-embedding:
 
-### 5. Run the Streamlit Application
-Start the interactive chat interface:
-```bash
-streamlit run app.py
-```
-Open your browser at `http://localhost:8501`.
+- **Option A - Interactive InSIS Portal Simulation (serving `public/` on port 8502):**
+  ```bash
+  python insis_demo/server.py
+  ```
+  Open `http://localhost:8502`.  
+  *To test the simulated logged-in Opt-In Personalisation mode (synthetic demo student record showing 90/120 ECTS earned, 24 enrolled, 30/144 credit vouchers remaining, and relative sample deadlines), click **Log in to Personal administration**, enter any demo name (e.g., `Alex Novak`), and use the demo password `ism_mastersthesis`.*
 
----
+- **Option B - Streamlit Chat UI:**
+  ```bash
+  streamlit run app.py
+  ```
+  Open `http://localhost:8501`.
 
-## Running Automated Tests & Evaluation
+- **Option C - Terminal Interactive Mode:**
+  ```bash
+  python cli.py
+  ```
 
-### 1. Unit & Integration Test Suite
-Run the full pytest suite (73 tests) covering deterministic crisis and sensitive topic rules, SQLite navigation/policy databases, student profile personalization, and UI link formatting:
-```bash
-pytest tests/ -v
-```
-
-### 2. Full Test-Set Evaluation (40 Questions)
-Execute the thesis evaluation set:
-```bash
-python evaluate.py
-```
-To run a fast test on the first 3 example rows:
-```bash
-python evaluate.py 3
-```
-The script writes results to `results/eval_YYYYMMDD_HHMM.csv` and outputs:
-- **Retrieval Hit Rate (%)**: percentage of questions where expected source document was retrieved
-- **Refusal Rate on Gaps (%)**: percentage of out-of-scope/gap questions where the bot stated *"I don't have verified information about this"*
-- **Referral Rate on Sensitive Questions (%)**: percentage of sensitive questions with administrative referrals
-- **Average Response Latency (ms)**
+*(Optional) To rebuild the vector index from scratch from `knowledge/`, run `python ingest.py` (requires `GEMINI_API_KEY`).*
 
 ---
 
-## Deployment (Vercel & Streamlit Community Cloud)
+## Privacy, Known Limitations & Transparency Notes
 
-Follow these steps to deploy the application online for user testing:
-
-1. **Push to GitHub**:
-   Ensure `vse-buddy-bot` is pushed to a GitHub repository.
-   Verify that `data/index.npz` and `data/index_meta.json` are committed to the repo, while `.env` and `logs/` are ignored.
-
-2. **Connect Streamlit Community Cloud**:
-   - Go to [share.streamlit.io](https://share.streamlit.io/).
-   - Click **New app**.
-   - Select your GitHub repository, branch (`main`), and set the main file path to `app.py` (or `vse-buddy-bot/app.py` if deployed from the root).
-
-3. **Configure App Secrets**:
-   - In the Streamlit Cloud deployment dashboard, click **Advanced settings** (or go to **Settings > Secrets**).
-   - Enter your Gemini API key:
-     ```toml
-     GEMINI_API_KEY = "your_actual_gemini_api_key_here"
-     ```
-   - Click **Save**.
-
-4. **Launch**:
-   Streamlit Cloud will install dependencies from `requirements.txt` and launch the app with a public URL you can share with test participants.
-
----
-
-## Privacy & Ethical Safeguards
-
-- **No Personal Data Collected:** The bot does not request or store student names, ID numbers, or contact details.
-- **Anonymous Interaction Logging:** All logs use random UUID session identifiers, timestamps, and retrieval metrics.
-- **Crisis Confidentiality:** When a mental health or self-harm emergency is detected, the event is logged only as `[CRISIS REDACTED]`; the student's text is never logged to disk.
-- **Configurable Logging:** Logging can be disabled entirely in `config.py` by setting `ENABLE_LOGGING = False`.
+- **No Real Personal Data / No Live InSIS SSO:** The public prototype does not collect student names, UCO identifiers, or real InSIS credentials. The logged-in view uses strictly synthetic placeholder records (`student_profile.py`).
+- **Anonymous Local Logging:** Local runs append anonymous session UUIDs to `logs/chat_log.csv` (gitignored) and redact crisis inputs as `[CRISIS REDACTED]`. On Vercel's read-only serverless runtime, local file logging is skipped automatically.
+- **Hosted LLM Variability:** Generation uses Google's `gemini-flash-lite-latest` alias (`temperature = 0.2`), so exact phrasing and response latency vary across live runs. Evaluation runs therefore record timestamp, model identifier, and knowledge-base SHA-256 hash.
+- **Knowledge Snapshot Boundaries:** Institutional rules and external visa schedules change over time; the corpus represents a curated static snapshot rather than a live institutional API feed.
+- **Development Tools Disclosure:** AI coding assistants were used as development aids for frontend UI and boilerplate code in accordance with VSE academic guidelines; all empirical data (student survey and ambassador interviews), knowledge-base sources, architectural design decisions, test verification, and manual benchmark grading were curated and verified by the thesis author.

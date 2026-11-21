@@ -82,6 +82,7 @@ class TestSensitiveTopicDetection:
             "What are the opening hours of the library in Žižkov?",
             "Where can I eat cheaply near campus?",
             "Are there sports courses in English?",
+            "What is the library late fee for overdue books?",
         ],
     )
     def test_sensitive_negative(self, query):

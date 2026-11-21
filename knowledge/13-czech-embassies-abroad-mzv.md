@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://mzv.gov.cz/jnp/en/index.html, https://ipc.gov.cz/en/
 TITLE: Czech embassies and consulates abroad (MZV / Ministry of Foreign Affairs)
-STAGE: Before arrival
+STAGE: pre_arrival
 DATE SAVED: 2026-11-04
 -->
 
@@ -15,6 +15,7 @@ DATE SAVED: 2026-11-04
 - **Ministry of Foreign Affairs Main English Portal:** https://mzv.gov.cz/jnp/en/index.html
 
 ## 2. Booking Your Visa Appointment & Timelines
+- **UNVERIFIED (Dynamic External Schedules):** Individual Czech embassy visa appointment links, email registration windows, and quota rules change frequently and are not verified in real time. Always confirm directly on the website of your territorially competent Czech Embassy or Consulate via https://mzv.gov.cz/jnp/en/diplomatic_missions/index.html or with the VŠE International Office.
 - **Book Early:** Statutory processing time for long-term study visas and residence permits is typically **up to 60 days** from the date a complete application is submitted at the embassy. Apply immediately upon receiving your official Czech-language VŠE Confirmation of Study and Proof of Accommodation.
 - **Appointment Registration:** Each Czech embassy publishes its dedicated visa appointment booking email or registration schedule under its *Visa and Consular Information* section on https://mzv.gov.cz/jnp/en/diplomatic_missions/index.html.
 - **Student Mode (*Režim student*):** If your country participates in the Czech government's *Student Mode* facilitation programme, coordinate with your VŠE degree programme coordinator (`admissions@vse.cz`) or exchange coordinator (`exchange@vse.cz`) regarding embassy slot nomination.

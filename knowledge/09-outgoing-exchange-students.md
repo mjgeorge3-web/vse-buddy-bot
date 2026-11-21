@@ -1,7 +1,7 @@
 <!--
-SOURCE: https://www.vse.cz/english/students/study/outgoing-exchange-students/
+SOURCE: https://ozs.vse.cz/english/studies-abroad/exchange-programme/
 TITLE: Outgoing exchange (VŠE students going abroad)
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

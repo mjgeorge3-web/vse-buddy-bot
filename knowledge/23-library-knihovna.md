@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://knihovna.vse.cz/en/
 TITLE: VŠE Library (knihovna.vse.cz)
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: arrival
 DATE SAVED: 2026-10-25
 -->
 
@@ -12,7 +12,7 @@ DATE SAVED: 2026-10-25
 - **Central Library (Žižkov)** – mezzanine of the Old Building, W. Churchill Sq. 4, Praha 3. Bus 135 "Náměstí Winstona Churchilla"; trams 5, 9, 15, 26 "Viktoria Žižkov".
 - **Study Library (Jižní Město)** – Ekonomická 957, Praha 4. Bus 177 "Volha".
 
-## Opening hours (next week, per current page)
+## Opening hours (confirm seasonal changes on library.vse.cz)
 - Žižkov: Mon 9–19, Tue–Thu 8–19, Fri 8–18.
 - Jižní Město: Mon–Thu 9–16, Fri 9–16.
 

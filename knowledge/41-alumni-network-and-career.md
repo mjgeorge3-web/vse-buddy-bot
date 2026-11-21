@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://alumni.vse.cz/english/
 TITLE: Alumni network and career opportunities
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 
@@ -12,8 +12,8 @@ The VŠE Alumni Centre runs an international alumni network, mentoring and event
 
 Career Centre (kc.vse.cz) provides:
 - Job board and CV reviews.
-- The annual **Šance Job Fair** (next edition announced for 7.10.2026).
-- Career Workshops (winter semester 2026 published 30.9.2026).
+- The annual **Šance Job Fair** (held each autumn and spring — confirm upcoming dates on https://kc.vse.cz/english/).
+- Career Workshops and employer networking sessions (check the current semester schedule on https://kc.vse.cz/english/).
 
 For corporate partnerships and the VŠE Talent competition, see https://www.vse.cz/english/partners/.
 

@@ -1,48 +1,30 @@
 """Student Profile & Pre-Arrival Checklist Engine.
 
 Supports:
-1. Authenticated InSIS Students (e.g. George Joseph) with opt-in GDPR-safe
-   personalised study context (ECTS progress, credit vouchers, enrolled courses,
-   pending coursework deadlines, and thesis status).
+1. Simulated Authenticated InSIS Student Demo Profile (opt-in, GDPR-safe):
+   provides synthetic ECTS progress, credit voucher balance, enrolled courses,
+   pending coursework deadlines, and thesis status for prototype demonstration.
 2. Interactive Onboarding Checklists for pre-arrival, arrival, and study stages.
 """
 
+from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
-# Base ISM Master's student profile template; adapts dynamically to any logged-in student's name
-DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
-    "programme": "Master in Information Systems Management (FIS C-ISM-MBI pres [term 5, E])",
-    "faculty": "Faculty of Informatics and Statistics (FIS)",
-    "study_period": "WS 2026/2027 - FIS",
-    "degree_target_ects": 120,
-    "earned_ects": 90,
-    "current_enrolled_ects": 24,
-    "remaining_ects_needed": 30,
-    "remaining_ects_after_current_term": 6,
-    "initial_vouchers": 144,
-    "remaining_vouchers": 120,
-    "used_vouchers_current_sem": 24,
-    "weighted_gpa": 1.42,
-    "variable_symbol": "84920194",
-    "tuition_status": "Cleared (0.00 CZK outstanding)",
-    "thesis_title": "Improving International Student Experience with GenAI based tool at University of Economics and Business in Prague",
-    "thesis_supervisor": "Ing. Pavel Sládek, Ph.D.",
-    "thesis_department": "Department of Information Technology (FIS)",
-    "thesis_assignment_status": "Confirmed by supervisor; student can no longer edit the assignment",
-    "thesis_submission_status": "Pending final PDF/A upload in InSIS",
-    "enrolled_courses": [
-        "4IT445 Advanced Data Analytics (6 ECTS, Mon 09:15 RB 101)",
-        "4SA421 Information Systems Management (6 ECTS, Tue 14:30 SB 204)",
-        "2SE411 European Economic Integration (6 ECTS, Thu 11:00 NB 403)",
-        "1PE401 Business Ethics & Governance (6 ECTS, Fri 09:15 JM 310)",
-    ],
-    "pending_assignments": [
+
+def _build_dynamic_assignments() -> List[Dict[str, str]]:
+    """Generate demo coursework deadlines relative to today so dates never go stale."""
+    today = date.today()
+    d3 = today + timedelta(days=3)
+    d10 = today + timedelta(days=10)
+    d18 = today + timedelta(days=18)
+    d23 = today + timedelta(days=23)
+    return [
         {
             "id": "4it445_m2",
             "course_code": "4IT445",
-            "course_name": "Advanced Data Analytics",
-            "task_title": "Milestone 2 - Machine Learning Pipeline Report",
-            "due_date": "Nov 15, 2026 (23:59)",
+            "course_name": "Advanced Data Analytics (Demo)",
+            "task_title": "Milestone 2 - Data Pipeline Report",
+            "due_date": f"{d3.strftime('%b %d, %Y')} (23:59)",
             "urgency": "urgent",
             "days_left": "3 days left",
             "weight": "25 points",
@@ -52,9 +34,9 @@ DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
         {
             "id": "4sa421_cs",
             "course_code": "4SA421",
-            "course_name": "Information Systems Management",
+            "course_name": "Information Systems Management (Demo)",
             "task_title": "Enterprise Architecture Case Study",
-            "due_date": "Nov 22, 2026 (23:59)",
+            "due_date": f"{d10.strftime('%b %d, %Y')} (23:59)",
             "urgency": "upcoming",
             "days_left": "10 days left",
             "weight": "30 points",
@@ -66,7 +48,7 @@ DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
             "course_code": "DIP-THESIS",
             "course_name": "Master's Thesis",
             "task_title": "Insert Additional Info (Abstracts & Keywords) & Upload Thesis PDF",
-            "due_date": "Nov 30, 2026 (23:59)",
+            "due_date": f"{d18.strftime('%b %d, %Y')} (23:59)",
             "urgency": "upcoming",
             "days_left": "18 days left",
             "weight": "Thesis Requirement (§ 47b)",
@@ -76,31 +58,63 @@ DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
         {
             "id": "2se411_pb",
             "course_code": "2SE411",
-            "course_name": "European Economic Integration",
+            "course_name": "European Economic Integration (Demo)",
             "task_title": "Policy Brief Essay",
-            "due_date": "Dec 05, 2026 (23:59)",
+            "due_date": f"{d23.strftime('%b %d, %Y')} (23:59)",
             "urgency": "later",
             "days_left": "23 days left",
             "weight": "20 points",
             "submission_url": "https://insis.vse.cz/auth/student/odevzdavarna.pl?course=2SE411&lang=en",
             "button_label": "📂 Go to 2SE411 Submission Page",
         },
+    ]
+
+
+# Synthetic ISM Master's demo student profile template (not real InSIS SSO data)
+# Voucher math: 144 initial - 90 earned - 24 currently enrolled = 30 remaining vouchers
+# (6 ECTS remaining after this term + 24 buffer vouchers).
+DEFAULT_ISM_PROFILE_TEMPLATE: Dict[str, Any] = {
+    "programme": "Master in Information Systems Management (FIS — Demo Profile)",
+    "faculty": "Faculty of Informatics and Statistics (FIS)",
+    "study_period": "Current Academic Term (Demo)",
+    "degree_target_ects": 120,
+    "earned_ects": 90,
+    "current_enrolled_ects": 24,
+    "remaining_ects_needed": 30,
+    "remaining_ects_after_current_term": 6,
+    "initial_vouchers": 144,
+    "used_vouchers_total": 114,
+    "used_vouchers_current_sem": 24,
+    "remaining_vouchers": 30,
+    "voucher_buffer": 24,
+    "weighted_gpa": 1.42,
+    "variable_symbol": "00000000 (Demo VS)",
+    "tuition_status": "Cleared (Demo Record)",
+    "thesis_title": "Sample Master's Thesis: AI-Assisted Student Support Prototype",
+    "thesis_supervisor": "Sample FIS Thesis Supervisor",
+    "thesis_department": "Department of Information Technology (FIS)",
+    "thesis_assignment_status": "Confirmed by supervisor (demo status)",
+    "thesis_submission_status": "Pending final PDF/A upload in InSIS",
+    "enrolled_courses": [
+        "4IT445 Advanced Data Analytics (6 ECTS, Demo)",
+        "4SA421 Information Systems Management (6 ECTS, Demo)",
+        "2SE411 European Economic Integration (6 ECTS, Demo)",
+        "3PE401 Business Ethics & Governance (6 ECTS, Demo)",
     ],
 }
 
 STUDENT_PROFILES: Dict[str, Dict[str, Any]] = {
-    "george joseph": {"name": "George Joseph", **DEFAULT_ISM_PROFILE_TEMPLATE},
+    "alex novak": {"name": "Alex Novak", **DEFAULT_ISM_PROFILE_TEMPLATE},
 }
 
 
 def get_student_profile(user_name: str) -> Dict[str, Any]:
-    """Return personalised study profile matching the exact logged-in user's name."""
-    clean_name = (user_name or "").strip() or "Authenticated Student"
+    """Return synthetic demo study profile matching the logged-in demo user's name."""
+    clean_name = (user_name or "").strip() or "Demo Student"
     existing = STUDENT_PROFILES.get(clean_name.lower())
-    if existing:
-        return dict(existing)
-    profile = dict(DEFAULT_ISM_PROFILE_TEMPLATE)
+    profile = dict(existing) if existing else dict(DEFAULT_ISM_PROFILE_TEMPLATE)
     profile["name"] = clean_name
+    profile["pending_assignments"] = _build_dynamic_assignments()
     return profile
 
 
@@ -108,13 +122,18 @@ PERSONAL_STUDY_CUES = [
     "who am i", "my name", "my profile", "logged in", "my account",
     "my credit", "my credits", "my voucher", "my vouchers", "my thesis", "my gpa",
     "my grade", "my grades", "my course", "my courses", "my timetable", "my schedule",
-    "my variable symbol", "my tuition", "my study", "credit vouchers",
-    "how many vouchers", "how many credit vouchers", "vouchers left", "vouchers remaining",
-    "can i afford to fail", "if i fail", "drop a course", "do i have enough",
-    "my supervisor", "am i eligible", "my balance", "left", "remaining",
-    "assignment", "assignments", "homework", "task", "tasks", "submission", "submissions",
-    "odevzdavarna", "odevzdani", "odevzdání", "due", "deadline", "deadlines", "pending", "to do",
-    "credits left", "credits remaining", "degree progress", "how many credits",
+    "my variable symbol", "my tuition", "my study",
+    "how many vouchers do i", "how many credit vouchers do i",
+    "how many vouchers i have", "how many credit vouchers i have",
+    "vouchers do i have", "vouchers i have left", "vouchers remaining for me",
+    "can i afford to fail", "drop a course", "do i have enough",
+    "my supervisor", "am i eligible", "my balance",
+    "my assignment", "my assignments", "pending assignment", "pending assignments",
+    "my homework", "my task", "my tasks", "my submission", "my submissions",
+    "my odevzdavarna", "my deadline", "my deadlines",
+    "pending deadline", "pending deadlines", "what is due", "assignments due",
+    "credits do i have left", "credits left to graduate", "my degree progress",
+    "how many credits do i", "assignments do i have", "tasks do i have",
 ]
 
 
@@ -159,7 +178,7 @@ def build_dynamic_context_chunks(
         "doc_id": "insis_student_profile",
         "title": f"Personalised InSIS Study Record: {profile['name']}",
         "source_url": "https://insis.vse.cz/auth/student/studium.pl?lang=en",
-        "date_saved": "2026-11-01",
+        "date_saved": date.today().isoformat(),
         "unverified": False,
         "score": 0.995,
         "text": (
@@ -171,7 +190,8 @@ def build_dynamic_context_chunks(
             f"Current Enrolled Semester Credits: {profile.get('current_enrolled_ects', 24)} ECTS (in progress this semester across 4 courses)\n"
             f"Net Remaining to Graduate After Current Semester: {profile.get('remaining_ects_after_current_term', 6)} ECTS\n"
             f"Credit Vouchers: {profile['remaining_vouchers']} remaining out of {profile['initial_vouchers']} initial Master's vouchers "
-            f"({profile['used_vouchers_current_sem']} used in current semester; voucher buffer is safe)\n"
+            f"({profile['earned_ects']} used for earned ECTS + {profile['used_vouchers_current_sem']} used this semester = {profile['used_vouchers_total']} used; "
+            f"6 needed after current term + {profile['voucher_buffer']} buffer vouchers)\n"
             f"Weighted GPA: {profile['weighted_gpa']} (scale 1=Excellent to 4=Fail)\n"
             f"Tuition Variable Symbol: {profile['variable_symbol']} | Tuition Status: {profile['tuition_status']}\n"
             f"Enrolled Courses: {courses_str}\n"
@@ -190,7 +210,7 @@ def get_onboarding_checklist(
     housing: str = "dorm",
     stage: str = "pre_arrival",
 ) -> List[Dict[str, str]]:
-    """Generate a tailored checklist for Idea 3 (works for both No-Login & Logged-In students)."""
+    """Generate a stage-aware onboarding checklist for both guest and logged-in students."""
     origin = origin.lower()
     housing = housing.lower()
     stage = stage.lower()
@@ -204,7 +224,7 @@ def get_onboarding_checklist(
         })
         if origin == "non_eu":
             items.append({
-                "task": "Book Czech Embassy visa/residence appointment & arrange pVZP insurance",
+                "task": "Book Czech Embassy visa/residence appointment & arrange comprehensive Czech health insurance",
                 "prompt": "What are the visa and health insurance requirements for non-EU students?",
             })
         else:
@@ -223,8 +243,8 @@ def get_onboarding_checklist(
                 "prompt": "What should I check when renting private accommodation in Prague?",
             })
         items.append({
-            "task": "Prepare nostrification (recognition of previous foreign diploma)",
-            "prompt": "How does foreign diploma recognition (nostrification) work at VŠE?",
+            "task": "Prepare foreign diploma assessment / recognition documents for VŠE",
+            "prompt": "How does foreign diploma assessment (nostrification) work at VŠE?",
         })
 
     elif stage == "arrival":
@@ -240,7 +260,7 @@ def get_onboarding_checklist(
             })
         else:
             items.append({
-                "task": "EU Stay > 30 days: Optional Foreign Police registration if in private flat",
+                "task": "EU Stay > 30 days: Mandatory Foreign Police reporting within 30 days if in private flat (Act No. 326/1999 Sb. § 93)",
                 "prompt": "Do EU students need to register with the Foreign Police?",
             })
         items.append({
@@ -248,7 +268,7 @@ def get_onboarding_checklist(
             "prompt": "How do I change my password and set up OTP authentication in InSIS?",
         })
         items.append({
-            "task": "Upload ID photo in InSIS & pick up ISIC card at Room SB 01",
+            "task": "Upload ID photo in InSIS & pick up ISIC card at the VŠE Student ID Card Centre (SB)",
             "prompt": "Where is the Student Card Centre to pick up my ISIC card?",
         })
         items.append({
@@ -258,7 +278,7 @@ def get_onboarding_checklist(
 
     else:  # studies / exams / thesis
         items.append({
-            "task": "Check credit vouchers & ensure >= 9 ECTS in 1st semester (20 ECTS/year)",
+            "task": "Check credit vouchers & ensure >= 9 ECTS in 1st semester (20 ECTS per active semester)",
             "prompt": "What is the minimum 9 ECTS credit rule and how do vouchers work?",
         })
         items.append({

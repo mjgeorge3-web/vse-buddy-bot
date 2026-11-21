@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://ipc.gov.cz/en/, https://frs.gov.cz/, https://ozs.vse.cz/english/
 TITLE: Visa and residence permit for study in the Czech Republic – requirements and rules
-STAGE: Before arrival
+STAGE: pre_arrival
 DATE SAVED: 2026-11-04
 -->
 

@@ -1,11 +1,10 @@
-"""InSIS Navigation & Campus Database with 50 University Policies & Floor Locations.
+"""InSIS Navigation & Campus Database with Verified Core VŠE Policies & Campus Offices.
 
 Provides an SQLite database (`data/insis_navigation.db`) and query engine
 for guiding international students through:
-1. InSIS Navigation Routes (20+ tasks with breadcrumbs and demo links)
-2. 50 VŠE Policies, Rules, Regulations & Penalties
-3. Complete Floor-by-Floor Campus Navigation (washrooms on each floor,
-   classrooms, study coordinator offices, lecture halls, and amenities).
+1. InSIS Navigation Routes (24 tasks with authentic breadcrumbs and links)
+2. 18 Core VŠE Policies & Statutory Regulations (verified against VŠE SZŘ / vse.cz)
+3. 12 Verified Campus Service Offices, Libraries, Dining & Ceremonial Halls.
 """
 
 import sys
@@ -19,7 +18,7 @@ import re
 import sqlite3
 from typing import Any, Dict, List, Optional, Tuple
 
-from vse_data_fixtures import POLICIES_50, CAMPUS_LOCATIONS
+from vse_data_fixtures import CORE_VSE_POLICIES, CAMPUS_LOCATIONS
 
 DB_PATH = Path(__file__).resolve().parent / "data" / "insis_navigation.db"
 
@@ -64,7 +63,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS insis_routes_fts USING fts5(
     tokenize = 'porter unicode61'
 );
 
--- 2. VŠE Policies, Rules & Regulations
+-- 2. VŠE Core Policies & Statutory Regulations
 CREATE TABLE IF NOT EXISTS vse_policies (
     rule_id TEXT PRIMARY KEY,
     category TEXT NOT NULL,
@@ -72,6 +71,7 @@ CREATE TABLE IF NOT EXISTS vse_policies (
     summary TEXT NOT NULL,
     rule_text TEXT NOT NULL,
     official_reference TEXT NOT NULL,
+    official_url TEXT NOT NULL,
     penalty_or_consequence TEXT,
     faq_triggers TEXT NOT NULL
 );
@@ -87,7 +87,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS vse_policies_fts USING fts5(
     tokenize = 'porter unicode61'
 );
 
--- 3. Campus Navigation (Classrooms, Washrooms, Coordinators)
+-- 3. Verified Campus Service Offices, Libraries & Main Halls
 CREATE TABLE IF NOT EXISTS campus_locations (
     location_id TEXT PRIMARY KEY,
     building TEXT NOT NULL,
@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS campus_locations (
     directions_from_entrance TEXT NOT NULL,
     amenities_accessibility TEXT,
     hours_or_availability TEXT,
+    official_url TEXT NOT NULL,
     keywords TEXT NOT NULL
 );
 
@@ -180,9 +181,9 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/student/registrace.pl?lang=en",
         "http://localhost:8502/auth/student/registrace.pl",
         "Personal administration > My College > Student's portal > Registration/Enrollment",
-        "1. Open **My College** → **Student's portal** and click **Registration/Enrollment** (`/auth/student/registrace.pl`).\n2. Select the upcoming semester and add compulsory (`oP`), specialization (`sP`), or elective (`vP`) courses to your registration basket.\n3. During your enrollment round (*zápis*), confirm concrete lecture/seminar timetable slots.\n4. Verify that total enrolled ECTS stays within your remaining credit voucher balance.",
+        "1. Open **My College** → **Student's portal** and click **Registration/Enrollment** (`/auth/student/registrace.pl`).\n2. Select the upcoming semester and add compulsory (`oP`), minor specialization (`sP`/`sV`), or faculty/free elective (`fV`) courses to your registration basket.\n3. During your enrollment round (*zápis*), confirm concrete lecture/seminar timetable slots.\n4. Verify that total enrolled ECTS stays within your remaining credit voucher balance.",
         "Enrollment runs in timed phases (Round 1 pre-registration, Round 2 automated allocation, Round 3 schedule adjustments).",
-        "You must earn at least 9 ECTS in your first semester and 20 ECTS per academic year to continue studies.",
+        "You must earn at least 9 ECTS in your first semester and maintain cumulative progress of at least 20 ECTS per active semester to stay on track.",
         "course registration, zapis, enroll in courses, register classes, registration enrollment, add course, registration round, timetable slots"
     ),
     (
@@ -195,7 +196,7 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/student/kontrola_planu.pl?lang=en",
         "http://localhost:8502/auth/student/kontrola_planu.pl",
         "Personal administration > My College > Student's portal > Plan progress check",
-        "1. Navigate to InSIS > Student's portal.\n2. Click the 'Plan progress check' tab in the top navigation bar (or 'Progress of study' icon).\n3. Review 'Credit voucher balance': Initial allocation (144 vouchers for Master's, 216 for Bachelor's), spent vouchers, and remaining balance.\n4. Check required course categories: Compulsory (oP), Minor Specialization (sP), and Optional electives (vP).\n5. Verify that completed ECTS meet the threshold for progression to the next semester.",
+        "1. Navigate to InSIS > Student's portal.\n2. Click the 'Plan progress check' tab in the top navigation bar (or 'Progress of study' icon).\n3. Review 'Credit voucher balance': Initial allocation (144 vouchers for Master's, 216 for Bachelor's), spent vouchers, and remaining balance.\n4. Check required course categories: Compulsory (oP), Minor Specialization (sP/sV), and Faculty/Free electives (fV).\n5. Verify that completed ECTS meet the threshold for progression to the next semester.",
         "Available at any time to active students. Shows automated calculation based on enrolled and completed courses.",
         "Failing a course consumes credit vouchers without granting credits. Running out of credit vouchers leads to study termination under VŠE Study and Examination Regulations Art. 12.",
         "credit vouchers, voucher balance, ects credits, kontrola planu, study progress, poukazky, credit limit, failed course penalty"
@@ -270,10 +271,10 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/financovani/index.pl?lang=en",
         "http://localhost:8502/auth/financovani/index.pl",
         "Personal administration > Financing of study and scholarships > Student Study Financing, Bank Accounts & Variable Symbol",
-        "1. Open InSIS **Study Financing** (`/auth/financovani/index.pl`) or navigate via **My College** → **Student's portal**.\n2. Copy the mandatory payment details for your faculty:\n   - **Bank Account / IBAN** & **SWIFT/BIC** (`CEKOCZPP` for ČSOB international transfers)\n   - **Variable Symbol (VS)**: Your unique 8-digit InSIS student ID\n3. Always include your **Variable Symbol** so the automated clearing system pairs the payment to your account.",
+        "1. Open InSIS **Study Financing** (`/auth/financovani/index.pl`) or navigate via **My College** → **Student's portal**.\n2. Copy the official VŠE tuition payment details (Česká spořitelna, a.s., Account `24242442/0800`, IBAN `CZ39 0800 0000 0000 2424 2442`, SWIFT/BIC `GIBACZPX`) or use the InSIS card/QR payment gateway.\n3. Always include your personal **Variable Symbol (VS)** from InSIS Study Financing and select **OUR** for international wire charges so the full amount is paired automatically.",
         "Fee assessment is issued each semester for English-taught degree programmes according to the Dean's decree.",
-        "Always specify your 8-digit Variable Symbol (VS). Payments sent without a Variable Symbol cannot be automatically matched.",
-        "tuition fee, pay tuition, bank account, variable symbol, variabilni symbol, iban, swift, school fees, csob, poplatky"
+        "Always specify your exact Variable Symbol (VS) shown in InSIS Study Financing. Payments sent without a Variable Symbol cannot be automatically matched.",
+        "tuition fee, pay tuition, bank account, variable symbol, variabilni symbol, iban, swift, school fees, ceska sporitelna, poplatky"
     ),
     (
         "TASK_CONTACT_CENTRE",
@@ -288,7 +289,7 @@ ROUTES_DATA = [
         "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **eAgenda**, open **Contact centre** (*Kontaktní centrum*) or **Document office** (*Úřadovna*, `/auth/uradovna/`).\n3. Open the **Searching for solution** tab and pick your topic, or click **General application/query**.\n4. Enter your subject and message, attach any supporting PDF documents, and submit.\n5. Track replies under **My queries**.",
         "Available to all registered students.",
         "Submit official study petitions and administrative inquiries here rather than emailing unmonitored addresses.",
-        "general query, general querry, general application, general application/query, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, ask coordinator in insis, study issues, study abroad query, scholarship query, submit request, find query in insis, where to find general query, where to find general querry, where is general query, where is general querry, how to find general query, how to find general querry, general query in insis, general querry in insis"
+        "general query, general application, searching for solution, my queries, contact centre, contact center, kontaktní centrum, kontaktni centrum, uradovna, úřadovna, submit query, submit inquiry, student ticket, message study department, study issues, submit request"
     ),
     (
         "TASK_DORM_ISKAM",
@@ -301,7 +302,7 @@ ROUTES_DATA = [
         "https://accommodation.vse.cz/",
         "SÚZ VŠE Accommodation Portal > ISKaM Housing System (https://iskam-web.vse.cz/)",
         "1. Open the VŠE **ISKaM** housing portal (`https://iskam-web.vse.cz/`) and sign in with your InSIS username and password.\n2. Submit your dormitory housing application during the intake window (Jarov, Blanice, Vltava, or Rooseveltova).\n3. Pay the refundable booking deposit (*kauce*) by card or bank transfer to confirm your room reservation.\n4. Request or download your signed **Proof of Accommodation** (*Doklad o zajištění ubytování*) for visa purposes.",
-        "Requires active VŠE InSIS credentials. Booking windows open in June/July for autumn and November for spring.",
+        "Requires active VŠE InSIS credentials. Always verify current seasonal booking windows and fee schedules on https://accommodation.vse.cz/.",
         "ISKaM (`https://iskam-web.vse.cz/`) is a dedicated housing portal separate from InSIS, operated by SÚZ VŠE (`https://accommodation.vse.cz/`).",
         "dormitory, dorms, iskam, student housing, koleje, room reservation, jarov, rooseveltova, dorm room, campus bed, suz housing"
     ),
@@ -330,9 +331,9 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/student/arch_studia.pl?lang=en",
         "http://localhost:8502/auth/student/arch_studia.pl",
         "Personal administration > My College > Student's portal > E-study record",
-        "1. Open **My College** → **Student's portal**.\n2. Click the **E-study record** tab (`/auth/student/arch_studia.pl`) for final grades and GPA, or **My lectures sheet** (`/auth/student/zaznamnik.pl`) for continuous semester points.\n3. Check recorded grades (`1` = Excellent, `2` = Very Good, `3` = Good, `4` = Fail, `Zap` = Unweighted Credit) and total earned ECTS.",
+        "1. Open **My College** → **Student's portal**.\n2. Click the **E-study record** tab (`/auth/student/arch_studia.pl`) for final grades and GPA, or **My lectures sheet** (`/auth/student/zaznamnik.pl`) for continuous semester points.\n3. Check recorded grades (`1` = Excellent, `2` = Very Good, `3` = Good, `4+` = Fail with one retake option, `4` = Fail, `Zap` = Unweighted Credit) and total earned ECTS.",
         "Grades appear immediately once recorded by your examiner in InSIS.",
-        "VŠE uses an inverted 1–4 grading scale: 1 is the best grade (90–100%), 3 is the lowest passing grade (60–74%), and 4 is Fail (<60%).",
+        "VŠE uses an inverted grading scale: 1 = Excellent (90–100%), 2 = Very Good (75–89%), 3 = Good (60–74%), 4+ = Conditional Fail with one retake right during the exam period (50–59%), and 4 = Definitive Fail (<50%).",
         "grades, study record, index, znamky, gpa, transcripts, results, failed course, credits earned, arch_studia, zaznamnik"
     ),
     (
@@ -362,7 +363,7 @@ ROUTES_DATA = [
         "InSIS Public Portal > Study plans (or Personal administration > Public information portal > Study plans)",
         "1. Open InSIS Public Portal (https://insis.vse.cz/katalog/plany.pl?lang=en) or navigate via 'Public information portal' > 'Study plans'.\n2. Select your Faculty and degree type (Bachelor / Master).\n3. Find your study programme (e.g. Information Systems Management - ISM, Economics, International Business).\n4. View recommended study trajectory per semester to guarantee graduation in standard duration (4 semesters for Master's, 6 for Bachelor's).",
         "Publicly accessible without logging in.",
-        "Study plans outline required courses by group (oP = compulsory, sP = specialization, vP = free elective). Ensure you complete all required group quotas.",
+        "Study plans outline required courses by group (oP = major compulsory, sP = minor compulsory, sV = minor selective/elective, fV = faculty/free elective). Ensure you complete all required group quotas.",
         "study plan, degree structure, curriculum, recommended trajectory, studijni plan, ism curriculum, specialization, plany"
     ),
     (
@@ -420,7 +421,7 @@ ROUTES_DATA = [
         "https://insis.vse.cz/auth/lide/moje_udaje.pl?lang=en",
         "http://localhost:8502/karty/platnost.pl",
         "Personal administration > Adjustment of the information system > Change photo / Personal data",
-        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **Adjustment of the information system**, click **Change photo** (or verify your details under **Personal data**, `/auth/lide/moje_udaje.pl`).\n3. Upload a passport-style portrait on a plain light background.\n4. Once approved, pick up your physical ISIC student card at the **Card Centre (Room SB 01, Old Building ground floor)**.",
+        "1. Log into InSIS **Personal administration** (`https://insis.vse.cz/auth/?lang=en`).\n2. Under **Adjustment of the information system**, click **Change photo** (or verify your details under **Personal data**, `/auth/lide/moje_udaje.pl`).\n3. Upload a passport-style portrait on a plain light background.\n4. Once approved, pick up your physical ISIC student card at the **VŠE Student ID Card Centre (Stará budova, SB — confirm exact counter and hours on vse.cz/english/students/campus-services/id-cards/)**.",
         "Required upon initial enrollment at VŠE.",
         "Use a clear front-facing portrait without filters, hats, or sunglasses. Card validity can also be checked publicly at `/karty/platnost.pl`.",
         "student id, isic card, upload photo, change photo, id card center, prukaz studenta, identification card, personal data, moje udaje"
@@ -453,7 +454,7 @@ ROUTES_DATA = [
         "1. Open the **Scholarships** portal directly below (`/auth/stipendia/`), or navigate via **My College** → **Student's portal** → **Scholarships** (*Žádosti o stipendia*).\n2. Select **Accommodation scholarship** (*Žádost o ubytovací stipendium*) and submit the online application during the semester intake window.\n3. Verify that an active **Czech bank account** is saved under **Study Financing & Bank Accounts** (`/auth/financovani/index.pl`) so quarterly payouts can be deposited.",
         "Eligible for full-time degree students within standard study duration (+ max 1 year) without permanent residence in Prague.",
         "The Accommodation Scholarship is a quarterly cash grant paid to your Czech bank account—separate from booking a dormitory room in ISKaM.",
-        "accommodation scholarship, accomodation scholarship, accommodation benefit, accomodation benefit, ubytovaci stipendium, ubytovací stipendium, scholarship, apply for scholarship, stipendia, zadost o ubytovaci stipendium, zadosti o stipendia, housing grant, living allowance, housing benefit, money for accommodation, how to apply for scholarship, how do i apply for accommodation benefit, how do i apply for accomodation benefit, apply for accommodation benefit, apply for accomodation benefit, student scholarship, accommodation grant, where to find accommodation benefit, where to find accomodation benefit"
+        "accommodation scholarship, accommodation benefit, ubytovaci stipendium, ubytovací stipendium, scholarship, apply for scholarship, stipendia, zadost o ubytovaci stipendium, zadosti o stipendia, housing grant, living allowance, housing benefit, accommodation grant"
     ),
     (
         "TASK_BANK_ACCOUNT_FINANCING",
@@ -493,8 +494,18 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH))
     conn.execute("PRAGMA foreign_keys = ON;")
-    
+
     with conn:
+        cur = conn.cursor()
+        # Seamless schema upgrade if an older DB file lacks official_url columns
+        for tbl in ("vse_policies", "campus_locations"):
+            cur.execute(f"PRAGMA table_info({tbl});")
+            cols = {row[1] for row in cur.fetchall()}
+            if cols and "official_url" not in cols:
+                cur.execute(f"DROP TABLE IF EXISTS {tbl};")
+                cur.execute(f"DROP TABLE IF EXISTS {tbl}_fts;")
+                force_refresh = True
+
         conn.executescript(SCHEMA_SQL)
         cur = conn.cursor()
         
@@ -525,24 +536,26 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
                 FROM insis_routes;
             """)
 
-        # 2. Populate 50 Policies & Rules
+        # 2. Populate Core VŠE Policies & Rules
         cur.execute("SELECT COUNT(*) FROM vse_policies;")
-        if cur.fetchone()[0] < len(POLICIES_50) or force_refresh:
+        if cur.fetchone()[0] != len(CORE_VSE_POLICIES) or force_refresh:
             cur.execute("DELETE FROM vse_policies;")
             cur.execute("DELETE FROM vse_policies_fts;")
             policy_rows = [
                 (
                     p["rule_id"], p["category"], p["title"], p["summary"],
-                    p["rule_text"], p["official_reference"], p.get("penalty_or_consequence", ""),
+                    p["rule_text"], p["official_reference"],
+                    p.get("official_url", "https://www.vse.cz/english/students/study/study-regulations/"),
+                    p.get("penalty_or_consequence", ""),
                     p["faq_triggers"]
                 )
-                for p in POLICIES_50
+                for p in CORE_VSE_POLICIES
             ]
             cur.executemany(
                 """INSERT INTO vse_policies (
                     rule_id, category, title, summary, rule_text,
-                    official_reference, penalty_or_consequence, faq_triggers
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
+                    official_reference, official_url, penalty_or_consequence, faq_triggers
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);""",
                 policy_rows
             )
             cur.execute("""
@@ -552,9 +565,9 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
                 FROM vse_policies;
             """)
 
-        # 3. Populate Campus Navigation Locations
+        # 3. Populate Verified Campus Locations
         cur.execute("SELECT COUNT(*) FROM campus_locations;")
-        if cur.fetchone()[0] < len(CAMPUS_LOCATIONS) or force_refresh:
+        if cur.fetchone()[0] != len(CAMPUS_LOCATIONS) or force_refresh:
             cur.execute("DELETE FROM campus_locations;")
             cur.execute("DELETE FROM campus_locations_fts;")
             loc_rows = [
@@ -562,6 +575,7 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
                     loc["location_id"], loc["building"], loc["floor"], loc["room_number"],
                     loc["facility_type"], loc["name"], loc["directions_from_entrance"],
                     loc.get("amenities_accessibility", ""), loc.get("hours_or_availability", ""),
+                    loc.get("official_url", "https://www.vse.cz/english/students/campus-services/campus-and-classrooms/"),
                     loc["keywords"]
                 )
                 for loc in CAMPUS_LOCATIONS
@@ -570,8 +584,8 @@ def init_database(force_refresh: bool = False) -> sqlite3.Connection:
                 """INSERT INTO campus_locations (
                     location_id, building, floor, room_number, facility_type,
                     name, directions_from_entrance, amenities_accessibility,
-                    hours_or_availability, keywords
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
+                    hours_or_availability, official_url, keywords
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
                 loc_rows
             )
             cur.execute("""
@@ -614,13 +628,15 @@ def search_routes(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
     cur = conn.cursor()
     raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", clean_q)
     if not raw_tokens:
+        conn.close()
         return []
 
-    # Normalize common typos and filter boilerplate words for precise navigation matching
+    # Normalize common spelling typos and filter boilerplate words for precise navigation matching
     typo_map = {
         "whre": "where",
         "querry": "query",
         "accomodation": "accommodation",
+        "scholorship": "scholarship",
         "documnt": "document",
     }
     stopwords_nav = {"to", "the", "in", "on", "at", "where", "whre", "how", "can", "i", "find", "get", "is", "do", "of", "a", "an", "for"}
@@ -683,16 +699,16 @@ def get_route_by_task_id(task_id: str) -> Optional[Dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
-# 2. Search Functions for 50 Policies & Rules
+# 2. Search Functions for Core VŠE Policies & Rules
 # ---------------------------------------------------------------------------
 def search_policies(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
-    """Searches 50 VŠE Policies and Rules using FTS5 and LIKE fallback."""
+    """Searches Core VŠE Policies and Rules using FTS5 and LIKE fallback."""
     if not query_str or not query_str.strip():
         return []
         
     conn = get_connection()
     cur = conn.cursor()
-    raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f]+", query_str.strip())
+    raw_tokens = re.findall(r"[a-zA-Z0-9_\u00c0-\u017f+]+", query_str.strip())
     if not raw_tokens:
         conn.close()
         return []
@@ -705,8 +721,6 @@ def search_policies(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
         "rule", "rules", "policy", "policies", "times", "time",
     }
     substantive = [t for t in raw_tokens if len(t) > 1 and t.lower() not in stopwords_pol]
-    if "3" in raw_tokens and ("fail" in query_str.lower() or "exam" in query_str.lower()):
-        substantive.extend(["retake", "second", "attempt"])
     tokens = substantive if substantive else [t for t in raw_tokens if len(t) > 1]
     if not tokens:
         conn.close()
@@ -757,10 +771,10 @@ def search_policies(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
-# 3. Search Functions for Campus Locations (Washrooms, Classrooms, Offices)
+# 3. Search Functions for Campus Locations (Offices, Libraries, Dining & Halls)
 # ---------------------------------------------------------------------------
 def search_campus_locations(query_str: str, limit: int = 3) -> List[Dict[str, Any]]:
-    """Searches Campus Locations (washrooms, classrooms, study coordinators) via FTS5 & LIKE."""
+    """Searches verified VŠE campus service locations via FTS5 and LIKE fallback."""
     if not query_str or not query_str.strip():
         return []
         
@@ -847,7 +861,11 @@ def format_navigation_card(route: Dict[str, Any]) -> str:
     if route.get("common_pitfalls"):
         card.append(f"⚠️ **Important Note:** {route['common_pitfalls']}")
     card.append(f"")
-    card.append(f"🔗 [Open in Official InSIS]({route['official_url']})  |  🧪 [Test in InSIS Demo Simulation]({route['demo_url']})")
+    import config
+    demo_link = route.get("demo_url", "")
+    if route.get("portal_path", "").startswith("/"):
+        demo_link = f"{config.DEMO_BASE_URL}{route['portal_path']}"
+    card.append(f"🔗 [Open in Official InSIS]({route['official_url']})  |  🧪 [Test in InSIS Demo Simulation]({demo_link})")
     return "\n".join(card)
 
 
@@ -892,14 +910,14 @@ def unified_search(query_str: str, limit: int = 3) -> Dict[str, Any]:
     """Smart dispatcher searching across InSIS routes, policies, and campus locations."""
     q_lower = query_str.lower()
     
-    # Campus cues
-    campus_cues = ["where is", "how do i get to", "toilet", "washroom", "wc", "restroom", "bathroom",
-                   "floor", "room", "hall", "aula", "sb", "nb", "rb", "menza", "canteen", "library",
-                   "coordinator", "office hours", "atm", "gym", "sports", "helpdesk", "ciks"]
-    # Policy cues
+    # Campus cues (verified offices, halls, libraries, dining)
+    campus_cues = ["where is", "how do i get to", "floor", "room", "hall", "aula",
+                   "sb", "nb", "rb", "jm", "menza", "canteen", "library",
+                   "coordinator", "office hours", "helpdesk", "ciks", "ozs", "suz"]
+    # Policy cues (verified VŠE statutory regulations)
     policy_cues = ["policy", "rule", "regulation", "penalty", "fail", "plagiarism", "cheat",
-                   "attending", "absence", "doctor", "retake", "guest", "dorm rules", "smoking",
-                   "insurance", "police", "foreign police", "merit", "scholarship", "voucher",
+                   "absence", "doctor", "retake", "4+", "grading", "insurance", "police",
+                   "foreign police", "merit", "scholarship", "voucher", "tuition",
                    "minimum credits", "9 ects", "20 ects", "termination", "expulsion"]
                    
     is_campus = any(c in q_lower for c in campus_cues)
@@ -918,16 +936,15 @@ def unified_search(query_str: str, limit: int = 3) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    print("[InSIS & Campus DB] Initializing complete database with 50 policies and locations...")
-    init_database()
+    print("[InSIS & Campus DB] Initializing database with verified VŠE policies and campus offices...")
+    init_database(force_refresh=True)
     print(f"[InSIS & Campus DB] Database ready at: {DB_PATH}")
     
     test_queries = [
-        "washroom 1st floor",
         "where is the study coordinator for fis",
-        "what happens if i fail an exam 3 times",
-        "overnight guest dorm rules",
-        "where is room RB 211"
+        "how does the 4+ exam retake rule work",
+        "where is the central library zizkov",
+        "tuition bank account and variable symbol",
     ]
     for q in test_queries:
         print(f"\n==================== QUERY: '{q}' ====================")

@@ -4,8 +4,8 @@
 //   1. No-Login Public InSIS Portal (https://insis.vse.cz/?lang=en)
 //   2. Custom Name + Password ("ism_mastersthesis") Login across all 195 URLs
 //   3. Clean Session Wipe on Logout (both Portal & Bot switch to Public Mode)
-//   4. Context-Aware Page Co-Pilot (Idea 1), Personalised Profile (Idea 2),
-//      Smart Topic Switch (Visas/Stay/Campus), & Interactive Checklist (Idea 3)
+//   4. Opt-In Personalised Study Context, Smart Topic Isolation
+//      (Visas/Stay/Campus), & Interactive Stage Onboarding Checklist
 // =============================================================================
 
 const REQUIRED_INSIS_PASSWORD = "ism_mastersthesis";
@@ -80,7 +80,7 @@ function resetBotConversationForSession() {
             <div class="starter-icon">🛂</div>
             <div class="starter-text">
               <div class="starter-title">Visa, Insurance &amp; 3-Day Police Rules</div>
-              <div class="starter-desc">Study visas, EUR 400k pVZP insurance &amp; 3-day Foreign Police registration</div>
+              <div class="starter-desc">Study visas, comprehensive Czech health insurance &amp; Foreign Police reporting</div>
             </div>
           </div>
           <div class="bot-starter-card" onclick="sendBotPrompt('How do I submit the E-application form to study at VŠE?')">
@@ -108,7 +108,7 @@ function resetBotConversationForSession() {
             <div class="starter-icon">📊</div>
             <div class="starter-text">
               <div class="starter-title">Check My Credit Vouchers &amp; ECTS</div>
-              <div class="starter-desc">Remaining voucher balance (120/144), earned ECTS, and degree progress</div>
+              <div class="starter-desc">Remaining voucher balance (30/144), earned ECTS, and degree progress</div>
             </div>
           </div>
           <div class="bot-starter-card" onclick="sendBotPrompt('Walk me through the complete Master\\'s Thesis workflow at VŠE from topic approval to submission, defense, and errata.')">
@@ -592,7 +592,8 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         <thead><tr><th>Programme Code</th><th>Programme Title</th><th>Faculty</th><th>Degree</th><th>Total Credits</th><th>Language</th></tr></thead>
         <tbody>
           <tr><td><strong>C-ISM-MBI</strong></td><td>Information Systems Management</td><td>FIS</td><td>Master (Ing.)</td><td>120 ECTS</td><td>English</td></tr>
-          <tr><td><strong>C-EDA</strong></td><td>Economic Data Analysis</td><td>FIS</td><td>Bachelor (Bc.)</td><td>180 ECTS</td><td>English</td></tr>
+          <tr><td><strong>C-EDS</strong></td><td>Economic Data Science</td><td>FIS</td><td>Bachelor (Bc.)</td><td>180 ECTS</td><td>English</td></tr>
+          <tr><td><strong>C-EDA</strong></td><td>Economic Data Analysis</td><td>FIS</td><td>Master (Ing.)</td><td>120 ECTS</td><td>English</td></tr>
           <tr><td><strong>C-MIFA</strong></td><td>Finance and Accounting</td><td>FFÚ</td><td>Master (Ing.)</td><td>120 ECTS</td><td>English</td></tr>
           <tr><td><strong>C-IDS</strong></td><td>International and Diplomatic Studies</td><td>FMV</td><td>Master (Ing.)</td><td>120 ECTS</td><td>English</td></tr>
           <tr><td><strong>C-BBA</strong></td><td>Bachelor of Business Administration</td><td>FPH</td><td>Bachelor (Bc.)</td><td>180 ECTS</td><td>English</td></tr>
@@ -613,8 +614,8 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         </div>
         <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:14px; text-align:center;">
           <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:700;">Remaining Balance</div>
-          <div style="font-size:24px; font-weight:800; color:#16a34a;">120 Vouchers</div>
-          <div style="font-size:11px; color:#64748b;">24 used in WS 2026/2027</div>
+          <div style="font-size:24px; font-weight:800; color:#16a34a;">30 Vouchers</div>
+          <div style="font-size:11px; color:#64748b;">90 earned + 24 enrolled (114 used)</div>
         </div>
         <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:14px; text-align:center;">
           <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:700;">Current Study Average</div>
@@ -623,7 +624,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         </div>
       </div>
       <p style="font-size:12px; color:#475569; line-height:1.6;">
-        <strong>Study Regulation Rules:</strong> You must earn at least 9 ECTS credits in your first semester, or 20 ECTS across any two consecutive semesters to maintain active enrollment.
+        <strong>Study Regulation Rules:</strong> You must earn at least 9 ECTS credits in your first semester and maintain cumulative progress of at least 20 ECTS per active semester to stay on track without voucher penalties.
       </p>
     `;
   } else if (path.includes("rozvrhy")) {
@@ -641,10 +642,10 @@ function renderGenericInsisPage(path, fullUrl, meta) {
           <tr><th>Day</th><th>Time</th><th>Course</th><th>Type</th><th>Room</th><th>Campus Building</th><th>Teacher</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>Monday</strong></td><td>09:15 &ndash; 12:30</td><td>4IT445 Advanced Data Analytics</td><td>Lecture + Lab</td><td><strong>RB 101</strong></td><td>Žižkov, Rajská budova (1st floor)</td><td>Doc. Kovář</td></tr>
-          <tr><td><strong>Tuesday</strong></td><td>14:30 &ndash; 17:45</td><td>4SA421 Info Systems Management</td><td>Seminar</td><td><strong>SB 204</strong></td><td>Žižkov, Stará budova (2nd floor)</td><td>Prof. Voříšek</td></tr>
-          <tr><td><strong>Thursday</strong></td><td>11:00 &ndash; 14:15</td><td>2SE411 European Integration</td><td>Lecture</td><td><strong>NB 403</strong></td><td>Žižkov, Nová budova (4th floor)</td><td>Doc. Dvořák</td></tr>
-          <tr><td><strong>Friday</strong></td><td>09:15 &ndash; 10:45</td><td>1PE401 Business Ethics</td><td>Lecture</td><td><strong>JM 310</strong></td><td>Jižní Město (3rd floor)</td><td>Mgr. Horáková</td></tr>
+          <tr><td><strong>Monday</strong></td><td>09:15 &ndash; 12:30</td><td>4IT445 Advanced Data Analytics</td><td>Lecture + Lab</td><td><strong>RB 101</strong></td><td>Žižkov, Rajská budova (1st floor)</td><td>Sample FIS Lecturer A</td></tr>
+          <tr><td><strong>Tuesday</strong></td><td>14:30 &ndash; 17:45</td><td>4SA421 Info Systems Management</td><td>Seminar</td><td><strong>SB 204</strong></td><td>Žižkov, Stará budova (2nd floor)</td><td>Sample FIS Lecturer B</td></tr>
+          <tr><td><strong>Thursday</strong></td><td>11:00 &ndash; 14:15</td><td>2SE411 European Integration</td><td>Lecture</td><td><strong>NB A</strong></td><td>Žižkov, Nová budova (1st floor)</td><td>Sample FMV Lecturer</td></tr>
+          <tr><td><strong>Friday</strong></td><td>09:15 &ndash; 10:45</td><td>3PE401 Business Ethics</td><td>Lecture</td><td><strong>JM 310</strong></td><td>Jižní Město (3rd floor)</td><td>Sample FBA Lecturer</td></tr>
         </tbody>
       </table>
     `;
@@ -659,8 +660,8 @@ function renderGenericInsisPage(path, fullUrl, meta) {
         <tbody>
           <tr>
             <td><strong>Diploma Thesis Defense</strong></td>
-            <td>Ing. Pavel Sládek, Ph.D.</td>
-            <td>Doc. Ing. O. Černý, Ph.D.</td>
+            <td>Sample FIS Thesis Supervisor</td>
+            <td>Sample Thesis Opponent</td>
             <td>June 2027 (Scheduled upon thesis locking)</td>
             <td><span style="color:#d97706; font-weight:700;">Awaiting Thesis Lock</span></td>
           </tr>
@@ -682,12 +683,12 @@ function renderGenericInsisPage(path, fullUrl, meta) {
       html = `
         <h3 style="font-size:16px; color:#004b87; margin-bottom:10px;">Study Financing &amp; Personal Payments (${safeUser})</h3>
         <table class="thesis-info-table" style="margin-bottom:18px;">
-          <tr><td class="label-cell">Bank Account (CZK):</td><td class="value-cell"><strong>19-2696090207 / 0100</strong> (Komerční banka)</td></tr>
-          <tr><td class="label-cell">IBAN:</td><td class="value-cell"><code>CZ04 0100 0000 1926 9609 0207</code></td></tr>
-          <tr><td class="label-cell">Your Variable Symbol (VS):</td><td class="value-cell"><strong style="color:#005596; font-size:15px;">84920194</strong> <em>(Mandatory to identify your student account!)</em></td></tr>
-          <tr><td class="label-cell">Payment Status:</td><td class="value-cell"><span style="color:#16a34a; font-weight:700;">All Tuition &amp; Obligations Cleared (0.00 CZK balance)</span></td></tr>
+          <tr><td class="label-cell">Official Bank Account:</td><td class="value-cell"><strong>24242442 / 0800</strong> (Česká spořitelna, a.s.)</td></tr>
+          <tr><td class="label-cell">IBAN / SWIFT:</td><td class="value-cell"><code>CZ39 0800 0000 0000 2424 2442</code> &bull; SWIFT: <code>GIBACZPX</code></td></tr>
+          <tr><td class="label-cell">Your Variable Symbol (VS):</td><td class="value-cell"><strong style="color:#005596; font-size:15px;">00000000 (Demo)</strong> <em>(Mandatory to identify your student account!)</em></td></tr>
+          <tr><td class="label-cell">Payment Status:</td><td class="value-cell"><span style="color:#16a34a; font-weight:700;">All Tuition &amp; Obligations Cleared (Demo Record)</span></td></tr>
         </table>
-        <button onclick="alert('Card payment gateway 3DS Secure: 0.00 CZK outstanding')" style="background:#005596; color:white; border:none; padding:8px 14px; border-radius:4px; font-weight:700; cursor:pointer;">💳 Open Card Payment Gateway</button>
+        <button onclick="alert('Card payment gateway 3DS Secure (Demo): 0.00 CZK outstanding')" style="background:#005596; color:white; border:none; padding:8px 14px; border-radius:4px; font-weight:700; cursor:pointer;">💳 Open Card Payment Gateway</button>
       `;
     } else {
       html = `
@@ -696,9 +697,9 @@ function renderGenericInsisPage(path, fullUrl, meta) {
           General financing rules for international English-taught Bachelor's and Master's programmes at VŠE Prague.
         </p>
         <ul style="font-size:12px; line-height:1.75; margin-left:20px; margin-bottom:14px;">
-          <li><strong>English Degree Tuition Fee:</strong> Standard fee is <strong>EUR 2,500 per semester</strong> (EUR 5,000 / academic year).</li>
-          <li><strong>Application Fee:</strong> EUR 50 electronic application fee paid during E-application submission.</li>
-          <li><strong>Scholarships:</strong> Merit scholarships (GPA &le; 1.50) and quarterly accommodation grants are available to eligible full-time students.</li>
+          <li><strong>English Degree Tuition Fee:</strong> Typically approx. <strong>EUR 5,000 / academic year</strong> (confirm exact faculty tuition &amp; payment dates on <a href="https://admissions.vse.cz/" target="_blank" rel="noopener noreferrer">admissions.vse.cz</a>).</li>
+          <li><strong>Official Tuition Account:</strong> Česká spořitelna (<code>24242442/0800</code>, IBAN <code>CZ39 0800 0000 0000 2424 2442</code>, SWIFT <code>GIBACZPX</code>) with your personal InSIS Variable Symbol.</li>
+          <li><strong>Scholarships:</strong> Merit scholarships and quarterly accommodation grants are governed by the official <a href="https://www.vse.cz/english/about-vse/information-and-regulations/scholarship-regulations/" target="_blank" rel="noopener noreferrer">VŠE Scholarship Regulations</a>.</li>
         </ul>
         <button onclick="showLoginView()" style="background:#005596; color:white; border:none; padding:7px 14px; border-radius:4px; font-weight:700; cursor:pointer;">🔒 Log in to view your personal Variable Symbol</button>
       `;
@@ -734,9 +735,9 @@ function renderGenericInsisPage(path, fullUrl, meta) {
       <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:16px; margin-bottom:14px;">
         <strong>Student:</strong> ${safeUser} (FIS ISM Master)<br>
         <strong>Academic Year:</strong> 2026/2027 &bull; Winter Semester<br>
-        <strong>Electronic Seal:</strong> Qualified Electronic Timestamp &bull; Verification Token #CONF-84920194
+        <strong>Electronic Seal:</strong> Qualified Electronic Timestamp &bull; Verification Token #CONF-DEMO-0001
       </div>
-      <button onclick="downloadConfirmationPdf()" style="background:#16a34a; color:white; border:none; padding:8px 16px; border-radius:4px; font-weight:700; cursor:pointer;">📥 Download Signed Confirmation of Study (PDF)</button>
+      <button onclick="downloadConfirmationPdf()" style="background:#16a34a; color:white; border:none; padding:8px 16px; border-radius:4px; font-weight:700; cursor:pointer;">📥 Download Demo Confirmation Sample (.txt)</button>
     `;
   } else if (path.includes("harmonogram.pl")) {
     html = `
@@ -764,7 +765,7 @@ function renderGenericInsisPage(path, fullUrl, meta) {
           <tr><td><strong>4IT445</strong></td><td>Advanced Data Analytics</td><td>Faculty of Informatics and Statistics (FIS)</td><td>6</td><td>English</td><td>WS</td></tr>
           <tr><td><strong>4SA421</strong></td><td>Information Systems Management</td><td>Faculty of Informatics and Statistics (FIS)</td><td>6</td><td>English</td><td>WS</td></tr>
           <tr><td><strong>2SE411</strong></td><td>European Economic Integration</td><td>Faculty of International Relations (FMV)</td><td>6</td><td>English</td><td>WS/SS</td></tr>
-          <tr><td><strong>1PE401</strong></td><td>Business Ethics &amp; Governance</td><td>Faculty of Business Administration (FBA)</td><td>6</td><td>English</td><td>WS</td></tr>
+          <tr><td><strong>3PE401</strong></td><td>Business Ethics &amp; Governance</td><td>Faculty of Business Administration (FBA)</td><td>6</td><td>English</td><td>WS</td></tr>
           <tr><td><strong>4IT101</strong></td><td>Introduction to Python Programming</td><td>Faculty of Informatics and Statistics (FIS)</td><td>3</td><td>English</td><td>WS/SS</td></tr>
         </tbody>
       </table>
@@ -877,23 +878,24 @@ function downloadConfirmationPdf() {
   const studentName = session.userName || "Authenticated Student";
   const fileSafeName = studentName.replace(/[^a-zA-Z0-9_-]+/g, "_");
   const text = `
-PRAGUE UNIVERSITY OF ECONOMICS AND BUSINESS (VŠE)
-FACULTY OF INFORMATICS AND STATISTICS (FIS)
-------------------------------------------------------------------------
-ELECTRONIC CONFIRMATION OF STUDY (POTVRZENÍ O STUDIU)
-Student: ${studentName}
-Programme: Information Systems Management (ISM) - Master
-Academic Year: 2026/2027 (Winter Semester)
-Status: Active Enrolled Student in Good Academic Standing.
-Digitally sealed with Qualified Electronic Stamp under Act No. 297/2016 Coll.
-Date of Issue: ${new Date().toISOString()}
-Verification: https://insis.vse.cz/overeni/?token=84920194-CONF
-------------------------------------------------------------------------
+========================================================================
+*** ACADEMIC PROTOTYPE SIMULATION — NOT AN OFFICIAL VŠE DOCUMENT ***
+========================================================================
+Simulated Demo Preview of Electronic Confirmation of Study (Potvrzení o studiu)
+Student (Demo): ${studentName}
+Programme: Information Systems Management (ISM) - Master (Demo Profile)
+Status: Simulated Demonstration Record (NOT legally valid)
+Generated: ${new Date().toISOString()}
+
+For a genuine digitally sealed PDF confirmation accepted by Czech
+authorities (OAMP/MVČR, PID), log into official InSIS:
+https://insis.vse.cz/auth/student/potvrzeni.pl?lang=en
+========================================================================
   `;
-  const blob = new Blob([text], { type: "text/plain" });
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `Confirmation_of_Study_${fileSafeName}_VSE.txt`;
+  a.download = `DEMO_Confirmation_Sample_${fileSafeName}.txt`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1070,8 +1072,8 @@ function submitErrataFile() {
   alert(
     `✓ Errata Upload Confirmed!\n\n` +
       `File: ${fileName}\n` +
-      `Protocol: #ERR-2026-84920194\n` +
-      `Notification dispatched to thesis supervisor Ing. Pavel Sládek, Ph.D. under § 47b.`
+      `Protocol: #ERR-DEMO-0001\n` +
+      `Notification dispatched to the assigned thesis supervisor under § 47b (Demo).`
   );
 }
 
@@ -1143,7 +1145,7 @@ function updateBotContextUI() {
       if (chatHistory.length > 0) {
         if (currentPageKey === "master_thesis") {
           chipsBox.innerHTML = `
-            <button class="mini-chip" onclick="sendBotPrompt('What do the 3 red X icons on this page mean for my thesis?')">❓ 3 Red Xs</button>
+            <button class="mini-chip" onclick="sendBotPrompt('What are the required steps to submit my Master\\'s thesis in InSIS?')">📤 Thesis Steps</button>
             <button class="mini-chip" onclick="sendBotPrompt('Where do I submit errata for my Master\\'s thesis in InSIS?')">📝 Submit Errata</button>
           `;
         } else {
@@ -1192,9 +1194,9 @@ function renderPopoverTopics() {
   if (!session.loggedIn) {
     items = [
       { icon: "🏢", text: "VŠE Dormitory Booking, Deposit & Campuses (ISKaM)", prompt: "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?" },
-      { icon: "🛂", text: "Visa, Health Insurance (pVZP) & 3-Day Police Rules", prompt: "What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?" },
+      { icon: "🛂", text: "Visa, Health Insurance & 3-Day Police Rules", prompt: "What are the visa, dormitory accommodation, and 3-day Foreign Police registration rules for international students?" },
       { icon: "📝", text: "Submit VŠE E-Application Form (No Login)", prompt: "How do I submit the E-application form to study at VŠE?" },
-      { icon: "🎓", text: "Foreign Diploma Recognition (Nostrification — 900 CZK)", prompt: "How does foreign diploma recognition (nostrification) work at VŠE?" },
+      { icon: "🎓", text: "Foreign Diploma Assessment & Recognition", prompt: "How does foreign diploma recognition (nostrification) work at VŠE?" },
       { icon: "📚", text: "Browse Public Course Catalogue & Study Plans", prompt: "Can I browse the Course catalogue and Study plans without an account?" },
       { icon: "📋", text: "Open Interactive Pre-Arrival & Onboarding Checklist", action: "showInteractiveChecklist" }
     ];
@@ -1204,7 +1206,7 @@ function renderPopoverTopics() {
       { icon: "📗", text: "Complete 4-Stage Master's Thesis Workflow & § 47b Errata", prompt: "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata." },
       { icon: "🧭", text: "Enable 'Navigation bar for students' Sidebar Portlet", prompt: "How do I enable the Navigation bar for students portlet in InSIS?" },
       { icon: "💰", text: "Apply for Accommodation Scholarship in InSIS", prompt: "How do I apply for the accommodation scholarship in InSIS?" },
-      { icon: "🏢", text: "VŠE Dormitory Booking, Rent (20th) & ISKaM Guide", prompt: "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?" },
+      { icon: "🏢", text: "VŠE Dormitory Booking, Deposit & ISKaM Guide", prompt: "How do I book and reserve a VŠE dormitory room in ISKaM, pay the deposit, and what are the dormitory campuses and contacts?" },
       { icon: "📋", text: "Open Interactive Student Onboarding Checklist", action: "showInteractiveChecklist" }
     ];
   }
@@ -1367,7 +1369,7 @@ async function submitBotMessage() {
     });
     if (response.ok) {
       const data = await response.json();
-      loadingBubble.innerHTML = formatBotMarkdown(data.answer);
+      loadingBubble.innerHTML = formatBotMarkdown(data.answer, data.mode || "normal");
       chatHistory.push({ role: "assistant", content: data.answer });
       handleContextualPageActions(query, session.loggedIn, data.answer);
     } else {
@@ -1375,7 +1377,7 @@ async function submitBotMessage() {
     }
   } catch (err) {
     const errMsg = "⚠️ **API Rate Limit or Connection Issue:** The live Google Gemini API is temporarily busy. Please wait a few seconds and try your question again.";
-    loadingBubble.innerHTML = formatBotMarkdown(errMsg);
+    loadingBubble.innerHTML = formatBotMarkdown(errMsg, "error");
   }
   updateBotContextUI();
   const container = document.getElementById("bot-messages-area");
@@ -1456,10 +1458,11 @@ function appendContextLink(label, actionFn) {
   container.scrollTop = container.scrollHeight;
 }
 
-function formatBotMarkdown(text) {
+function formatBotMarkdown(text, mode = "normal") {
   if (!text) return "";
   let formatted = text.replace(/\r\n/g, "\n");
   let sourcesHtml = "";
+  const hasUnverifiedWarning = /unverified|may be outdated|don't have verified|do not have verified/i.test(formatted);
   // 0. Unwrap any backticks directly surrounding URLs so backticks never get consumed by URL tokens
   formatted = formatted.replace(/`(https?:\/\/[^`\s]+)`/g, "$1");
   // 1. Extract source citations and transform them into sleek badge pills (skipping URLs already in the body)
@@ -1572,9 +1575,9 @@ function formatBotMarkdown(text) {
       return saveToken(`<a class="${pillClass}" href="${url}" ${clickAttr}><span class="link-icon">${icon}</span><span class="link-label">${escapeHtml(displayLabel)}</span><span class="link-arrow">↗</span></a>`) + trailing;
     }
   );
-  // 5. Helper for inline typography (bold, italic, single-line inline tags, citations)
+  // 5. Helper for inline typography (HTML-escaped first to prevent XSS, then markdown formatting)
   function formatInline(str) {
-    return str
+    return escapeHtml(str)
       .replace(/(?<=\s|^)\[(\d+(?:\s*,\s*\d+)*)\](?=[,\.\s]|$)/g, '<span class="bot-cite-ref">[$1]</span>')
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*([^\*\n]+)\*/g, "<em>$1</em>")
@@ -1614,9 +1617,19 @@ function formatBotMarkdown(text) {
       /^#{1,3}\s+/.test(trimmed)
     )) {
       const cleanTitle = trimmed.replace(/^#{1,3}\s+/, "");
+      let badgeHtml = "";
+      if (mode === "normal" && !hasUnverifiedWarning) {
+        badgeHtml = `<div class="bot-ans-verified-badge"><span class="v-dot">✓</span> Grounded VŠE Guidance</div>`;
+      } else if (mode === "crisis") {
+        badgeHtml = `<div class="bot-ans-verified-badge" style="background:#fee2e2;color:#991b1b;">⚠️ Emergency Support Resources</div>`;
+      } else if (mode === "no_context" || hasUnverifiedWarning) {
+        badgeHtml = `<div class="bot-ans-verified-badge" style="background:#fef3c7;color:#92400e;">ℹ️ Confirm With Official VŠE Office</div>`;
+      } else if (mode === "error") {
+        badgeHtml = `<div class="bot-ans-verified-badge" style="background:#fee2e2;color:#991b1b;">⚠️ Service Notice</div>`;
+      }
       blocks.push(
         `<div class="bot-ans-header">` +
-          `<div class="bot-ans-verified-badge"><span class="v-dot">✓</span> Verified VŠE Guidance</div>` +
+          `${badgeHtml}` +
           `<div class="bot-ans-title">${formatInline(cleanTitle)}</div>` +
         `</div>`
       );
@@ -1707,27 +1720,32 @@ function handleAssignmentUpload(courseCode, fileInputId, statusSpanId) {
 }
 
 function downloadDeadlinesIcs() {
+  const pad = (n) => String(n).padStart(2, "0");
+  const fmtUtc = (daysAhead, hourUtc) => {
+    const d = new Date(Date.now() + daysAhead * 86400000);
+    return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(hourUtc)}5900Z`;
+  };
   const icsContent =
     "BEGIN:VCALENDAR\r\n" +
     "VERSION:2.0\r\n" +
-    "PRODID:-//VSE Prague//Coursework Deadlines//EN\r\n" +
+    "PRODID:-//VSE Prague//Demo Coursework Deadlines//EN\r\n" +
     "BEGIN:VEVENT\r\n" +
-    "SUMMARY:4IT445 Milestone 2 - Machine Learning Pipeline Report\r\n" +
-    "DESCRIPTION:Submit into InSIS Coursework Vault. Weight 25 pts.\r\n" +
-    "DTSTART:20261115T215900Z\r\n" +
-    "DTEND:20261115T225900Z\r\n" +
+    "SUMMARY:4IT445 Milestone 2 - Data Pipeline Report (Demo)\r\n" +
+    "DESCRIPTION:Demo coursework vault submission in InSIS. Weight 25 pts.\r\n" +
+    `DTSTART:${fmtUtc(3, 21)}\r\n` +
+    `DTEND:${fmtUtc(3, 22)}\r\n` +
     "END:VEVENT\r\n" +
     "BEGIN:VEVENT\r\n" +
-    "SUMMARY:4SA421 Enterprise Architecture Case Study\r\n" +
-    "DESCRIPTION:Submit TOGAF ADM document into InSIS. Weight 30 pts.\r\n" +
-    "DTSTART:20261122T215900Z\r\n" +
-    "DTEND:20261122T225900Z\r\n" +
+    "SUMMARY:4SA421 Enterprise Architecture Case Study (Demo)\r\n" +
+    "DESCRIPTION:Demo TOGAF ADM submission in InSIS. Weight 30 pts.\r\n" +
+    `DTSTART:${fmtUtc(10, 21)}\r\n` +
+    `DTEND:${fmtUtc(10, 22)}\r\n` +
     "END:VEVENT\r\n" +
     "BEGIN:VEVENT\r\n" +
-    "SUMMARY:Master's Thesis Abstract & PDF Submission Deadline\r\n" +
+    "SUMMARY:Master's Thesis Abstract & PDF/A Submission Deadline (Demo)\r\n" +
     "DESCRIPTION:Required by § 47b in InSIS.\r\n" +
-    "DTSTART:20261130T215900Z\r\n" +
-    "DTEND:20261130T225900Z\r\n" +
+    `DTSTART:${fmtUtc(18, 21)}\r\n` +
+    `DTEND:${fmtUtc(18, 22)}\r\n` +
     "END:VEVENT\r\n" +
     "END:VCALENDAR\r\n";
   const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
@@ -1744,6 +1762,13 @@ function downloadDeadlinesIcs() {
 // 7. Initial Startup & Browser History Listener
 // -----------------------------------------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
+  const clockEl = document.getElementById("demo-live-clock");
+  if (clockEl) {
+    const now = new Date();
+    clockEl.textContent = "🕒 " + now.toLocaleString("en-US", {
+      month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit"
+    });
+  }
   cleanupLegacySessionKeys();
   resetBotConversationForSession();
   loadInsisUrls();

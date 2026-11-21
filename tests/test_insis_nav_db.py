@@ -164,12 +164,19 @@ def test_bot_clean_output_workflows_and_policy_routing(monkeypatch):
     assert va_mode == "normal"
     assert any("12-visa" in c.get("doc_id", "") or "45-foreign-police" in c.get("doc_id", "") for c in va_chunks)
 
-    # 4. Policy consequence question matches the Three-Attempt Exam Rule in SQLite policies DB
-    policies = insis_nav_db.search_policies("What happens if I fail an exam 3 times at VŠE?")
+    # 4. Policy consequence question matches the VŠE 4+ Grading Scale & Retake Rule
+    policies = insis_nav_db.search_policies("How does the 4+ exam retake rule work at VŠE?")
     assert len(policies) > 0
-    assert "Three-Attempt Exam Rule" in policies[0]["title"]
+    assert "4+" in policies[0]["title"]
+    assert "one retake" in policies[0]["rule_text"].lower()
 
-    # 5. Dynamic context chunks do not leak into public/citations section
+    # 5. Tuition navigation route cites verified VŠE Česká spořitelna IBAN
+    tuition_route = insis_nav_db.get_route_by_task_id("TASK_TUITION_PAYMENT")
+    assert tuition_route is not None
+    assert "Česká spořitelna" in tuition_route["step_by_step_instructions"]
+    assert "CZ39 0800 0000 0000 2424 2442" in tuition_route["step_by_step_instructions"]
+
+    # 6. Dynamic context chunks do not leak into public/citations section
     dyn_chunks = [
         {
             "id": "live_page_master_thesis",

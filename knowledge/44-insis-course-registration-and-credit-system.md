@@ -1,5 +1,5 @@
 <!--
-SOURCE: https://www.vse.cz/english/students/study-regulations/, https://ci.vse.cz/english/
+SOURCE: https://www.vse.cz/english/students/study/study-regulations/, https://ci.vse.cz/english/
 TITLE: InSIS course registration, rounds and credit voucher system at VŠE
 STAGE: studies
 DATE SAVED: 2026-10-25
@@ -22,9 +22,9 @@ DATE SAVED: 2026-10-25
 2. **Open Student's Portal:** In the main menu, navigate to **My Study** (or *My College*) → **Student's Portal**.
 3. **Open Registration/Enrollment:** Click on **Registration/Enrollment** (Registrace/Zápisy).
 4. **Browse Course Categories:** At the bottom of the page, click the course category indicator corresponding to your study plan:
-   - `sP`: Compulsory courses (Povinné předměty)
-   - `sV`: Elective/optional courses (Volitelné předměty)
-   - Language groups or faculty-specific elective groups.
+   - `oP`: Major/programme compulsory courses (*povinné předměty*, Class I)
+   - `sP` / `sV`: Minor specialization compulsory (`sP`, Class I) and selective (`sV`, Class II) courses
+   - `fV`: Faculty and general free electives (*volitelné předměty*, Class II), plus language (`sJ`) and sports (`TV`) groups.
 5. **Select and Add:** Check the boxes next to your desired courses and click **Add selected courses**.
 6. **Select Timetable Slot (Mandatory):** In the **Timetable** column, click **Select** to pick your time slot. If a course has both a lecture and a seminar/exercise, you must choose time slots for both. The status icon turns green when complete.
 7. **Verify Schedule:** Click **Display Timetables** to visually inspect your weekly calendar and ensure there are no overlapping classes.
@@ -42,6 +42,6 @@ Registration in InSIS is split into clearly separated phases:
 - **Standard workload:** Standard full-time study load is **30 ECTS credits** per semester (60 ECTS per academic year).
 - **First-semester thresholds:**
   - **Absolute minimum:** At least **9 ECTS credits** must be earned in the first semester to avoid immediate study termination by the Dean.
-  - **Progression threshold:** At least **20 ECTS credits** should be earned to meet the cumulative $20 \times \text{semesters}$ progression pace and prevent voucher deduction penalties.
-- **Ongoing cumulative threshold:** In subsequent semesters, total earned credits must satisfy: $\text{Cumulative Credits} \ge 20 \times \text{number of active semesters}$ (e.g. 40 after semester 2, 60 after semester 3).
-- **Exam retakes:** If a student fails an exam on the regular attempt, they are entitled to up to **two retake attempts** (opravný termín) within the examination period of the same semester.
+  - **Progression threshold:** At least **20 ECTS credits** should be earned to meet the cumulative `20 x active semesters` progression pace and prevent voucher deduction penalties.
+- **Ongoing cumulative threshold:** In subsequent semesters, total earned credits must satisfy `Cumulative Credits >= 20 x number of active semesters` (e.g., 40 after semester 2, 60 after semester 3).
+- **Exam retakes (`4+` rule):** Under VŠE Study and Examination Regulations, students who receive a conditional fail of **`4+`** (50–59%) are entitled to **one retake attempt** (*opravný termín*) within the same semester exam period (`4+` cannot be awarded twice in succession or on the last exam date, and an unused `4+` converts to `4`). Confirm course rules in the InSIS syllabus and with your Study Department.

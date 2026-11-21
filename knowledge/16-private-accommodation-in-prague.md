@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/campus-services/accommodation-centre/
 TITLE: Private accommodation in Prague – general guidance
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: pre_arrival
 DATE SAVED: 2026-10-25
 -->
 
@@ -13,5 +13,5 @@ VŠE maintains an Accommodation Centre page under Campus Services. Common privat
 - Student residences run by private operators.
 - Facebook groups "Flat in Prague / Pronájem Praha".
 
-Always sign a written contract, never transfer deposits before viewing, and check that the landlord is registered for VAT if charging short-term fees.
+Always sign a written lease contract (needed as proof of accommodation for immigration), verify the landlord's ownership in the Czech Land Registry (*katastr nemovitostí*), and never transfer deposits before viewing the flat.
 

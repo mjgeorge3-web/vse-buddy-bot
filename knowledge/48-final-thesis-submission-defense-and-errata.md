@@ -1,7 +1,7 @@
 <!--
-SOURCE: https://fis.vse.cz/english/information-for-students/final-theses/, https://insis.vse.cz/
+SOURCE: https://vskp.vse.cz/english, https://fis.vse.cz/english/contacts/
 TITLE: Final thesis submission, InSIS errata, defense and reviews at VŠE
-STAGE: Studying
+STAGE: studies
 DATE SAVED: 2026-10-28
 -->
 
@@ -75,7 +75,7 @@ Prepare a clear 1–2 page PDF document structured as follows:
 - **Correction Table:**
   | Page / Section | Original (Erroneous) Text | Corrected (Accurate) Text | Reason / Note |
   | :--- | :--- | :--- | :--- |
-  | Page 24, Para 2 | "sample size of 15" | "sample size of 25" | Typographical correction |
+  | Page 24, Table 2 | "Values in EUR thousands" | "Values in CZK thousands" | Unit label correction |
   | Page 48, Table 4 | "Value = 12.4%" | "Value = 18.2%" | Calculation adjustment |
 - **Minor Errors at Defense:** For very minor typos or grammar glitches, you do not always need a formal Errata upload; you can prepare a brief slide in your defense presentation acknowledging the corrections in response to the opponent's review.
 

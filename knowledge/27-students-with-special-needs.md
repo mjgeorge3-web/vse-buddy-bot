@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/services/centre-of-people-with-disabilities/
 TITLE: Centre for Students with Special Needs
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/services/sports/
 TITLE: Sports and recreation at VŠE
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: living
 DATE SAVED: 2026-10-25
 -->
 

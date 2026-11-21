@@ -3,7 +3,7 @@
 Features:
 - Responsive Streamlit chat interface (st.chat_message) with custom university styling
 - Permanent research prototype disclaimer
-- Interactive Welcome Hero state with 6 quick starter cards on main canvas
+- Interactive Welcome Hero state with 8 quick starter cards on main canvas
 - Categorized quick questions across student journey stages (Before arrival, First weeks, Studying, Living in Prague)
 - Inline user feedback (thumbs up / down + qualitative comment popover) logged anonymously to logs/feedback.csv
 - One-click copy response helper popover
@@ -292,7 +292,7 @@ with st.sidebar:
             ("Student Navigation Sidebar (Portlets)", "How do I enable the Navigation bar for students portlet in InSIS?"),
             ("Course Enrollment in InSIS", "How do I enroll in courses and build my timetable in InSIS?"),
             ("Semester Credits & Vouchers", "How many credits do I need per semester and how do vouchers work?"),
-            ("Exam Retakes & Grading Scale", "What happens if I fail an exam 3 times at VŠE?"),
+            ("Exam Retakes & 4+ Grading Scale", "How do VŠE's 4+ grading scale and exam retakes work?"),
             ("Master's Thesis Workflow", "Walk me through the complete Master's Thesis workflow at VŠE from topic approval to submission, defense, and errata."),
             ("Accommodation Scholarship", "How do I apply for the accommodation scholarship in InSIS?"),
         ],
@@ -326,11 +326,9 @@ with st.sidebar:
         
         # Calculate dynamic knowledge base stats
         metadata = getattr(st.session_state.bot.retriever, "metadata", []) or []
-        chunk_count = len(metadata) if metadata else 254
-        doc_count = (
-            len(set((c.get("doc_id") or c.get("filename", "")) for c in metadata if (c.get("doc_id") or c.get("filename"))))
-            if metadata
-            else 52
+        chunk_count = len(metadata)
+        doc_count = len(
+            set((c.get("doc_id") or c.get("filename", "")) for c in metadata if (c.get("doc_id") or c.get("filename")))
         )
 
         st.markdown(f"- **Session ID:** `{st.session_state.session_id[:12]}...`")
@@ -346,7 +344,7 @@ with st.sidebar:
             **About VŠE Buddy Bot**
             - Developed as a Master's Thesis research prototype in Information Systems Management (ISM).
             - Strictly grounded in curated VŠE documentation to prevent ungrounded AI hallucinations.
-            - **Tech Stack:** Python 3.14, Streamlit, Google Gemini (GenAI SDK), NumPy vector store.
+            - **Tech Stack:** Python 3.10+, Streamlit, Google Gemini (GenAI SDK), NumPy vector store, SQLite FTS5.
             
             **Privacy & GDPR Compliance**
             - **Do NOT enter personal identifiable data** (passwords, birth dates, or passport numbers).
@@ -413,10 +411,15 @@ else:
             # Display mode badge for assistant messages
             if role == "assistant":
                 mode = message.get("mode")
+                is_sensitive = bool(message.get("sensitive"))
                 if mode == "crisis":
                     st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
-                elif mode == "referral":
+                elif mode == "error":
+                    st.markdown('<div class="badge-crisis">⚠️ Configuration / Service Notice</div>', unsafe_allow_html=True)
+                elif is_sensitive:
                     st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
+                elif mode == "no_context":
+                    st.markdown('<div class="badge-referral">ℹ️ No Verified Source Found</div>', unsafe_allow_html=True)
                 elif mode in ("normal", "grounded"):
                     st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
 
@@ -504,11 +507,16 @@ if prompt_to_process:
             )
             answer_text = result["answer"]
             mode = result.get("mode")
+            is_sensitive = bool(result.get("sensitive"))
 
             if mode == "crisis":
                 st.markdown('<div class="badge-crisis">🚨 Emergency Helpline Resources</div>', unsafe_allow_html=True)
-            elif mode == "referral":
+            elif mode == "error":
+                st.markdown('<div class="badge-crisis">⚠️ Configuration / Service Notice</div>', unsafe_allow_html=True)
+            elif is_sensitive:
                 st.markdown('<div class="badge-referral">⚠️ Official Office Referral</div>', unsafe_allow_html=True)
+            elif mode == "no_context":
+                st.markdown('<div class="badge-referral">ℹ️ No Verified Source Found</div>', unsafe_allow_html=True)
             elif mode in ("normal", "grounded"):
                 st.markdown('<div class="badge-grounded">✓ Verified VŠE Documentation</div>', unsafe_allow_html=True)
 
@@ -519,6 +527,7 @@ if prompt_to_process:
         "role": "assistant",
         "content": answer_text,
         "mode": result.get("mode"),
+        "sensitive": is_sensitive,
         "top_score": result.get("top_score"),
         "latency_ms": result.get("latency_ms"),
         "feedback_id": str(uuid.uuid4())[:8],

@@ -10,6 +10,7 @@ Executes the pipeline:
 
 import csv
 from datetime import datetime, timezone
+import os
 import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
@@ -27,17 +28,6 @@ import student_profile
 
 # Shared worker pool for timeout-isolated LLM calls
 _LLM_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm_pool")
-
-REFERRAL_TARGETS = {
-    "visa_residence": "the VŠE International Office and the Czech Ministry of the Interior (mvcr.cz)",
-    "foreign_police": "the Czech Foreign Police and the VŠE International Office",
-    "employment_work": "the Czech Ministry of the Interior (mvcr.cz) and the VŠE International Office",
-    "health_insurance": "the official health insurance provider and the VŠE International Office",
-    "legal": "the VŠE Legal Department or an authorized legal advisor",
-    "tuition_payment": "your faculty Study Department or the VŠE Admission Office",
-    "academic_failure_expulsion": "your faculty Study Department and official VŠE Study Regulations",
-    "mental_wellbeing": "VŠE Academic Psychological Counselling (ac@vse.cz)",
-}
 
 
 class BuddyBot:
@@ -61,6 +51,20 @@ class BuddyBot:
             )
         return self.client
 
+    @staticmethod
+    def prepare_past_history(
+        question: str, history: Optional[List[Dict[str, str]]] = None
+    ) -> List[Dict[str, str]]:
+        """Remove a trailing duplicate copy of the current user question from conversation history."""
+        if not history:
+            return []
+        if (
+            history[-1].get("role") == "user"
+            and history[-1].get("content", "").strip() == question.strip()
+        ):
+            return list(history[:-1])
+        return list(history)
+
     def build_retrieval_query(self, question: str, history: Optional[List[Dict[str, str]]] = None) -> str:
         """Build retrieval query, smartly incorporating context only for genuine follow-up questions.
         
@@ -80,17 +84,21 @@ class BuddyBot:
             "what about", "and for", "how about", "more", "else", "details",
             "who", "where is it", "why", "is it", "are they", "does it",
         ]
-        has_anaphoric_cue = any(cue in q_lower for cue in anaphoric_cues)
+        has_anaphoric_cue = any(
+            re.search(rf"\b{re.escape(cue)}\b", q_lower) for cue in anaphoric_cues
+        )
 
         # Independent topic cues that indicate a new question topic
         independent_topic_cues = [
             "voucher", "vouchers", "credit", "credits", "ects", "thesis", "errata",
             "accommodation", "accomodation", "dorm", "dorms", "housing", "flat",
             "visa", "visas", "police", "insurance", "library", "menza", "canteen",
-            "timetable", "schedule", "admission", "application", "apply", "washroom",
-            "toilet", "wc", "study plan", "exam", "exams", "retake", "gpa", "tuition",
+            "timetable", "schedule", "admission", "application", "apply",
+            "study plan", "exam", "exams", "retake", "gpa", "tuition",
         ]
-        has_independent_topic = any(cue in q_lower for cue in independent_topic_cues)
+        has_independent_topic = any(
+            re.search(rf"\b{re.escape(cue)}\b", q_lower) for cue in independent_topic_cues
+        )
 
         # Only combine with previous turn if it's genuinely a follow-up AND doesn't introduce a new topic
         if (is_short_followup or has_anaphoric_cue) and not (has_independent_topic and len(words) >= 4):
@@ -182,7 +190,7 @@ class BuddyBot:
         feedback: str = "",
     ):
         """Log interaction to logs/chat_log.csv while redacting crisis text."""
-        if not config.ENABLE_LOGGING:
+        if not config.ENABLE_LOGGING or os.getenv("VERCEL"):
             return
 
         try:
@@ -255,6 +263,7 @@ class BuddyBot:
             return {
                 "answer": crisis_msg,
                 "sources": [],
+                "retrieved_sources": [],
                 "mode": "crisis",
                 "sensitive": False,
                 "sensitive_topic": None,
@@ -288,6 +297,7 @@ class BuddyBot:
             return {
                 "answer": error_msg,
                 "sources": [],
+                "retrieved_sources": [],
                 "mode": "error",
                 "sensitive": is_sensitive,
                 "sensitive_topic": sensitive_topic,
@@ -303,96 +313,60 @@ class BuddyBot:
             context_chunks = list(chunks)
 
         # -------------------------------------------------------------
-        # 4b. InSIS & Campus Knowledge Database Enrichment
+        # 4b. Structured SQLite Enrichment (InSIS Routes, Policies, Campus)
         # -------------------------------------------------------------
-        nav_policy_exclusions = [
-            "what happens", "if i fail", "fail an exam", "3 times", "three times",
-            "penalty", "sanction", "expelled", "expulsion", "plagiarism", "turnitin",
-            "chatgpt", "ai tool", "minimum ects", "9 ects", "20 ects",
-            "quiet hours", "smoking", "overnight guest", "visa", "residence permit",
-            "foreign police", "health insurance", "pvzp", "nostrification",
-            "e-application", "prihlaska", "apply to study", "admission procedure",
-            "counselling", "counseling", "psychological", "litacka", "lítačka",
-            "public transport", "without an account", "without login", "without logging",
-            "university email", "course materials", "academic calendar", "library",
-            "opening hours", "apply for a vse dormitory", "apply for a vše dormitory",
-            "what is insis used for", "forgot my insis password", "how many credits should",
-        ]
-        has_nav_exclusion = any(exc in ql for exc in nav_policy_exclusions)
-
-        explicit_insis_phrases = [
-            "in insis", "navigate", "navigation bar", "portlet", "portlets",
-            "whre to find", "contact centre", "contact center", "general query", "general querry",
-            "variable symbol", "bank account", "financing of study", "study financing",
-            "accommodation scholarship", "accomodation scholarship", "housing grant",
-            "confirmation of study", "odevzdavarna", "coursework submission",
-            "submit errata", "insert errata", "iskam", "book a dorm",
-            "find accomodation", "find accommodation", "two-factor", "authenticator",
+        # General domain-level triggers (no test-question strings hardcoded).
+        insis_nav_triggers = [
+            "in insis", "portlet", "portlets", "contact centre", "contact center",
+            "general query", "variable symbol", "financing of study", "study financing",
+            "accommodation scholarship", "confirmation of study", "odevzdavarna",
+            "coursework submission", "errata", "iskam", "two-factor", "authenticator",
             "totp", "course evaluation", "anketa", "document server",
         ]
-        action_nav_verbs = [
-            "where", "whre", "how to", "how do i", "how can i", "find",
-            "open", "apply for", "register for", "upload", "submit", "download", "enable", "add",
-        ]
-        insis_task_nouns = [
-            "scholarship", "scholorship", "stipend", "tuition", "exam",
-            "timetable", "schedule", "study plan", "catalogue", "catalog", "thesis",
-            "errata", "isic", "grade", "transcript", "portlet", "sidebar",
-        ]
+        is_direct_nav = any(p in ql for p in insis_nav_triggers)
 
-        is_direct_nav = (not has_nav_exclusion) and (
-            any(p in ql for p in explicit_insis_phrases)
-            or (any(v in ql for v in action_nav_verbs) and any(n in ql for n in insis_task_nouns))
-        )
-
-        campus_cues = [
-            "washroom", "toilet", "wc", "bathroom", "restroom", "ciks", "bibliobox",
-            "study room", "sb 22", "rb 101", "rb 201", "rb 209", "nb 403",
-            "old building", "new building", "rajska", "rajská", "itzikov",
-            "which floor", "what floor", "room number", "coordinator office",
+        campus_triggers = [
+            "bibliobox", "which floor", "what floor", "room number",
+            "coordinator office", "study coordinator", "ism coordinator",
+            "likesova", "likešova", "vencovskeho", "vencovského",
+            "admission office", "it helpdesk", "menza", "av gastro",
         ]
-        is_direct_campus = any(cue in ql for cue in campus_cues) and not has_nav_exclusion
+        has_room_code = bool(re.search(r"\b(?:sb|nb|rb|jm)\s*\d{2,3}\b", ql))
+        is_direct_campus = has_room_code or any(cue in ql for cue in campus_triggers)
+
+        policy_triggers = [
+            "retake", "4+", "4 plus", "vouchers", "voucher", "penalty", "sanction",
+            "expelled", "expulsion", "interruption", "grading scale",
+            "plagiarism", "credit recognition", "fail an exam", "failed an exam", "fail exam",
+        ]
+        is_policy_query = any(pc in ql for pc in policy_triggers)
 
         try:
             import insis_nav_db
-            search_res = insis_nav_db.unified_search(question, limit=2)
             candidates = []
+            # When vector retrieval rejected an out-of-domain query (mode == "no_context"),
+            # ONLY allow explicit InSIS navigation queries to enrich — never let generic
+            # policy/campus keyword hits bypass the Stage 1 similarity gate.
+            allow_policy_campus = mode != "no_context"
+            if is_direct_nav or (allow_policy_campus and (is_direct_campus or is_policy_query)):
+                search_res = insis_nav_db.unified_search(question, limit=2)
 
-            policy_cues = [
-                "fail", "failed", "retake", "3 times", "three times", "twice",
-                "minimum ects", "9 ects", "20 ects", "voucher", "vouchers",
-                "penalty", "sanction", "expelled", "expulsion", "terminate",
-                "interruption", "interrupt", "grading scale", "grade 4",
-                "quiet hours", "smoking", "overnight guest", "plagiarism",
-            ]
-            is_policy_query = any(pc in ql for pc in policy_cues)
-            broad_doc_topics = [
-                "e-application", "prihlaska", "apply to study", "admission procedure",
-                "litacka", "lítačka", "public transport", "embassy", "embassies",
-                "nostrification", "without an account", "without login", "chatgpt",
-                "visa", "foreign police", "health insurance", "work part-time",
-                "how many credits should",
-            ]
-            skip_db_override = any(t in ql for t in broad_doc_topics)
-
-            if not skip_db_override:
                 if is_direct_nav and search_res.get("insis_routes"):
-                    for r in search_res["insis_routes"][:2]:
-                        candidates.append(("insis", r.get("rank", -5.0) - 20.0, r))
-
-                if is_policy_query and search_res.get("policies"):
+                    for r in search_res["insis_routes"][:1]:
+                        candidates.append(("insis", r.get("rank", -5.0) - 10.0, r))
+                if allow_policy_campus and is_policy_query and search_res.get("policies"):
                     for p in search_res["policies"][:1]:
-                        pol_boost = -15.0 if has_nav_exclusion else 0.0
-                        candidates.append(("policy", p.get("rank", -5.0) + pol_boost, p))
-                if is_direct_campus and search_res.get("campus_locations"):
+                        candidates.append(("policy", p.get("rank", -5.0), p))
+                if allow_policy_campus and is_direct_campus and search_res.get("campus_locations"):
                     for loc in search_res["campus_locations"][:1]:
                         candidates.append(("campus", loc.get("rank", -5.0), loc))
 
             candidates.sort(key=lambda c: c[1])
 
             db_chunk = None
+            best_kind = None
             if candidates:
-                best_kind, best_rank, best_item = candidates[0]
+                best_kind, _, best_item = candidates[0]
 
                 if best_kind == "policy":
                     pol = best_item
@@ -400,10 +374,10 @@ class BuddyBot:
                         "id": f"policy_{pol['rule_id']}",
                         "doc_id": "50-vse-policies-rules-and-regulations.md",
                         "title": f"VŠE Policy [{pol['rule_id']}]: {pol['title']}",
-                        "source_url": "https://www.vse.cz/english/university-rules-and-regulations/",
-                        "date_saved": "2026-11-04",
+                        "source_url": pol.get("official_url") or "https://www.vse.cz/english/students/study/study-regulations/",
+                        "date_saved": config.STRUCTURED_DATA_DATE,
                         "unverified": False,
-                        "score": 0.99,
+                        "score": round(top_score, 4),
                         "text": (
                             f"Policy Title: {pol['title']}\n"
                             f"Category: {pol['category']} | Official Reference: {pol['official_reference']}\n"
@@ -417,18 +391,18 @@ class BuddyBot:
                     loc = best_item
                     db_chunk = {
                         "id": f"campus_{loc['location_id']}",
-                        "doc_id": "51-vse-campus-navigation-classrooms-washrooms-offices.md",
-                        "title": f"VŠE Campus Navigation: {loc['name']} ({loc['room_number']})",
-                        "source_url": "https://www.vse.cz/english/campus-map-and-buildings/",
-                        "date_saved": "2026-11-04",
+                        "doc_id": "51-vse-campus-offices-and-services.md",
+                        "title": f"VŠE Campus Directory: {loc['name']} ({loc['room_number']})",
+                        "source_url": loc.get("official_url") or "https://www.vse.cz/english/students/campus-services/campus-and-classrooms/",
+                        "date_saved": config.STRUCTURED_DATA_DATE,
                         "unverified": False,
-                        "score": 0.99,
+                        "score": round(top_score, 4),
                         "text": (
                             f"Location Name: {loc['name']}\n"
                             f"Building: {loc['building']} | Floor: {loc['floor']} | Room Number: {loc['room_number']}\n"
                             f"Facility Type: {loc['facility_type']}\n"
-                            f"Walking Directions from Main Entrance:\n{loc['directions_from_entrance']}\n"
-                            f"Amenities & Accessibility: {loc.get('amenities_accessibility', 'Standard')}\n"
+                            f"Directions:\n{loc['directions_from_entrance']}\n"
+                            f"Amenities & Contacts: {loc.get('amenities_accessibility', 'Standard')}\n"
                             f"Hours / Availability: {loc.get('hours_or_availability', 'Standard building hours')}\n"
                         ),
                         "is_campus_loc": True,
@@ -452,9 +426,9 @@ class BuddyBot:
                         "doc_id": backing_doc_id,
                         "title": f"InSIS Navigation Guide: {top_nav['title_en']}",
                         "source_url": top_nav["official_url"],
-                        "date_saved": "2026-11-04",
-                        "unverified": False,
-                        "score": 0.98,
+                        "date_saved": config.STRUCTURED_DATA_DATE,
+                        "unverified": tid == "TASK_DORM_ISKAM",
+                        "score": round(top_score, 4),
                         "text": (
                             f"InSIS Navigation Task: {top_nav['title_en']} ({top_nav['title_cs']})\n"
                             f"Category: {top_nav['category']} | InSIS Path: {top_nav['portal_path']}\n"
@@ -469,9 +443,7 @@ class BuddyBot:
 
             if db_chunk:
                 context_chunks = [db_chunk] + context_chunks
-                if top_score < db_chunk["score"]:
-                    top_score = db_chunk["score"]
-                if mode == "no_context":
+                if mode == "no_context" and best_kind == "insis":
                     mode = "normal"
         except Exception as e:
             print(f"[Knowledge DB Query Warning]: {e}")
@@ -489,22 +461,26 @@ class BuddyBot:
             except Exception as e:
                 print(f"[Dynamic Context Warning]: {e}")
 
+        # Record all retrieved non-dynamic document IDs prior to LLM citation filtering
+        retrieved_doc_ids: List[str] = []
+        for c in context_chunks:
+            did = c.get("doc_id", "")
+            if did and not c.get("is_dynamic_context") and did not in retrieved_doc_ids:
+                retrieved_doc_ids.append(did)
+
         # -------------------------------------------------------------
-        # 5. Live Google Gemini Generation (15s timeout + rate-limit retry)
+        # 5. Live Google Gemini Generation (15s timeout + single retry on 429)
         # -------------------------------------------------------------
         raw_answer = None
         last_error = None
+        is_auth_error = False
 
         try:
+            # Fail fast before retries if GEMINI_API_KEY is missing
+            client = self._get_client()
+
             prompt_content = prompts.build_prompt_with_context(question, context_chunks)
-
-            past_history = []
-            if history:
-                if history[-1].get("role") == "user" and history[-1].get("content", "").strip() == question.strip():
-                    past_history = history[:-1]
-                else:
-                    past_history = history
-
+            past_history = self.prepare_past_history(question, history)
             recent_history = past_history[-config.MAX_HISTORY_MESSAGES:] if past_history else []
             gemini_contents: List[types.Content] = []
 
@@ -532,8 +508,6 @@ class BuddyBot:
                 )
             )
 
-            client = self._get_client()
-
             def _generate_with_gemini(m_name: str):
                 return client.models.generate_content(
                     model=m_name,
@@ -545,10 +519,9 @@ class BuddyBot:
                     ),
                 )
 
-            models_to_try = [config.CHAT_MODEL, config.CHAT_MODEL, getattr(config, "CHAT_FALLBACK_MODEL", config.CHAT_MODEL)]
-            for attempt_idx, candidate_model in enumerate(models_to_try):
+            for attempt_idx in range(2):
                 try:
-                    future = _LLM_EXECUTOR.submit(_generate_with_gemini, candidate_model)
+                    future = _LLM_EXECUTOR.submit(_generate_with_gemini, config.CHAT_MODEL)
                     response = future.result(timeout=15.0)
                     if response and response.text:
                         raw_answer = response.text.strip()
@@ -556,10 +529,17 @@ class BuddyBot:
                 except Exception as e:
                     last_error = e
                     err_str = str(e)
-                    if attempt_idx < len(models_to_try) - 1:
-                        wait_s = 5.0 if ("429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower()) else 2.0
+                    err_upper = err_str.upper()
+                    if any(tok in err_upper for tok in ("API_KEY_INVALID", "API KEY", "PERMISSION_DENIED", "UNAUTHENTICATED", "401", "403")):
+                        is_auth_error = True
+                        break
+                    if attempt_idx == 0:
+                        wait_s = 5.0 if ("429" in err_str or "RESOURCE_EXHAUSTED" in err_upper or "quota" in err_str.lower()) else 2.0
                         time.sleep(wait_s)
                         continue
+        except ValueError as e:
+            last_error = e
+            is_auth_error = True
         except Exception as e:
             last_error = e
 
@@ -567,9 +547,14 @@ class BuddyBot:
             print(f"[Gemini API Error]: {last_error}")
             latency = (time.perf_counter() - start_time) * 1000
             err_text = str(last_error or "")
-            if "429" in err_text or "RESOURCE_EXHAUSTED" in err_text or "quota" in err_text.lower():
+            if is_auth_error:
                 honest_msg = (
-                    "⚠️ **API Rate Limit Reached:** The Google Gemini free-tier rate limit (15 requests/minute) "
+                    "⚠️ **Gemini API Key Missing or Invalid:** Please configure a valid `GEMINI_API_KEY` "
+                    "in your `.env` file (see `.env.example`) or Streamlit secrets and try again."
+                )
+            elif "429" in err_text or "RESOURCE_EXHAUSTED" in err_text or "quota" in err_text.lower():
+                honest_msg = (
+                    "⚠️ **API Rate Limit Reached:** The Google Gemini free-tier rate limit "
                     "was temporarily reached. Please wait a few seconds and try your question again."
                 )
             else:
@@ -580,6 +565,7 @@ class BuddyBot:
             return {
                 "answer": honest_msg,
                 "sources": [],
+                "retrieved_sources": retrieved_doc_ids,
                 "mode": "error",
                 "sensitive": is_sensitive,
                 "sensitive_topic": sensitive_topic,
@@ -601,19 +587,18 @@ class BuddyBot:
         sources_text, cited_chunks = self.format_sources_section(raw_answer, context_chunks)
         final_answer = raw_answer
 
-        # If sensitive topic and answer does not explicitly refer student, append referral note
+        # If sensitive topic and answer lacks explicit verification/contact referral phrasing, append notice
+        llm_native_referral = False
+        referral_enforced = False
         if is_sensitive:
-            referral_keywords = [
-                "confirm", "refer", "contact", "office", "department", "mvcr",
-                "embassy", "police", "counselling", "skm", "ozs"
-            ]
-            has_referral = any(kw in raw_answer.lower() for kw in referral_keywords)
-            if not has_referral:
-                target_office = REFERRAL_TARGETS.get(
+            llm_native_referral = safety.has_explicit_referral(raw_answer)
+            if not llm_native_referral:
+                target_office = safety.REFERRAL_TARGETS.get(
                     sensitive_topic or "",
                     "the responsible official office or faculty department"
                 )
                 final_answer += f"\n\n⚠️ Please confirm this with {target_office}."
+                referral_enforced = True
 
         # Append clickable markdown sources
         final_answer += sources_text
@@ -630,9 +615,12 @@ class BuddyBot:
         return {
             "answer": final_answer,
             "sources": cited_chunks,
+            "retrieved_sources": retrieved_doc_ids,
             "mode": mode,
             "sensitive": is_sensitive,
             "sensitive_topic": sensitive_topic,
+            "llm_native_referral": llm_native_referral,
+            "referral_enforced": referral_enforced,
             "top_score": round(top_score, 4),
             "latency_ms": round(latency, 1),
         }

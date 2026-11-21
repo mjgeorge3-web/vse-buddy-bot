@@ -164,7 +164,7 @@ INTENT_EXPANSIONS = {
     "portlets": ["portlet", "insis", "navigation", "student", "adjustment", "sidebar"],
     "admission": ["admissions", "application", "prihlaska", "apply", "programmes"],
     "admissions": ["admission", "application", "prihlaska", "apply", "programmes"],
-    "visa": ["residence", "permit", "embassy", "ipc", "frs", "insurance", "police"],
+    "visa": ["residence", "permit", "embassy", "embassies", "consulate", "mzv", "ipc", "frs", "insurance", "police"],
 }
 
 
@@ -310,8 +310,6 @@ class Retriever:
                     for exp_w in INTENT_EXPANSIONS[candidate]:
                         if len(exp_w) >= config.MIN_KEYWORD_LENGTH and exp_w not in STOPWORDS:
                             expanded.add(exp_w)
-        if "where" in words and "visa" in words:
-            expanded.update(["embassies", "embassy", "mzv", "abroad", "consulate"])
         return list(expanded)
 
     def retrieve(
@@ -354,7 +352,7 @@ class Retriever:
         ubiquitous_terms = {
             "vše", "vse", "student", "students", "international", "university",
             "prague", "czech", "study", "studying", "campus", "english",
-            "courses", "course", "find", "need", "apply", "access", "cam",
+            "courses", "course", "find", "need", "apply", "access",
         }
         generic_qualifiers = {
             "central", "centre", "center", "office", "department", "service",
@@ -440,10 +438,13 @@ class Retriever:
         # Sort all chunks by final score descending
         scored_chunks.sort(key=lambda x: x["score"], reverse=True)
 
-        top_score = scored_chunks[0]["score"] if scored_chunks else 0.0
-
-        # Filter chunks that pass minimum score threshold (cap at 2 chunks per document for diversity)
-        passing_chunks = [c for c in scored_chunks if c["score"] >= min_score]
+        # Report top_score on the exact same basis used for threshold gating so logs/UI never contradict mode
+        if query_vec is not None:
+            top_score = max((c["base_score"] for c in scored_chunks), default=0.0)
+            passing_chunks = [c for c in scored_chunks if c["base_score"] >= min_score]
+        else:
+            top_score = scored_chunks[0]["score"] if scored_chunks else 0.0
+            passing_chunks = [c for c in scored_chunks if c["score"] >= min_score]
         selected_chunks: List[Dict[str, Any]] = []
         doc_counts: Dict[str, int] = {}
         for c in passing_chunks:

@@ -1,7 +1,7 @@
 <!--
-SOURCE: https://www.mvcr.cz/mvcren/article/employment-of-foreigners.aspx
+SOURCE: https://up.gov.cz/en/employment-of-foreigners
 TITLE: Employment during studies – general information
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: studies
 DATE SAVED: 2026-10-25
 -->
 

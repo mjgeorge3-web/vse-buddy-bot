@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.pid.cz/en/
 TITLE: Prague public transport – PID (Pražská integrovaná doprava)
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: arrival
 DATE SAVED: 2026-10-25
 -->
 

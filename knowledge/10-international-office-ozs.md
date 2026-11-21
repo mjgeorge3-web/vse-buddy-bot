@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://ozs.vse.cz/english/
 TITLE: International Office (OZS) – coordination of international mobility
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: pre_arrival
 DATE SAVED: 2026-10-25
 -->
 

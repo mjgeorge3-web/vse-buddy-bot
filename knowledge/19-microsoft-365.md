@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/information-sources-and-technology/microsoft-365-suite/
 TITLE: Microsoft 365 (Outlook, Teams, OneDrive) for students
-STAGE: Knowledge base for VŠE international students (general information; refer to official authorities / International Office for personal advice)
+STAGE: arrival
 DATE SAVED: 2026-10-25
 -->
 

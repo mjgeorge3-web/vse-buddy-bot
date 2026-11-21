@@ -1,5 +1,5 @@
 <!--
-SOURCE: https://admissions.vse.cz/foreign-education/, https://edu.vse.cz/
+SOURCE: https://www.vse.cz/english/study-at-vse/assessing-foreign-education-in-the-admissions-process/
 TITLE: Foreign education assessment and nostrification at VŠE
 STAGE: pre_arrival
 DATE SAVED: 2026-10-25
@@ -9,9 +9,9 @@ DATE SAVED: 2026-10-25
 
 > General information only. Confirm with the relevant official authority or the VŠE International Office / Admission Office before acting.
 
-## Internal VŠE assessment for admission (edu.vse.cz)
-- Because VŠE holds institutional accreditation, it has the legal authority to assess foreign secondary and higher education directly for the admission procedure.
-- General state nostrification is **not required** for most applicants if you use VŠE's internal assessment via the portal https://edu.vse.cz/.
+## Internal VŠE assessment for admission
+- Because VŠE holds institutional accreditation, it has the legal authority to assess foreign secondary and higher education directly within the admission procedure (see https://www.vse.cz/english/study-at-vse/assessing-foreign-education-in-the-admissions-process/).
+- General state nostrification is **not required** for most applicants because VŠE integrates foreign education assessment into the InSIS admissions process (generally with no separate assessment fee for English-taught degree programmes — confirm current terms on https://admissions.vse.cz/).
 - The internal assessment starts automatically after submitting and paying for your admission application in InSIS.
 - The internal evaluation is valid exclusively for enrollment into study programmes at VŠE.
 

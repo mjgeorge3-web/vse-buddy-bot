@@ -1,7 +1,7 @@
 <!--
 SOURCE: https://www.vse.cz/english/students/services/academic-psychological-counselling/
 TITLE: Academic Psychological Counselling and Mental Well-being at VŠE
-STAGE: Studying
+STAGE: studies
 DATE SAVED: 2026-10-28
 -->
 

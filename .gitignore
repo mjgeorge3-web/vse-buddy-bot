@@ -26,3 +26,6 @@ env/
 Thumbs.db
 
 .vercel
+
+# Ignore temporary scratch files inside results/, while allowing frozen thesis benchmark CSVs
+results/*.tmp

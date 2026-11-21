@@ -1,8 +1,6 @@
-"""Unit tests for 50 Policies, Rules, Regulations & Campus Navigation (washrooms, classrooms, coordinators)."""
+"""Unit tests for Verified Core VŠE Policies (18) & Campus Service Locations (12)."""
 
-import os
 from pathlib import Path
-import pytest
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -11,79 +9,93 @@ import insis_nav_db
 
 
 def test_policies_database_count():
-    """Verify that all 50 policies are inserted and searchable."""
+    """Verify that all 18 verified core VŠE policies are inserted and searchable."""
+    insis_nav_db.init_database()
     conn = insis_nav_db.get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM vse_policies;")
-    count = cur.fetchone()[0]
-    assert count == 50, f"Expected 50 policies, got {count}"
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM vse_policies;")
+        count = cur.fetchone()[0]
+        assert count == 18, f"Expected 18 verified core policies, got {count}"
+    finally:
+        conn.close()
 
 
 def test_campus_locations_database_count():
-    """Verify that all campus locations are inserted and searchable."""
+    """Verify that all 12 verified campus service locations are inserted and searchable."""
+    insis_nav_db.init_database()
     conn = insis_nav_db.get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM campus_locations;")
-    count = cur.fetchone()[0]
-    assert count >= 40, f"Expected at least 40 campus locations, got {count}"
-
-
-def test_search_washroom_locations():
-    """Verify that washroom queries return floor-specific restrooms."""
-    hits_1st = insis_nav_db.search_campus_locations("washroom 1st floor", limit=2)
-    assert len(hits_1st) > 0
-    assert any("washroom" in h["facility_type"] or "WC" in h["room_number"] for h in hits_1st)
-
-    hits_ground = insis_nav_db.search_campus_locations("toilet ground floor", limit=2)
-    assert len(hits_ground) > 0
-    assert any("Ground" in h["floor"] or "0" in h["floor"] for h in hits_ground)
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM campus_locations;")
+        count = cur.fetchone()[0]
+        assert count == 12, f"Expected 12 verified campus locations, got {count}"
+    finally:
+        conn.close()
 
 
 def test_search_study_coordinator_offices():
-    """Verify searching for FIS and FMV study coordinators."""
+    """Verify searching for verified FIS study coordinator office (NB 403) returns official URL."""
     fis_hits = insis_nav_db.search_campus_locations("study coordinator fis ism", limit=1)
     assert len(fis_hits) == 1
-    assert "NB 113" in fis_hits[0]["room_number"] or "NB 114" in fis_hits[0]["room_number"]
+    assert "NB 403" in fis_hits[0]["room_number"]
     assert "study_coordinator" in fis_hits[0]["facility_type"]
+    assert fis_hits[0]["official_url"] == "https://fis.vse.cz/english/contacts/"
 
 
-def test_search_classrooms():
-    """Verify navigation to specific classrooms like RB 211 and SB M1."""
-    rb211_hits = insis_nav_db.search_campus_locations("room RB 211", limit=1)
-    assert len(rb211_hits) == 1
-    assert "RB 209" in rb211_hits[0]["room_number"] or "211" in rb211_hits[0]["room_number"]
-    assert rb211_hits[0]["building"] == "RB"
+def test_search_library_and_canteen():
+    """Verify verified SB Central Library and AV GASTRO Menza (zero dead skm.vse.cz links)."""
+    lib_hits = insis_nav_db.search_campus_locations("central library knihovna zizkov", limit=1)
+    assert len(lib_hits) == 1
+    assert lib_hits[0]["building"] == "SB"
+    assert "Mezzanine" in lib_hits[0]["floor"]
+    assert lib_hits[0]["official_url"] == "https://library.vse.cz/"
 
-    sbm1_hits = insis_nav_db.search_campus_locations("lecture hall SB M1", limit=1)
-    assert len(sbm1_hits) == 1
-    assert sbm1_hits[0]["building"] == "SB"
+    menza_hits = insis_nav_db.search_campus_locations("menza canteen av gastro", limit=1)
+    assert len(menza_hits) == 1
+    assert "AV GASTRO" in menza_hits[0]["name"]
+    assert "skm.vse.cz" not in menza_hits[0]["directions_from_entrance"]
 
 
-def test_search_academic_policies():
-    """Verify searching for minimum credits, failed exam attempts, and tuition penalties."""
+def test_search_core_academic_policies():
+    """Verify searching for 9 ECTS floor, VŠE 4+ retake rule, and Česká spořitelna tuition account."""
     p_cred = insis_nav_db.search_policies("minimum credits first semester 9 ects", limit=1)
     assert len(p_cred) == 1
     assert p_cred[0]["rule_id"] == "POL_001"
     assert "9 ECTS" in p_cred[0]["title"]
 
-    p_retake = insis_nav_db.search_policies("exam retake attempts three attempts", limit=1)
+    p_retake = insis_nav_db.search_policies("4+ grading scale exam retake", limit=1)
     assert len(p_retake) == 1
-    assert p_retake[0]["rule_id"] == "POL_012"
+    assert p_retake[0]["rule_id"] == "POL_010"
+    assert "4+" in p_retake[0]["title"]
+    assert "one retake" in p_retake[0]["rule_text"].lower()
 
-    p_ai = insis_nav_db.search_policies("generative ai chatgpt thesis policy", limit=1)
-    assert len(p_ai) == 1
-    assert p_ai[0]["rule_id"] == "POL_020"
+    p_tuition = insis_nav_db.search_policies("tuition bank account iban variable symbol", limit=1)
+    assert len(p_tuition) == 1
+    assert p_tuition[0]["rule_id"] == "POL_015"
+    assert "CZ39 0800 0000 0000 2424 2442" in p_tuition[0]["rule_text"]
 
 
-def test_search_dormitory_policies():
-    """Verify dorm quiet hours and overnight guest registration."""
-    p_guest = insis_nav_db.search_policies("overnight guests in dormitory", limit=1)
-    assert len(p_guest) == 1
-    assert p_guest[0]["rule_id"] == "POL_039"
+def test_all_policy_and_location_urls_are_live_verified():
+    """Verify zero legacy 404 or dead skm.vse.cz URLs exist in vse_data_fixtures."""
+    import vse_data_fixtures as f
 
-    p_quiet = insis_nav_db.search_policies("quiet hours nocni klid dorm", limit=1)
-    assert len(p_quiet) == 1
-    assert p_quiet[0]["rule_id"] == "POL_040"
+    banned = [
+        "skm.vse.cz",
+        "university-rules-and-regulations",
+        "campus-map-and-buildings",
+        "suz.vse.cz/english",
+        "admissions.vse.cz/tuition-fees",
+        "admissions.vse.cz/foreign-education",
+    ]
+    for p in f.CORE_VSE_POLICIES:
+        assert p["official_url"].startswith("https://")
+        for b in banned:
+            assert b not in p["official_url"], f"Dead URL {b} in {p['rule_id']}"
+    for loc in f.CAMPUS_LOCATIONS:
+        assert loc["official_url"].startswith("https://")
+        for b in banned:
+            assert b not in loc["official_url"], f"Dead URL {b} in {loc['location_id']}"
 
 
 def test_format_policy_and_location_cards():
