@@ -332,7 +332,7 @@ def build_and_save_index(force: bool = False) -> Tuple[np.ndarray, List[Dict[str
         # HttpOptions.timeout is in milliseconds (30000 ms = 30 seconds)
         client = genai.Client(
             api_key=api_key,
-            http_options=types.HttpOptions(timeout=30000),
+            http_options=types.HttpOptions(timeout=30000, api_version="v1beta"),
         )
         print(f"Generating embeddings for {len(missing_texts)} updated/new chunks (reusing {len(chunks) - len(missing_texts)} cached)...")
         embedded_missing = embed_chunks_with_backoff(client, missing_texts, model=config.EMBEDDING_MODEL)

@@ -47,7 +47,7 @@ class BuddyBot:
                 )
             self.client = genai.Client(
                 api_key=api_key,
-                http_options=types.HttpOptions(timeout=15000),
+                http_options=types.HttpOptions(timeout=15000, api_version="v1beta"),
             )
         return self.client
 
